@@ -29,6 +29,16 @@
     .event{padding:clamp(22px,5vw,42px);background:#fff;border:1px solid var(--line);border-radius:22px}.event-label{font-size:11px;letter-spacing:.14em;font-weight:800;color:#65783d}.date{font-size:clamp(24px,4vw,34px);font-weight:800;line-height:1.4;margin:8px 0 30px}.details{display:grid;grid-template-columns:140px 1fr;border-top:1px solid var(--line)}.details dt,.details dd{margin:0;padding:18px 0;border-bottom:1px solid var(--line)}.details dt{font-size:13px;color:var(--muted)}.details dd{font-weight:600}.songs{font-weight:500!important}.songs p{margin:0 0 6px}.songs p:last-child{margin-bottom:0}.closing{text-align:center;font-size:clamp(20px,4vw,28px);font-weight:800;letter-spacing:.02em;margin:36px 0 0}.cta{display:inline-flex;margin-top:30px;padding:12px 20px;background:var(--ink);color:#fff;border-radius:999px;font-size:13px;font-weight:700}.back:focus-visible,.cta:focus-visible{outline:3px solid var(--green);outline-offset:4px}
     @media(max-width:600px){main{padding:52px 0 70px}.details{grid-template-columns:1fr}.details dt{padding:14px 0 0;border-bottom:0}.details dd{padding:4px 0 16px}.lead{font-size:14px}}
   </style>
+
+  <style id="hamoso-social-float-style">
+    .hamoso-social-float{position:fixed;right:20px;bottom:22px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+    .hamoso-social-float a{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#242820;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:transform .2s ease,background .2s ease}
+    .hamoso-social-float a:hover{transform:translateY(-3px);background:#56633b}
+    .hamoso-social-float a:focus-visible{outline:3px solid #a6b86a;outline-offset:3px}
+    .hamoso-social-float svg{width:23px;height:23px;display:block;fill:currentColor}
+    .hamoso-social-float .instagram svg{fill:none;stroke:currentColor;stroke-width:1.9}
+    @media(max-width:600px){.hamoso-social-float{right:12px;bottom:14px;gap:8px}.hamoso-social-float a{width:44px;height:44px}.hamoso-social-float svg{width:21px;height:21px}}
+  </style>
 </head>
 <body>
   <header><div class="wrap nav"><a class="brand" href="../../index.html">HAMOSO.</a><a class="back" href="../../schedule/index.html">← 年間スケジュールへ戻る</a></div></header>
@@ -48,5 +58,14 @@
     <p class="closing">当日までおたのしみに！</p>
     <a class="cta" href="../../schedule/index.html">年間スケジュールに戻る ↗</a>
   </main>
+
+  <nav class="hamoso-social-float" aria-label="公式SNS">
+    <a href="https://x.com/meiji_hamoso" target="_blank" rel="noopener noreferrer" aria-label="ハモソ公式X（新しいタブで開く）" title="公式X">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-6.78 7.75L23.2 22h-6.25l-4.9-7.42L5.56 22H2.43l7.25-8.29L1.8 2h6.4l4.43 6.77L18.9 2Zm-1.1 18h1.73L7.27 3.9H5.41L17.8 20Z"/></svg>
+    </a>
+    <a class="instagram" href="https://www.instagram.com/meiji_hamoso/" target="_blank" rel="noopener noreferrer" aria-label="ハモソ公式Instagram（新しいタブで開く）" title="公式Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
+    </a>
+  </nav>
 </body>
 </html>
