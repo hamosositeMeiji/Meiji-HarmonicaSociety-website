@@ -225,6 +225,54 @@ a:hover .arrow {
       font-size: 20px;
     }
 
+    /* LATEST NEWS STRIP */
+    .latest-news-strip {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-height: 58px;
+      padding: 12px max(20px, calc((100% - var(--max)) / 2));
+      border-bottom: 1px solid var(--line);
+      background: #eeefe7;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .latest-news-label {
+      flex-shrink: 0;
+      color: var(--green-dark);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+    }
+    .latest-news-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      width: 100%;
+    }
+    .latest-news-date {
+      flex-shrink: 0;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+    }
+    .latest-news-title {
+      overflow: hidden;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .latest-news-arrow {
+      flex-shrink: 0;
+      margin-left: auto;
+      color: var(--green-dark);
+      font-size: 18px;
+      transition: transform .2s;
+    }
+    .latest-news-strip:hover .latest-news-arrow { transform: translate(3px, -2px); }
+    .latest-news-strip:hover .latest-news-title { text-decoration: underline; text-underline-offset: 3px; }
+
     /* HERO */
     .hero {
       padding: 34px 0 80px;
@@ -994,6 +1042,14 @@ a:hover .arrow {
 
     /* MOBILE */
     @media (max-width: 650px) {
+      .latest-news-strip { gap: 10px; padding: 10px 16px; min-height: 54px; }
+      .latest-news-label { font-size: 9px; letter-spacing: .06em; }
+      .latest-news-link { gap: 8px; }
+      .latest-news-date { font-size: 10px; }
+      .latest-news-title { font-size: 12px; }
+    }
+
+    @media (max-width: 650px) {
       .wrap { width: calc(100% - 36px); }
       .section { padding: 70px 0; }
 
@@ -1223,6 +1279,15 @@ button:focus-visible {
 </nav>
     </div>
   </header>
+
+  <a class="latest-news-strip" href="news/2026/homecoming-day.html" aria-label="2026年10月25日 明治大学ホームカミングデー OBOGライブに出演">
+    <span class="latest-news-label">LATEST NEWS</span>
+    <span class="latest-news-link">
+      <time class="latest-news-date" datetime="2026-10-25">2026.10.25</time>
+      <span class="latest-news-title">明治大学ホームカミングデー OBOGライブに出演</span>
+      <span class="latest-news-arrow" aria-hidden="true">↗</span>
+    </span>
+  </a>
 
   <main id="top">
     <section class="hero wrap">
