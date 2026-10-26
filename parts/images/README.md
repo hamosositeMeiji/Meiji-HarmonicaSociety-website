@@ -1,14 +1,20 @@
 # パート紹介画像の置き場
 
-各パート紹介で使う写真をこのフォルダに置きます。現在は仮参照として `BASS-SAMPLE.jpg` を用意しています。
+各パートの詳細ページには写真を2枚掲載します。
 
-## 画像ファイル名（予定）
-- `HARMONICA-SAMPLE.jpg`
-- `FLUTE-SAMPLE.jpg`
-- `CLARINET-SAMPLE.jpg`
-- `KEYBOARD-SAMPLE.jpg`
-- `GUITAR-SAMPLE.jpg`
-- `BASS-SAMPLE.jpg`
-- `PERCUSSION-SAMPLE.jpg`
+- メンバー写真：PART-MEMBER-SAMPLE.svg（例：BASS-MEMBER-SAMPLE.svg）
+- 楽器写真：PART-SAMPLE.svg（例：BASS-SAMPLE.svg）
 
-写真を追加したら、`parts/detail.html` のパート別データに対応する画像パスを指定します。実際の写真を追加するまではサンプル画像の枠を表示します。
+## ファイル一覧
+
+| パート | メンバー写真 | 楽器写真 |
+|---|---|---|
+| ハーモニカ | HARMONICA-MEMBER-SAMPLE.svg | HARMONICA-SAMPLE.svg |
+| フルート | FLUTE-MEMBER-SAMPLE.svg | FLUTE-SAMPLE.svg |
+| クラリネット | CLARINET-MEMBER-SAMPLE.svg | CLARINET-SAMPLE.svg |
+| キーボード | KEYBOARD-MEMBER-SAMPLE.svg | KEYBOARD-SAMPLE.svg |
+| ギター | GUITAR-MEMBER-SAMPLE.svg | GUITAR-SAMPLE.svg |
+| ベース | BASS-MEMBER-SAMPLE.svg | BASS-SAMPLE.svg |
+| パーカッション | PERCUSSION-MEMBER-SAMPLE.svg | PERCUSSION-SAMPLE.svg |
+
+実際の写真に差し替える場合は、ファイル名をそのまま使って写真ファイルを置き換え、parts/detail.html の memberImage または image のパスを変更してください。JPGやPNGを使う場合は、コード側の拡張子も合わせます。
