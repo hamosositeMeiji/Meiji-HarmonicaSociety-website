@@ -29,22 +29,6 @@
     .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{padding:28px;border:1px solid var(--line);border-radius:18px;background:#fff}.num{font-size:11px;color:var(--muted);letter-spacing:.1em}.symbol{display:grid;place-items:center;width:54px;height:54px;margin:24px 0 16px;border-radius:16px;background:#e5ebd5;font-size:26px}h2{font-size:22px;margin:0 0 12px;letter-spacing:-.03em}.card p{font-size:14px;color:var(--muted);margin:0}.note{margin-top:36px;padding:24px 28px;background:#eeefe7;border-radius:16px}.note p{margin:0;font-size:14px}.cta{display:inline-flex;margin-top:34px;padding:12px 20px;background:var(--ink);color:#fff;border-radius:999px;font-size:13px;font-weight:700}.cta:focus-visible,.back:focus-visible{outline:3px solid var(--green);outline-offset:4px}
     @media(max-width:720px){main{padding:52px 0 70px}.cards{grid-template-columns:1fr}.card{padding:24px}.intro{font-size:14px}}
 
-    .activity-reports{margin-top:76px;padding-top:48px;border-top:1px solid var(--line)}
-    .reports-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:24px}
-    .reports-heading h2{margin:8px 0 0;font-size:clamp(25px,4vw,34px);letter-spacing:-.04em}
-    .reports-heading p{max-width:340px;margin:0;color:var(--muted);font-size:13px}
-    .report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-    .report-card{display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fff;transition:transform .2s,border-color .2s}
-    .report-card:hover{transform:translateY(-3px);border-color:var(--green)}
-    .report-photo{aspect-ratio:16/9;display:grid;place-items:center;background:linear-gradient(135deg,#eeefe7,#f7f6f0);color:#65783d;font-size:12px;font-weight:800;letter-spacing:.16em;border-bottom:1px dashed #c6cbb8}
-    .report-copy{padding:22px}
-    .report-meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:12px}
-    .report-meta span{color:#65783d;font-weight:700}
-    .report-copy h3{margin:12px 0 10px;font-size:20px;line-height:1.55}
-    .report-copy p{margin:0;color:var(--muted);font-size:13px}
-    .report-link{display:inline-block;margin-top:20px;font-size:11px;font-weight:800;letter-spacing:.1em;color:#65783d}
-    @media(max-width:720px){.activity-reports{margin-top:54px;padding-top:36px}.reports-heading{display:block}.reports-heading p{margin-top:12px}.report-grid{grid-template-columns:1fr}.report-copy{padding:20px}}
-
   </style>
 
   <style id="hamoso-social-float-style">
@@ -69,24 +53,6 @@
       <article class="card"><div class="num">03 — CAMP & MORE</div><div class="symbol">✳</div><h2>合宿・交流イベント</h2><p>音楽から少し離れて、仲間との交流を楽しむ時間も大切にしています。一緒に過ごす時間が、普段の練習や合奏でのコミュニケーションにもつながります。</p></article>
     </div>
 
-    <section class="activity-reports" aria-labelledby="activity-reports-title">
-      <div class="reports-heading">
-        <div><div class="eyebrow">ACTIVITY REPORTS</div><h2 id="activity-reports-title">ハモソの活動レポート</h2></div>
-        <p>ステージの裏側や、演奏を届けた日の様子をお届けします。</p>
-      </div>
-      <div class="report-grid">
-        <a class="report-card" href="odawara-live.html">
-          <div class="report-photo" aria-hidden="true"><span>PHOTO</span></div>
-          <div class="report-copy"><div class="report-meta"><time datetime="2026-09-19">2026.09.19</time><span>出張演奏</span></div>
-          <h3>小田原にて出張演奏</h3><p>第23回 明治大学連合父母会 首都圏6地区協議会へ出演。アコースティックな編成で、近い距離から音楽を届けました。</p><span class="report-link">READ REPORT ↗</span></div>
-        </a>
-        <a class="report-card" href="homecoming-day.html">
-          <div class="report-photo" aria-hidden="true"><span>PHOTO</span></div>
-          <div class="report-copy"><div class="report-meta"><time datetime="2026-10-25">2026.10.25</time><span>ライブ出演</span></div>
-          <h3>明治大学ホームカミングデー OBOGライブ</h3><p>第29回ホームカミングデーに現役生として出演。大先輩たちに囲まれながら演奏しました。</p><span class="report-link">READ REPORT ↗</span></div>
-        </a>
-      </div>
-    </section>
 
     <div class="note"><p>活動内容やイベントの日程は年度によって変わる場合があります。最新のお知らせもあわせてご確認ください。</p></div>
     <a class="cta" href="../index.html#schedule">活動日・スケジュールを見る ↗</a>
