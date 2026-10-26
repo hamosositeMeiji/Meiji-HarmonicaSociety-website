@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="明治大学ハーモニカソサエティーのパート紹介。">
+  <title>パート紹介｜明治大学ハーモニカソサエティー</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="parts.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">本文へ移動</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="../index.html">MEIJI UNIVERSITY HAMONICA SOCIETY</a>
+      <a class="back-link" href="index.html">← パート一覧へ</a>
+    </div>
+  </header>
+
+  <main class="wrap detail" id="main-content" tabindex="-1">
+    <article>
+      <p class="detail-role" id="part-role"></p>
+      <h1 id="part-name"></h1>
+      <p class="detail-intro" id="part-intro"></p>
+      <section>
+        <h2>どんなパート？</h2>
+        <p id="part-detail"></p>
+      </section>
+      <section>
+        <h2>ハモソの中での役割</h2>
+        <p id="part-group"></p>
+      </section>
+    </article>
+    <aside class="detail-aside">
+      <p>未経験でも、どのパートが合うかわからなくても大丈夫。見学・体験で実際の音を聴いてみてください。</p>
+      <a class="button" href="../index.html#join">見学・体験について</a>
+    </aside>
+  </main>
+
+  <footer><div class="wrap">© 2026 MEIJI UNIVERSITY HARMONICA SOCIETY</div></footer>
+
+  <script>
+    const partData = {
+      harmonica: { name: "ハーモニカ", english: "HARMONICA", role: "01 / MELODY", intro: "ハモソの主役。主にメロディーを担当します。", detail: "穴に息を吹き込んだり吸ったりすることで音が出る楽器です。たくさんの音が重なったときの一体感も、ハーモニカならではの魅力です。", group: "フルート、クラリネットとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
+      flute: { name: "フルート", english: "FLUTE", role: "02 / MELODY", intro: "高音を担当し、きらきらと美しい音色を響かせます。", detail: "メロディーだけでなく、伴奏やコーラスも担当します。曲に合わせて、さまざまな表情をつくるパートです。", group: "ハーモニカ、クラリネットとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
+      clarinet: { name: "クラリネット", english: "CLARINET", role: "03 / MELODY", intro: "メロディーから伴奏、時にはソロまで。幅広く活躍するパートです。", detail: "いろいろな役割をこなし、深みのある音色も特徴です。曲ごとに違う役割に挑戦できる楽しさがあります。", group: "ハーモニカ、フルートとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
+      keyboard: { name: "キーボード", english: "KEYBOARD", role: "04 / HARMONY", intro: "ピアノやシンセサイザー、アコーディオンで音の広がりをつくります。", detail: "伴奏だけでなく、曲によってはソロを担当することもあります。多彩な音色でバンドを彩るパートです。", group: "ギター、ベース、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
+      guitar: { name: "ギター", english: "GUITAR", role: "05 / HARMONY", intro: "メロディーを支え、ときには印象的なフレーズやソロも奏でます。", detail: "曲の雰囲気をつくる名脇役であり、コンボの華でもあります。さまざまな曲で活躍するパートです。", group: "キーボード、ベース、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
+      bass: { name: "ベース", english: "BASS", role: "06 / LOW END", intro: "低音で全体をしっかり支える、縁の下の力持ちです。", detail: "曲の土台をつくりながら、ときにはぐっと目立つフレーズも担当します。バンド全体を前に進める存在です。", group: "キーボード、ギター、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
+      percussion: { name: "パーカッション", english: "PERCUSSION", role: "07 / RHYTHM", intro: "ドラムを中心に、演奏のリズムと勢いをつくるパートです。", detail: "グロッケンやタンバリンなど、さまざまな小物楽器でも演奏を盛り上げます。曲に合う音を選ぶ楽しさがあります。", group: "キーボード、ギター、ベースとともに、後ろから演奏を支える『コンボ』の一つです。" }
+    };
+
+    const requestedPart = new URLSearchParams(window.location.search).get("part");
+    const part = partData[requestedPart] || partData.harmonica;
+    document.title = part.name + "｜パート紹介｜明治大学ハーモニカソサエティー";
+    document.getElementById("part-role").textContent = part.role + " / " + part.english;
+    document.getElementById("part-name").textContent = part.name;
+    document.getElementById("part-intro").textContent = part.intro;
+    document.getElementById("part-detail").textContent = part.detail;
+    document.getElementById("part-group").textContent = part.group;
+  </script>
+</body>
+</html>
+

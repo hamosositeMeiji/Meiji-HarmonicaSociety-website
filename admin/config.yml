@@ -1,0 +1,33 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "site_settings"
+    label: "サイト更新"
+    files:
+      - name: "schedule"
+        label: "練習・年間予定"
+        file: "content/site.json"
+        format: "json"
+        fields:
+          - { label: "主な活動場所", name: "location", widget: "string" }
+          - { label: "活動に関する注意書き", name: "notice", widget: "text" }
+          - { label: "年間予定の注意書き", name: "yearlyNotice", widget: "text" }
+          - label: "定例練習"
+            name: "regular"
+            widget: "list"
+            fields:
+              - { label: "曜日", name: "day", widget: "string" }
+              - { label: "時間", name: "time", widget: "string" }
+              - { label: "内容", name: "label", widget: "string" }
+          - label: "例年の主な活動"
+            name: "yearly"
+            widget: "list"
+            fields:
+              - { label: "時期", name: "when", widget: "string" }
+              - { label: "行事", name: "title", widget: "string" }
+
