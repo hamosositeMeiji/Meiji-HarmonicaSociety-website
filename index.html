@@ -526,6 +526,18 @@ a:hover .arrow {
       letter-spacing: -.04em;
     }
 
+    .activities-title-link {
+      display: inline-block;
+      transition: opacity .2s ease;
+    }
+
+    .activities-title-link:hover { opacity: .68; }
+
+    .activities-title-link:focus-visible {
+      outline: 2px solid var(--green-dark);
+      outline-offset: 5px;
+    }
+
     .activity-more {
       display: flex;
       justify-content: center;
@@ -1286,7 +1298,7 @@ button:focus-visible {
         <div class="section-head reveal">
           <div>
             <div class="eyebrow">02 / ACTIVITIES</div>
-            <h2>More than<br>just music.</h2>
+            <h2><a class="activities-title-link" href="activities/index.html">More than<br>just music.</a></h2>
           </div>
           <p>
             いつもの練習から大きなステージまで。
