@@ -23,6 +23,10 @@
     <article>
       <p class="detail-role" id="part-role"></p>
       <h1 id="part-name"></h1>
+      <figure class="part-photo">
+        <img id="part-photo" src="images/HARMONICA-SAMPLE.svg" alt="ハーモニカの写真（仮画像）">
+        <figcaption id="part-photo-caption">写真は仮置きです。実際の写真に差し替えます。</figcaption>
+      </figure>
       <p class="detail-intro" id="part-intro"></p>
       <section>
         <h2>どんなパート？</h2>
@@ -43,13 +47,13 @@
 
   <script>
     const partData = {
-      harmonica: { name: "ハーモニカ", english: "HARMONICA", role: "01 / MELODY", intro: "ハモソの主役。主にメロディーを担当します。", detail: "穴に息を吹き込んだり吸ったりすることで音が出る楽器です。たくさんの音が重なったときの一体感も、ハーモニカならではの魅力です。", group: "フルート、クラリネットとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
-      flute: { name: "フルート", english: "FLUTE", role: "02 / MELODY", intro: "高音を担当し、きらきらと美しい音色を響かせます。", detail: "メロディーだけでなく、伴奏やコーラスも担当します。曲に合わせて、さまざまな表情をつくるパートです。", group: "ハーモニカ、クラリネットとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
-      clarinet: { name: "クラリネット", english: "CLARINET", role: "03 / MELODY", intro: "メロディーから伴奏、時にはソロまで。幅広く活躍するパートです。", detail: "いろいろな役割をこなし、深みのある音色も特徴です。曲ごとに違う役割に挑戦できる楽しさがあります。", group: "ハーモニカ、フルートとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
-      keyboard: { name: "キーボード", english: "KEYBOARD", role: "04 / HARMONY", intro: "ピアノやシンセサイザー、アコーディオンで音の広がりをつくります。", detail: "伴奏だけでなく、曲によってはソロを担当することもあります。多彩な音色でバンドを彩るパートです。", group: "ギター、ベース、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
-      guitar: { name: "ギター", english: "GUITAR", role: "05 / HARMONY", intro: "メロディーを支え、ときには印象的なフレーズやソロも奏でます。", detail: "曲の雰囲気をつくる名脇役であり、コンボの華でもあります。さまざまな曲で活躍するパートです。", group: "キーボード、ベース、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
-      bass: { name: "ベース", english: "BASS", role: "06 / LOW END", intro: "低音で全体をしっかり支える、縁の下の力持ちです。", detail: "曲の土台をつくりながら、ときにはぐっと目立つフレーズも担当します。バンド全体を前に進める存在です。", group: "キーボード、ギター、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
-      percussion: { name: "パーカッション", english: "PERCUSSION", role: "07 / RHYTHM", intro: "ドラムを中心に、演奏のリズムと勢いをつくるパートです。", detail: "グロッケンやタンバリンなど、さまざまな小物楽器でも演奏を盛り上げます。曲に合う音を選ぶ楽しさがあります。", group: "キーボード、ギター、ベースとともに、後ろから演奏を支える『コンボ』の一つです。" }
+      harmonica: { name: "ハーモニカ", english: "HARMONICA", image: "images/HARMONICA-SAMPLE.svg", role: "01 / MELODY", intro: "ハモソの主役。主にメロディーを担当します。", detail: "穴に息を吹き込んだり吸ったりすることで音が出る楽器です。たくさんの音が重なったときの一体感も、ハーモニカならではの魅力です。", group: "フルート、クラリネットとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
+      flute: { name: "フルート", english: "FLUTE", image: "images/FLUTE-SAMPLE.svg", role: "02 / MELODY", intro: "高音を担当し、きらきらと美しい音色を響かせます。", detail: "メロディーだけでなく、伴奏やコーラスも担当します。曲に合わせて、さまざまな表情をつくるパートです。", group: "ハーモニカ、クラリネットとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
+      clarinet: { name: "クラリネット", english: "CLARINET", image: "images/CLARINET-SAMPLE.svg", role: "03 / MELODY", intro: "メロディーから伴奏、時にはソロまで。幅広く活躍するパートです。", detail: "いろいろな役割をこなし、深みのある音色も特徴です。曲ごとに違う役割に挑戦できる楽しさがあります。", group: "ハーモニカ、フルートとともに、曲のメロディーを中心に担う『前パ』の一つです。" },
+      keyboard: { name: "キーボード", english: "KEYBOARD", image: "images/KEYBOARD-SAMPLE.svg", role: "04 / HARMONY", intro: "ピアノやシンセサイザー、アコーディオンで音の広がりをつくります。", detail: "伴奏だけでなく、曲によってはソロを担当することもあります。多彩な音色でバンドを彩るパートです。", group: "ギター、ベース、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
+      guitar: { name: "ギター", english: "GUITAR", image: "images/GUITAR-SAMPLE.svg", role: "05 / HARMONY", intro: "メロディーを支え、ときには印象的なフレーズやソロも奏でます。", detail: "曲の雰囲気をつくる名脇役であり、コンボの華でもあります。さまざまな曲で活躍するパートです。", group: "キーボード、ベース、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
+      bass: { name: "ベース", english: "BASS", image: "images/BASS-SAMPLE.svg", role: "06 / LOW END", intro: "低音で全体をしっかり支える、縁の下の力持ちです。", detail: "曲の土台をつくりながら、ときにはぐっと目立つフレーズも担当します。バンド全体を前に進める存在です。", group: "キーボード、ギター、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
+      percussion: { name: "パーカッション", english: "PERCUSSION", image: "images/PERCUSSION-SAMPLE.svg", role: "07 / RHYTHM", intro: "ドラムを中心に、演奏のリズムと勢いをつくるパートです。", detail: "グロッケンやタンバリンなど、さまざまな小物楽器でも演奏を盛り上げます。曲に合う音を選ぶ楽しさがあります。", group: "キーボード、ギター、ベースとともに、後ろから演奏を支える『コンボ』の一つです。" }
     };
 
     const requestedPart = new URLSearchParams(window.location.search).get("part");
@@ -57,6 +61,10 @@
     document.title = part.name + "｜パート紹介｜明治大学ハーモニカソサエティー";
     document.getElementById("part-role").textContent = part.role + " / " + part.english;
     document.getElementById("part-name").textContent = part.name;
+    const partPhoto = document.getElementById("part-photo");
+    partPhoto.src = part.image;
+    partPhoto.alt = part.name + "の写真（仮画像）";
+    document.getElementById("part-photo-caption").textContent = part.english + "-SAMPLE：実際の写真に差し替える場所";
     document.getElementById("part-intro").textContent = part.intro;
     document.getElementById("part-detail").textContent = part.detail;
     document.getElementById("part-group").textContent = part.group;
