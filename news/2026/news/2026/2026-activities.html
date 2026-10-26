@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>記事タイトル｜ハモソ</title>
+  <meta name="description" content="記事の概要を入力してください。">
+  <style>
+    :root {
+      --paper: #f8f8f3;
+      --ink: #20231c;
+      --muted: #73766c;
+      --accent: #8b9f40;
+      --line: #dedfd4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Noto Sans JP", sans-serif;
+      line-height: 1.9;
+    }
+    header, footer {
+      padding: 22px 6%;
+      border-bottom: 1px solid var(--line);
+    }
+    footer {
+      border-top: 1px solid var(--line);
+      border-bottom: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    a { color: inherit; }
+    .wrap {
+      width: min(100% - 40px, 760px);
+      margin: 0 auto;
+    }
+    header a {
+      font-weight: 700;
+      text-decoration: none;
+    }
+    main { padding: 55px 0 80px; }
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .category { color: var(--accent); }
+    h1 {
+      font-size: clamp(30px, 6vw, 48px);
+      line-height: 1.4;
+    }
+    .article-body { margin-top: 36px; }
+    .article-body h2 {
+      margin-top: 36px;
+      font-size: 23px;
+    }
+    .back {
+      display: inline-block;
+      margin-top: 40px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="../index.html">HAMOSO</a>
+    <span> / NEWS</span>
+  </header>
+
+  <main class="wrap">
+    <article>
+      <div class="meta">
+        <time datetime="2026-01-01">2026.01.01</time>
+        <span class="category">お知らせ</span>
+      </div>
+
+      <h1>記事タイトルを入力</h1>
+
+      <div class="article-body">
+        <p>ここに記事の本文を入力してください。</p>
+
+        <h2>見出しを入力</h2>
+        <p>詳細な内容を入力してください。</p>
+      </div>
+
+<a class="back" href="index.html">← 2026年度のNEWSへ戻る</a>
+<p><a href="../index.html">NEWSトップへ戻る</a></p>
+    </article>
+  </main>
+
+  <footer>
+    明治大学ハーモニカソサエティー
+  </footer>
+</body>
+</html>
