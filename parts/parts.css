@@ -154,13 +154,27 @@ h1 {
 
 .detail h1 { margin: 8px 0 22px; }
 .detail-intro { margin: 0; font-size: clamp(18px, 2.4vw, 25px); line-height: 1.6; }
-.part-photo {
+.part-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
   margin: 28px 0 30px;
+}
+.part-photo {
+  min-width: 0;
+  margin: 0;
+}
+.photo-label {
+  margin: 0 0 10px !important;
+  color: var(--green-dark) !important;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
 }
 .part-photo img {
   display: block;
   width: 100%;
-  aspect-ratio: 12 / 7.6;
+  aspect-ratio: 12 / 9;
   object-fit: cover;
   border: 1px solid var(--line);
   background: #eeefe7;
@@ -211,5 +225,6 @@ footer {
   .grid { grid-template-columns: 1fr; padding-bottom: 64px; }
   .card { min-height: 190px; }
   .detail { grid-template-columns: 1fr; padding-top: 46px; }
+  .part-photo-grid { grid-template-columns: 1fr; gap: 24px; }
 }
 
