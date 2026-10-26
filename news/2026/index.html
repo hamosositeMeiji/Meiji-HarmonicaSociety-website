@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="明治大学ハーモニカソサエティーの2026年度のお知らせ・活動報告一覧です。">
+  <title>2026年度のNEWS｜ハモソ</title>
+  <style>
+    :root {
+      --paper: #f8f8f3;
+      --ink: #20231c;
+      --muted: #73766c;
+      --accent: #8b9f40;
+      --line: #dedfd4;
+      --white: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Noto Sans JP", sans-serif;
+      line-height: 1.8;
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      width: min(100% - 40px, 900px);
+      margin-inline: auto;
+    }
+
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      font-weight: 800;
+      text-decoration: none;
+      letter-spacing: .04em;
+    }
+
+    .back {
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .hero {
+      padding: 72px 0 48px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .18em;
+    }
+
+    h1 {
+      margin: 8px 0;
+      font-size: clamp(36px, 7vw, 60px);
+      line-height: 1.2;
+      letter-spacing: -.04em;
+    }
+
+    .intro { color: var(--muted); }
+
+    .section-heading {
+      margin: 42px 0 18px;
+      font-size: 22px;
+    }
+
+    .news-card {
+      display: block;
+      margin-bottom: 16px;
+      padding: 24px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: transform .2s, border-color .2s;
+    }
+
+    a.news-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .category { color: var(--accent); }
+
+    h2.card-title {
+      margin: 10px 0;
+      font-size: 21px;
+    }
+
+    .news-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .read-more {
+      display: inline-block;
+      margin-top: 14px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .archive {
+      margin: 48px 0;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .archive h2 { margin-top: 0; }
+
+    .archive a {
+      display: inline-block;
+      margin: 4px 12px 4px 0;
+      color: var(--accent);
+    }
+
+    footer {
+      margin-top: 64px;
+      padding: 28px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding-top: 48px; }
+      .news-card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap header-inner">
+      <a class="brand" href="../../index.html">HAMOSO</a>
+      <a class="back" href="../index.html">← NEWS一覧へ</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">NEWS ARCHIVE</div>
+      <h1>2026年度</h1>
+      <p class="intro">
+        明治大学ハーモニカソサエティーの2026年度のお知らせ・活動報告です。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-heading">お知らせ一覧</h2>
+
+      <a class="news-card" href="../2026-autumn-concert.html">
+        <div class="meta">
+          <span>2026.11.21</span>
+          <span class="category">演奏会</span>
+        </div>
+        <h2 class="card-title">演奏会のお知らせ</h2>
+        <p>日暮里サニーホールで開催する演奏会についてのお知らせです。</p>
+        <span class="read-more">READ MORE ↗</span>
+      </a>
+
+      <article class="news-card">
+        <div class="meta">
+          <span>2026年度</span>
+          <span class="category">活動報告</span>
+        </div>
+        <h2 class="card-title">活動報告を準備中です</h2>
+        <p>合奏やパート練習、演奏会に向けた準備など、ハモソの日々の活動を今後紹介していきます。</p>
+        <span class="read-more">COMING SOON</span>
+      </article>
+    </section>
+
+    <section class="archive">
+      <h2>過去の年度</h2>
+      <p>過去のお知らせは、年度ごとに整理して公開していきます。</p>
+      <a href="../index.html">NEWSトップへ戻る</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <a href="../../index.html">明治大学ハーモニカソサエティー公式サイト</a>
+    </div>
+  </footer>
+</body>
+</html>
