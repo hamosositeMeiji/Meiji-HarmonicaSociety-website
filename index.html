@@ -557,6 +557,23 @@ a:hover .arrow {
       transition: .25s;
     }
 
+    .music-item {
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .music-item:focus-visible {
+      outline: 2px solid var(--green-dark);
+      outline-offset: 4px;
+    }
+
+    .music-more {
+      display: flex;
+      justify-content: center;
+      margin-top: 28px;
+    }
+
     .music-item:hover {
       background: var(--green);
       border-color: var(--green);
@@ -1318,46 +1335,49 @@ button:focus-visible {
       </p>
 
       <div class="music-grid">
-        <div class="music-item reveal">
+        <a class="music-item reveal" href="parts/detail.html?part=harmonica" aria-label="ハーモニカの紹介を見る">
           <span>01 / MELODY</span>
           <strong>ハーモニカ</strong>
           <small>HARMONICA</small>
-        </div>
-        <div class="music-item reveal">
+        </a>
+        <a class="music-item reveal" href="parts/detail.html?part=flute" aria-label="フルートの紹介を見る">
           <span>02 / MELODY</span>
           <strong>フルート</strong>
           <small>FLUTE</small>
-        </div>
-        <div class="music-item reveal">
+        </a>
+        <a class="music-item reveal" href="parts/detail.html?part=clarinet" aria-label="クラリネットの紹介を見る">
           <span>03 / MELODY</span>
           <strong>クラリネット</strong>
           <small>CLARINET</small>
-        </div>
-        <div class="music-item reveal">
+        </a>
+        <a class="music-item reveal" href="parts/detail.html?part=keyboard" aria-label="キーボードの紹介を見る">
           <span>04 / HARMONY</span>
           <strong>キーボード</strong>
           <small>KEYBOARD</small>
-        </div>
-        <div class="music-item reveal">
+        </a>
+        <a class="music-item reveal" href="parts/detail.html?part=guitar" aria-label="ギターの紹介を見る">
           <span>05 / HARMONY</span>
           <strong>ギター</strong>
           <small>GUITAR</small>
-        </div>
-        <div class="music-item reveal">
+        </a>
+        <a class="music-item reveal" href="parts/detail.html?part=bass" aria-label="ベースの紹介を見る">
           <span>06 / LOW END</span>
           <strong>ベース</strong>
           <small>BASS</small>
-        </div>
-        <div class="music-item reveal">
+        </a>
+        <a class="music-item reveal" href="parts/detail.html?part=percussion" aria-label="パーカッションの紹介を見る">
           <span>07 / RHYTHM</span>
           <strong>パーカッション</strong>
           <small>PERCUSSION</small>
-        </div>
-        <div class="music-item reveal">
+        </a>
+        <a class="music-item reveal" href="parts/index.html" aria-label="すべてのパートを見る">
           <span>08 / YOUR PART</span>
           <strong>ほかにも！</strong>
-          <small>ASK US ABOUT INSTRUMENTS</small>
-        </div>
+          <small>VIEW ALL PARTS ↗</small>
+        </a>
+      </div>
+      <div class="music-more reveal">
+        <a class="button" href="parts/index.html">パート紹介を詳しく見る <span>↗</span></a>
       </div>
     </section>
 
