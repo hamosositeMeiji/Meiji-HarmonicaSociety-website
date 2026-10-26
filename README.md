@@ -1,2 +1,2 @@
-# Meiji-HarmonicaSociety-website
-明治大学ハーモニカソサエティー公式サイト
+# hamosoMeiji-website
+MeijiUniHamoso official website

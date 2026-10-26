@@ -1,0 +1,1513 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f8f8f3">
+  <meta name="description" content="明治大学ハーモニカソサエティー（ハモソ）の公式サイト。ハーモニカを中心に、さまざまな楽器で音楽を楽しむビッグバンドサークルです。">
+  <title>ハモソ｜明治大学ハーモニカソサエティー</title>
+  <link rel="icon" href="images/logo.jpg" type="image/jpeg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #f8f8f3;
+      --ink: #20231e;
+      --muted: #73776d;
+      --green: #d8f36a;
+      --line: #dedfd6;
+      --white: #ffffff;
+      --radius: 22px;
+      --max: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 90px;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", "Noto Sans JP", sans-serif;
+      line-height: 1.85;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    ::selection { background: var(--green); color: var(--ink); }
+
+    .wrap {
+      width: min(var(--max), calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 25px;
+      height: 2px;
+      background: currentColor;
+    }
+
+    .section {
+      padding: 112px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 30px;
+      margin-bottom: 44px;
+    }
+
+    .section-head h2 {
+      margin: 10px 0 0;
+      font-size: clamp(36px, 5vw, 64px);
+      line-height: 1.08;
+      letter-spacing: -.055em;
+      font-weight: 800;
+    }
+
+    .section-head p {
+      max-width: 380px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    .arrow {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      transition: .25s ease;
+    }
+
+    a:hover .arrow {
+      background: var(--green);
+      border-color: var(--green);
+      transform: rotate(45deg);
+    }
+
+    /* HEADER */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248,248,243,.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(222,223,214,.8);
+    }
+
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .brand img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+
+    .brand-text {
+      display: grid;
+      line-height: 1.35;
+    }
+
+    .brand-text strong {
+      font-size: 15px;
+      letter-spacing: .02em;
+    }
+
+    .brand-text small {
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: .08em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(14px, 2.3vw, 30px);
+    }
+
+    .nav-links > a:not(.nav-cta) {
+      font-size: 12px;
+      font-weight: 700;
+      transition: opacity .2s;
+    }
+
+    .nav-links > a:hover { opacity: .55; }
+
+    .nav-cta {
+      padding: 12px 18px;
+      background: var(--ink);
+      color: white;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: .2s;
+    }
+
+    .nav-cta:hover {
+      background: #454b3b;
+      transform: translateY(-2px);
+    }
+
+    .menu-toggle {
+      display: none;
+      border: 1px solid var(--line);
+      background: transparent;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 34px 0 80px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .hero-top p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+    }
+
+    .hero-title {
+      position: relative;
+      z-index: 2;
+      margin: 0 0 -2.8vw;
+      font-size: clamp(58px, 12.4vw, 156px);
+      font-weight: 800;
+      line-height: .91;
+      letter-spacing: -.085em;
+    }
+
+    .hero-title .accent {
+      color: #8b9f40;
+    }
+
+    .hero-image {
+      position: relative;
+      min-height: 340px;
+      height: min(59vw, 650px);
+      max-height: 650px;
+      overflow: hidden;
+      border-radius: 5px;
+      background: #d8d9ce url("images/hero-sample.jpg") center 45% / cover no-repeat;
+    }
+
+    .hero-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(15,18,12,.65), transparent 58%);
+    }
+
+    .hero-image-note {
+      position: absolute;
+      z-index: 1;
+      left: clamp(20px, 5vw, 58px);
+      bottom: clamp(20px, 5vw, 52px);
+      color: white;
+    }
+
+    .hero-image-note p {
+      margin: 0 0 8px;
+      font-size: 11px;
+      letter-spacing: .16em;
+      font-weight: 700;
+    }
+
+    .hero-image-note h2 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 54px);
+      line-height: 1.35;
+      letter-spacing: -.04em;
+    }
+
+    .hero-image-note h2 span {
+      background: var(--green);
+      color: var(--ink);
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      padding: 0 8px;
+    }
+
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 30px;
+      padding-top: 24px;
+    }
+
+    .hero-bottom p {
+      max-width: 560px;
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 14px 20px;
+      background: var(--ink);
+      color: white;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: .25s;
+    }
+
+    .button:hover {
+      background: #454b3b;
+      transform: translateY(-2px);
+    }
+
+    .button.light {
+      color: var(--ink);
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .button.light:hover { background: var(--green); }
+
+    
+
+/* TICKER */
+.ticker {
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+  width: 100%;
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 35s linear infinite;
+  will-change: transform;
+}
+
+.ticker-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 34px;
+  padding-right: 34px;
+}
+
+.ticker-group span {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  white-space: nowrap;
+}
+
+.ticker-group b {
+  color: #8b9f40;
+}
+
+@keyframes ticker {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+    /* ABOUT */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 8vw, 110px);
+      align-items: center;
+    }
+
+    .about-copy h3 {
+      margin: 20px 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.5;
+      letter-spacing: -.045em;
+    }
+
+    .about-copy h3 em {
+      font-style: normal;
+      background: linear-gradient(transparent 65%, var(--green) 65%);
+    }
+
+    .about-copy > p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 2.15;
+    }
+
+    .about-visual {
+      position: relative;
+      padding: 0 0 42px 30px;
+    }
+
+    .about-visual img {
+      width: 100%;
+      height: 470px;
+      object-fit: cover;
+      background: #e4e4da;
+      border-radius: 5px;
+    }
+
+    .about-stamp {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 135px;
+      height: 135px;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      border-radius: 50%;
+      background: var(--green);
+      transform: rotate(-10deg);
+      line-height: 1.3;
+    }
+
+    .about-stamp strong {
+      font-size: 29px;
+      letter-spacing: -.07em;
+    }
+
+    .about-stamp small {
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line);
+      margin-top: 36px;
+    }
+
+    .stat {
+      padding: 20px 12px 0 0;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: clamp(20px, 3vw, 30px);
+      letter-spacing: -.05em;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    /* ACTIVITIES */
+    .activities { background: #eeefe7; }
+
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .activity-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 300px;
+      padding: 28px;
+      border: 1px solid #dfe0d6;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.58);
+      transition: .25s;
+    }
+
+    .activity-card:hover {
+      transform: translateY(-6px);
+      background: white;
+      box-shadow: 0 18px 45px rgba(32,35,30,.06);
+    }
+
+    .activity-number {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+
+    .activity-icon {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      margin: 30px 0 18px;
+      border-radius: 16px;
+      background: var(--green);
+      font-size: 25px;
+    }
+
+    .activity-card h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing: -.04em;
+    }
+
+    .activity-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* MUSIC */
+    .music-intro {
+      max-width: 620px;
+      margin: -18px 0 36px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .music-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .music-item {
+      min-height: 165px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      transition: .25s;
+    }
+
+    .music-item:hover {
+      background: var(--green);
+      border-color: var(--green);
+      transform: translateY(-3px);
+    }
+
+    .music-item span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .music-item strong {
+      font-size: clamp(17px, 2vw, 23px);
+      letter-spacing: -.04em;
+    }
+
+    .music-item small {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* CONCERT */
+    .concert {
+      padding: 0 0 112px;
+    }
+
+    .concert-panel {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      overflow: hidden;
+      border-radius: 6px;
+      background: var(--ink);
+      color: white;
+    }
+
+    .concert-copy {
+      padding: clamp(28px, 5vw, 64px);
+    }
+
+    .concert-copy .eyebrow { color: var(--green); }
+
+    .concert-copy h2 {
+      margin: 28px 0 14px;
+      font-size: clamp(36px, 5vw, 62px);
+      line-height: 1.2;
+      letter-spacing: -.06em;
+    }
+
+    .concert-copy > p {
+      color: #c2c5bb;
+      font-size: 13px;
+    }
+
+    .concert-date {
+      margin: 30px 0;
+      padding: 20px 0;
+      border-top: 1px solid #44483e;
+      border-bottom: 1px solid #44483e;
+    }
+
+    .concert-date strong {
+      display: block;
+      font-size: clamp(25px, 4vw, 42px);
+      line-height: 1.4;
+      letter-spacing: -.04em;
+    }
+
+    .concert-date span {
+      font-size: 12px;
+      color: #c2c5bb;
+    }
+
+    .concert-copy .button {
+      background: var(--green);
+      color: var(--ink);
+    }
+
+    .concert-copy .button:hover { background: white; }
+
+    .concert-art {
+      min-height: 500px;
+      position: relative;
+      background:
+        radial-gradient(circle at 70% 25%, rgba(216,243,106,.35), transparent 30%),
+        linear-gradient(145deg, #a6b85a, #59633c 55%, #262a22);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .concert-art::before,
+    .concert-art::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 50%;
+      width: 430px;
+      height: 430px;
+    }
+
+    .concert-art::after {
+      width: 310px;
+      height: 310px;
+    }
+
+    .concert-art-word {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      transform: rotate(-8deg);
+    }
+
+    .concert-art-word small {
+      display: block;
+      font-size: 12px;
+      letter-spacing: .25em;
+    }
+
+    .concert-art-word strong {
+      display: block;
+      font-size: clamp(55px, 8vw, 100px);
+      line-height: 1;
+      letter-spacing: -.09em;
+      color: var(--green);
+    }
+
+    .concert-art-word span {
+      display: block;
+      margin-top: 18px;
+      font-size: 14px;
+      letter-spacing: .12em;
+    }
+
+    /* SCHEDULE */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 70px;
+    }
+
+    .schedule-lead {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .schedule-list { border-top: 1px solid var(--line); }
+
+    .schedule-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 20px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .schedule-row .day {
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .schedule-row strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .schedule-row p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .schedule-note {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* FAQ */
+    .faq { background: #eeefe7; }
+
+    .faq-list {
+      max-width: 850px;
+      margin-left: auto;
+    }
+
+    details {
+      border-bottom: 1px solid #d6d8cd;
+    }
+
+    details:first-child { border-top: 1px solid #d6d8cd; }
+
+    summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 0;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary::after {
+      content: "+";
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border: 1px solid #c9cbbf;
+      border-radius: 50%;
+      font-size: 20px;
+      font-weight: 400;
+      transition: .2s;
+    }
+
+    details[open] summary::after {
+      content: "−";
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .faq-answer {
+      padding: 0 50px 24px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .faq-answer p { margin: 0; }
+
+    /* JOIN */
+    .join {
+      padding: 120px 0;
+      background: var(--green);
+    }
+
+    .join-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 40px;
+    }
+
+    .join .eyebrow { color: #4e5a27; }
+
+    .join h2 {
+      margin: 22px 0;
+      font-size: clamp(44px, 8vw, 100px);
+      line-height: 1.05;
+      letter-spacing: -.075em;
+    }
+
+    .join p {
+      max-width: 560px;
+      margin: 0;
+      font-size: 14px;
+      color: #485032;
+    }
+
+    .join-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 200px;
+    }
+
+    .join-actions .button {
+      background: var(--ink);
+      color: white;
+    }
+
+    .join-actions .button.light {
+      background: transparent;
+      color: var(--ink);
+      border-color: rgba(32,35,30,.35);
+    }
+
+    .join-actions .button.light:hover { background: white; }
+
+    /* FOOTER */
+    .footer {
+      padding: 48px 0 26px;
+      background: var(--ink);
+      color: white;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 30px;
+      padding-bottom: 40px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .footer-brand img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .footer-brand strong { display: block; }
+
+    .footer-brand span {
+      color: #aeb2a7;
+      font-size: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+    }
+
+    .footer-links a {
+      color: #d0d2c9;
+      font-size: 12px;
+    }
+
+    .footer-links a:hover { color: var(--green); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #44483e;
+      color: #aeb2a7;
+      font-size: 10px;
+    }
+
+    /* REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+    /* TABLET */
+    @media (max-width: 900px) {
+      .section { padding: 82px 0; }
+
+      .activity-grid { grid-template-columns: 1fr 1fr; }
+      .activity-card:last-child { grid-column: 1 / -1; }
+
+      .music-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .about-grid { gap: 35px; }
+      .about-visual img { height: 380px; }
+
+      .concert-panel { grid-template-columns: 1fr 1fr; }
+      .concert-art { min-height: 450px; }
+
+      .schedule-grid { gap: 35px; }
+      .join { padding: 90px 0; }
+    }
+
+    /* MOBILE */
+    @media (max-width: 650px) {
+      .wrap { width: calc(100% - 36px); }
+      .section { padding: 70px 0; }
+
+      .section-head {
+        display: block;
+        margin-bottom: 30px;
+      }
+
+      .section-head p { margin-top: 18px; }
+
+      .nav { min-height: 68px; }
+      .brand img { width: 38px; height: 38px; }
+      .brand-text strong { font-size: 13px; }
+      .brand-text small { font-size: 8px; }
+
+      .menu-toggle { display: block; }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 68px;
+        left: 0;
+        right: 0;
+        padding: 22px 24px 28px;
+        background: var(--paper);
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+      }
+
+      .nav-links.open { display: flex; }
+
+      .nav-links > a:not(.nav-cta) {
+        padding: 13px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav-cta {
+        margin-top: 16px;
+        text-align: center;
+      }
+
+      .hero { padding: 22px 0 55px; }
+      .hero-top p { font-size: 9px; }
+      .hero-title {
+        font-size: clamp(52px, 15vw, 92px);
+        margin-bottom: -1vw;
+      }
+
+      .hero-image {
+        height: 112vw;
+        min-height: 390px;
+        max-height: 560px;
+        background-position: center;
+      }
+
+      .hero-image-note h2 { font-size: 32px; }
+      .hero-bottom { grid-template-columns: 1fr; gap: 22px; }
+      .hero-bottom p { font-size: 13px; }
+
+      .about-grid { grid-template-columns: 1fr; }
+      .about-visual { padding-left: 20px; }
+      .about-visual img { height: 390px; }
+      .about-stamp { width: 110px; height: 110px; }
+      .about-stamp strong { font-size: 25px; }
+
+      .stats { gap: 8px; }
+      .stat strong { font-size: 23px; }
+
+      .activity-grid { grid-template-columns: 1fr; }
+      .activity-card,
+      .activity-card:last-child { grid-column: auto; min-height: 255px; }
+
+      .music-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .music-item { min-height: 140px; padding: 16px; }
+      .music-item strong { font-size: 19px; }
+
+      .concert { padding-bottom: 70px; }
+      .concert-panel { grid-template-columns: 1fr; }
+      .concert-copy { padding: 30px 24px; }
+      .concert-copy h2 { font-size: 44px; }
+      .concert-art { min-height: 330px; }
+      .concert-art::before { width: 300px; height: 300px; }
+      .concert-art::after { width: 220px; height: 220px; }
+      .concert-art-word strong { font-size: 68px; }
+
+      .schedule-grid { grid-template-columns: 1fr; gap: 28px; }
+      .schedule-row { grid-template-columns: 80px 1fr; gap: 12px; }
+
+      .join { padding: 76px 0; }
+      .join-inner { grid-template-columns: 1fr; gap: 28px; }
+      .join h2 { font-size: 58px; }
+      .join-actions { min-width: 0; }
+
+      .footer-top { flex-direction: column; }
+      .footer-bottom { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="ハモソ トップ">
+        <img src="images/logo.jpg" alt="ハモソのロゴ">
+        <span class="brand-text">
+          <strong>明治大学ハモソ</strong>
+          <small>HARMONICA SOCIETY</small>
+        </span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle"
+        aria-label="メニューを開く" aria-expanded="false"
+        aria-controls="navLinks">☰</button>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#about">ABOUT</a>
+        <a href="#activities">ACTIVITIES</a>
+        <a href="#music">INSTRUMENTS</a>
+        <a href="#concert">CONCERT</a>
+        <a href="#schedule">SCHEDULE</a>
+        <a class="nav-cta" href="#join">見学・体験はこちら ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <div class="hero-top">
+        <span class="pill">MEIJI UNIVERSITY · EST. 1918</span>
+        <p>MUSIC / FRIENDS / EXPERIENCE</p>
+      </div>
+
+      <h1 class="hero-title">MAKE SOME<br><span class="accent">NOISE.</span></h1>
+
+      <div class="hero-image">
+        <div class="hero-image-note">
+          <p>WELCOME TO HAMO-SO</p>
+          <h2>音楽を、もっと。<br><span>自由に。</span></h2>
+        </div>
+      </div>
+
+      <div class="hero-bottom">
+        <p>
+          ハーモニカを中心に、さまざまな楽器で音楽をつくる。
+          明治大学ハーモニカソサエティー、通称「ハモソ」。
+          音楽が好きな人も、これから始めたい人も、一緒に演奏を楽しもう。
+        </p>
+        <div class="hero-links">
+          <a class="button" href="#about">ハモソについて <span>↘</span></a>
+          <a class="button light" href="#join">JOIN US <span>↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <div class="ticker" aria-label="ハモソの活動">
+      <div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-group">
+      <span>MUSIC FOR EVERYONE <b>✳</b></span>
+      <span>HARMONICA SOCIETY <b>✳</b></span>
+      <span>PLAY TOGETHER <b>✳</b></span>
+      <span>MEIJI UNIVERSITY <b>✳</b></span>
+      <span>MAKE SOME NOISE <b>✳</b></span>
+      <span>FIND YOUR SOUND <b>✳</b></span>
+    </div>
+    <div class="ticker-group" aria-hidden="true">
+      <span>MUSIC FOR EVERYONE <b>✳</b></span>
+      <span>HARMONICA SOCIETY <b>✳</b></span>
+      <span>PLAY TOGETHER <b>✳</b></span>
+      <span>MEIJI UNIVERSITY <b>✳</b></span>
+      <span>MAKE SOME NOISE <b>✳</b></span>
+      <span>FIND YOUR SOUND <b>✳</b></span>
+    </div>
+  </div>
+</div>
+    <section class="section wrap" id="about">
+      <div class="about-grid">
+        <div class="about-copy reveal">
+          <div class="eyebrow">01 / ABOUT US</div>
+          <h3>音楽でつながる。<br>音楽で広がる。<br><em>ハモソという場所。</em></h3>
+          <p>
+            明治大学ハーモニカソサエティーは、1918年に創立された音楽サークルです。
+            ハーモニカを中心としたビッグバンドスタイルで、J-POPから洋楽、
+            ジャズ、フュージョンまで幅広いジャンルに取り組んでいます。
+          </p>
+          <p>
+            それぞれの楽器の音が重なり、一つの音楽になっていく。
+            個人で演奏するだけでは味わえない、バンドならではの楽しさがあります。
+          </p>
+          <a class="pill" href="#activities">活動について知る ↘</a>
+
+          <div class="stats">
+            <div class="stat">
+              <strong>1918</strong>
+              <span>FOUNDED</span>
+            </div>
+            <div class="stat">
+              <strong>108th</strong>
+              <span>ANNIVERSARY YEAR · 2026</span>
+            </div>
+            <div class="stat">
+              <strong>ALL LEVELS</strong>
+              <span>BEGINNERS WELCOME</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-visual reveal">
+          <img src="images/hero.jpg" alt="ハモソの活動イメージ">
+          <div class="about-stamp">
+            <small>LET'S PLAY</small>
+            <strong>TOGETHER!</strong>
+            <small>HAMO-SO ✳</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section activities" id="activities">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">02 / ACTIVITIES</div>
+            <h2>More than<br>just music.</h2>
+          </div>
+          <p>
+            いつもの練習から大きなステージまで。
+            仲間と音を合わせながら、大学生活の思い出をつくっていきます。
+          </p>
+        </div>
+
+        <div class="activity-grid">
+          <article class="activity-card reveal">
+            <span class="activity-number">01 — PRACTICE</span>
+            <div class="activity-icon">♫</div>
+            <h3>日々の練習</h3>
+            <p>
+              パートごとの練習や合奏を通して、少しずつ演奏をレベルアップ。
+              初めて楽器に触れる人も、自分のペースで参加できます。
+            </p>
+          </article>
+
+          <article class="activity-card reveal">
+            <span class="activity-number">02 — LIVE</span>
+            <div class="activity-icon">↗</div>
+            <h3>ライブ・演奏会</h3>
+            <p>
+              練習の成果をステージで披露。
+              大人数で音を重ねる迫力と、演奏を届ける楽しさを味わえます。
+            </p>
+          </article>
+
+          <article class="activity-card reveal">
+            <span class="activity-number">03 — CAMP & MORE</span>
+            <div class="activity-icon">✳</div>
+            <h3>合宿・交流イベント</h3>
+            <p>
+              音楽だけでなく、仲間との交流もサークルの楽しみ。
+              一緒に過ごす時間が、普段の合奏にもつながります。
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="music">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">03 / INSTRUMENTS</div>
+          <h2>Find your<br>own sound.</h2>
+        </div>
+        <p>
+          主役のメロディーも、曲を支える低音も、リズムも。
+          いろいろな楽器が集まってハモソのサウンドが生まれます。
+        </p>
+      </div>
+
+      <p class="music-intro reveal">
+        「楽器をやったことがない」「どのパートが合うかわからない」でも大丈夫。
+        まずは見学・体験で、いろいろな音に触れてみてください。
+      </p>
+
+      <div class="music-grid">
+        <div class="music-item reveal">
+          <span>01 / MELODY</span>
+          <strong>ハーモニカ</strong>
+          <small>HARMONICA</small>
+        </div>
+        <div class="music-item reveal">
+          <span>02 / MELODY</span>
+          <strong>フルート</strong>
+          <small>FLUTE</small>
+        </div>
+        <div class="music-item reveal">
+          <span>03 / MELODY</span>
+          <strong>クラリネット</strong>
+          <small>CLARINET</small>
+        </div>
+        <div class="music-item reveal">
+          <span>04 / HARMONY</span>
+          <strong>キーボード</strong>
+          <small>KEYBOARD</small>
+        </div>
+        <div class="music-item reveal">
+          <span>05 / HARMONY</span>
+          <strong>ギター</strong>
+          <small>GUITAR</small>
+        </div>
+        <div class="music-item reveal">
+          <span>06 / LOW END</span>
+          <strong>ベース</strong>
+          <small>BASS</small>
+        </div>
+        <div class="music-item reveal">
+          <span>07 / RHYTHM</span>
+          <strong>パーカッション</strong>
+          <small>PERCUSSION</small>
+        </div>
+        <div class="music-item reveal">
+          <span>08 / YOUR PART</span>
+          <strong>ほかにも！</strong>
+          <small>ASK US ABOUT INSTRUMENTS</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="concert wrap" id="concert">
+      <div class="concert-panel reveal">
+        <div class="concert-copy">
+          <div class="eyebrow">04 / UPCOMING CONCERT</div>
+          <h2>See you<br>at the live.</h2>
+          <p>
+            ハモソの演奏を、ぜひ会場で。
+            音源だけでは伝わらない、バンドの迫力を体感してください。
+          </p>
+
+          <div class="concert-date">
+            <strong>11.21 SAT<br>2026</strong>
+            <span>OPEN 17:00 / START 17:30</span>
+          </div>
+
+          <p>
+            会場：日暮里サニーホール
+          </p>
+
+          <a class="button" href="#join">最新情報・お問い合わせ ↗</a>
+        </div>
+
+        <div class="concert-art" aria-label="秋の演奏会のビジュアル">
+          <div class="concert-art-word">
+            <small>MEIJI UNIVERSITY</small>
+            <strong>LIVE!</strong>
+            <span>AUTUMN CONCERT 2026</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="schedule">
+      <div class="schedule-grid">
+        <div class="reveal">
+          <div class="eyebrow">05 / SCHEDULE</div>
+          <h2 style="font-size:clamp(38px,5vw,62px);line-height:1.12;letter-spacing:-.06em;margin:20px 0;">
+            Make time<br>for music.
+          </h2>
+          <p class="schedule-lead">
+            授業やアルバイトと両立しながら、音楽を楽しもう。
+            見学に来る前に、活動日をチェック！
+          </p>
+        </div>
+
+        <div class="reveal">
+          <div class="schedule-list">
+            <div class="schedule-row">
+              <div class="day">MONDAY</div>
+              <div>
+                <strong>18:00 – 20:40</strong>
+                <p>平日練習</p>
+              </div>
+            </div>
+            <div class="schedule-row">
+              <div class="day">WEDNESDAY</div>
+              <div>
+                <strong>18:00 – 20:40</strong>
+                <p>平日練習</p>
+              </div>
+            </div>
+            <div class="schedule-row">
+              <div class="day">FRIDAY</div>
+              <div>
+                <strong>18:00 – 20:40</strong>
+                <p>平日練習</p>
+              </div>
+            </div>
+            <div class="schedule-row">
+              <div class="day">SATURDAY</div>
+              <div>
+                <strong>9:00 – 12:30</strong>
+                <p>土曜練習</p>
+              </div>
+            </div>
+          </div>
+          <p class="schedule-note">
+            主な活動場所：明治大学 駿河台キャンパス周辺<br>
+            ※活動日・時間・場所は変更される場合があります。見学前に最新情報をご確認ください。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section faq" id="faq">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div>
+            <div class="eyebrow">06 / FAQ</div>
+            <h2>Good to know.</h2>
+          </div>
+          <p>
+            初めてのサークル見学は、わからないことがあって当然。
+            よくある質問をまとめました。
+          </p>
+        </div>
+
+        <div class="faq-list reveal">
+          <details>
+            <summary>楽器未経験でも入れますか？</summary>
+            <div class="faq-answer">
+              <p>
+                もちろん、まずは見学・体験に来てみてください。
+                楽器やパートについても、実際に活動を見ながら相談できます。
+              </p>
+            </div>
+          </details>
+
+          <details>
+            <summary>大学から楽器を始めても大丈夫ですか？</summary>
+            <div class="faq-answer">
+              <p>
+                大学から新しく音楽を始めたい人も、ぜひ相談してください。
+                自分に合う楽器や練習方法について、体験時に案内します。
+              </p>
+            </div>
+          </details>
+
+          <details>
+            <summary>見学や楽器体験はできますか？</summary>
+            <div class="faq-answer">
+              <p>
+                見学・体験を希望する場合は、公式SNSなどからご連絡ください。
+                希望日時を相談して、参加方法を確認できます。
+              </p>
+            </div>
+          </details>
+
+          <details>
+            <summary>どんな曲を演奏しますか？</summary>
+            <div class="faq-answer">
+              <p>
+                J-POP、洋楽、ジャズ、フュージョンなど、幅広いジャンルに取り組んでいます。
+                演奏曲は時期やステージによって異なります。
+              </p>
+            </div>
+          </details>
+
+          <details>
+            <summary>入部前に準備するものはありますか？</summary>
+            <div class="faq-answer">
+              <p>
+                まずは見学に来て、活動の雰囲気を知ってみてください。
+                楽器や費用などについては、体験時に確認するのがおすすめです。
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="join" id="join">
+      <div class="wrap join-inner">
+        <div class="reveal">
+          <div class="eyebrow">07 / JOIN THE COMMUNITY</div>
+          <h2>YOUR NEXT<br>CHAPTER.</h2>
+          <p>
+            音楽が好き。その気持ちがあれば、きっかけは十分。
+            まずは見学から、ハモソの雰囲気を感じてみませんか？
+            質問だけでも、お気軽にどうぞ！
+          </p>
+        </div>
+
+        <div class="join-actions reveal">
+          <a class="button" href="https://meiji-uni-hamoso.jimdosite.com/" target="_blank" rel="noopener noreferrer">
+            旧公式サイトを見る ↗
+          </a>
+          <a class="button light" href="#schedule">
+            活動日をチェック ↓
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <a class="footer-brand" href="#top">
+          <img src="images/logo.jpg" alt="">
+          <span>
+            <strong>明治大学ハーモニカソサエティー</strong>
+            <span>MEIJI UNIVERSITY HARMONICA SOCIETY</span>
+          </span>
+        </a>
+
+        <nav class="footer-links" aria-label="フッターメニュー">
+          <a href="#about">ABOUT</a>
+          <a href="#activities">ACTIVITIES</a>
+          <a href="#music">INSTRUMENTS</a>
+          <a href="#concert">CONCERT</a>
+          <a href="#faq">FAQ</a>
+          <a href="#join">JOIN US</a>
+        </nav>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 MEIJI UNIVERSITY HARMONICA SOCIETY</span>
+        <a href="#top">BACK TO TOP ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // スマートフォン用メニュー
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+      menuToggle.setAttribute(
+        "aria-label",
+        isOpen ? "メニューを閉じる" : "メニューを開く"
+      );
+      menuToggle.textContent = isOpen ? "×" : "☰";
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "メニューを開く");
+        menuToggle.textContent = "☰";
+      });
+    });
+
+    // スクロールに合わせてコンテンツを表示
+    const revealItems = document.querySelectorAll(".reveal");
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      revealItems.forEach(item => observer.observe(item));
+    } else {
+      revealItems.forEach(item => item.classList.add("visible"));
+    }
+  </script>
+</body>
+</html>
