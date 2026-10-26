@@ -154,6 +154,23 @@ h1 {
 
 .detail h1 { margin: 8px 0 22px; }
 .detail-intro { margin: 0; font-size: clamp(18px, 2.4vw, 25px); line-height: 1.6; }
+.part-photo {
+  margin: 28px 0 30px;
+}
+.part-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 12 / 7.6;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: #eeefe7;
+}
+.part-photo figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .detail section { margin-top: 42px; }
 .detail h2 { margin: 0 0 12px; font-size: 20px; }
 .detail p { margin: 0; color: var(--muted); }
