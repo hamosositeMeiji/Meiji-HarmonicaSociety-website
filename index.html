@@ -369,8 +369,10 @@ a:hover .arrow {
 .ticker-track {
   display: flex;
   width: max-content;
+  gap: 0;
   animation: ticker 35s linear infinite;
   will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .ticker-group {
@@ -379,6 +381,7 @@ a:hover .arrow {
   align-items: center;
   gap: 34px;
   padding-right: 34px;
+  box-sizing: border-box;
 }
 
 .ticker-group span {
@@ -1251,7 +1254,6 @@ button:focus-visible {
     </section>
 
     <div class="ticker" aria-label="ハモソの活動">
-      <div class="ticker">
   <div class="ticker-track">
     <div class="ticker-group">
       <span>MUSIC FOR EVERYONE <b>✳</b></span>
@@ -1270,7 +1272,7 @@ button:focus-visible {
       <span>FIND YOUR SOUND <b>✳</b></span>
     </div>
   </div>
-</div>
+    </div>
     <section class="section wrap" id="about">
       <div class="about-grid">
         <div class="about-copy reveal">
