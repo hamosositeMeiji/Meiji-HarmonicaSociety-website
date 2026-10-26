@@ -1,0 +1,239 @@
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="明治大学ハーモニカソサエティーの演奏会のお知らせ。">
+  <title>演奏会のお知らせ｜ハモソ</title>
+  <link rel="icon" href="../images/logo.jpg" type="image/jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #f8f8f3;
+      --ink: #20231c;
+      --muted: #73766c;
+      --accent: #8b9f40;
+      --line: #dedfd4;
+      --white: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", "Noto Sans JP", sans-serif;
+      line-height: 1.9;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 6%;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 400;
+    }
+
+    .back {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    main {
+      width: min(760px, 88%);
+      margin: 0 auto;
+      padding: 70px 0 90px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .15em;
+    }
+
+    h1 {
+      margin: 16px 0 20px;
+      font-size: clamp(30px, 6vw, 48px);
+      line-height: 1.45;
+      letter-spacing: -.04em;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tag {
+      padding: 3px 10px;
+      background: #edf0df;
+      color: #58672b;
+      font-weight: 700;
+    }
+
+    .lead {
+      margin: 35px 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .event-box {
+      margin: 35px 0;
+      padding: 28px;
+      background: var(--white);
+      border: 1px solid var(--line);
+    }
+
+    .event-box h2 {
+      margin: 0 0 18px;
+      font-size: 20px;
+    }
+
+    .event-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .event-row:last-child { border-bottom: 0; }
+
+    .event-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .event-value { font-weight: 700; }
+
+    .notice {
+      padding: 18px 20px;
+      background: #f0f1e8;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .back-bottom {
+      display: inline-block;
+      margin-top: 38px;
+      padding: 12px 20px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 700;
+      transition: background .2s ease;
+    }
+
+    .back-bottom:hover {
+      background: var(--white);
+    }
+
+    footer {
+      padding: 28px 6%;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 550px) {
+      main { padding: 45px 0 60px; }
+      .event-box { padding: 20px; }
+      .event-row { grid-template-columns: 80px 1fr; }
+      .brand small { font-size: 8px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <a class="brand" href="../index.html">
+      <img src="../images/logo.jpg" alt="ハモソのロゴ">
+      <span>
+        ハモソ
+        <small>MEIJI UNIVERSITY HARMONICA SOCIETY</small>
+      </span>
+    </a>
+    <a class="back" href="index.html">← NEWS</a>
+  </header>
+
+  <main>
+    <div class="eyebrow">NEWS & INFORMATION</div>
+    <h1>演奏会のお知らせ</h1>
+
+    <div class="meta">
+      <span>2026.11.21</span>
+      <span class="tag">演奏会</span>
+    </div>
+
+    <p class="lead">
+      明治大学ハーモニカソサエティーの演奏会に向けて、準備を進めています。
+      ぜひ今後のお知らせもチェックしてください。
+    </p>
+
+    <section class="event-box">
+      <h2>開催情報</h2>
+      <div class="event-row">
+        <div class="event-label">開催日</div>
+        <div class="event-value">2026年11月21日（土）</div>
+      </div>
+      <div class="event-row">
+        <div class="event-label">会場</div>
+        <div class="event-value">日暮里サニーホール</div>
+      </div>
+      <div class="event-row">
+        <div class="event-label">開演時間</div>
+        <div>詳細は確定後に掲載します。</div>
+      </div>
+      <div class="event-row">
+        <div class="event-label">曲目</div>
+        <div>詳細は確定後に掲載します。</div>
+      </div>
+    </section>
+
+    <div class="notice">
+      ※ 開演時間・曲目などは、正式な情報が確定してから更新してください。
+    </div>
+
+    <a class="back-bottom" href="index.html">← ニュース一覧に戻る</a>
+  </main>
+
+  <footer>
+    © Meiji University Harmonica Society
+  </footer>
+</body>
+</html>
+```
