@@ -1041,6 +1041,85 @@ a:hover .arrow {
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+/* ===== MOTION DESIGN ===== */
+
+/* ページを開いたときの登場 */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-title {
+  animation: fade-up .9s cubic-bezier(.2,.7,.2,1) both;
+}
+
+.hero-image {
+  animation: hero-image-in 1.2s ease-out both;
+}
+
+@keyframes hero-image-in {
+  from {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ボタン・リンクの反応 */
+.nav-cta,
+.pill,
+.arrow {
+  transition:
+    background-color .25s ease,
+    color .25s ease,
+    border-color .25s ease,
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+.nav-cta:hover {
+  background: var(--green-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(36,40,32,.12);
+}
+
+/* 写真カードのホバー */
+a img {
+  transition: transform .5s cubic-bezier(.2,.7,.2,1);
+}
+
+a:hover img {
+  transform: scale(1.025);
+}
+
+/* キーボード操作時の視認性 */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--green-dark);
+  outline-offset: 4px;
+}
+
+/* 動きを控えたい人にはアニメーションを減らす */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
   </style>
 </head>
 
