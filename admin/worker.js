@@ -133,6 +133,15 @@ async function handle(request, env) {
     return json({ ok: true, id, url: "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/media/" + id }, 201, headers);
   }
 
+  // Public endpoint exposes only explicitly published announcements and safe display fields.
+  if (url.pathname === "/api/public/announcements" && request.method === "GET") {
+    const stored = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
+    const items = (Array.isArray(stored) ? stored : []).filter(item => item && item.published === true).slice(0, 20).map(item => ({
+      id: item.id, title: item.title, date: item.date, category: item.category, body: item.body, imageUrl: item.imageUrl || ""
+    }));
+    return json({ items }, 200, { ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60" });
+  }
+
   // All content routes require a valid bearer token.
   if (url.pathname === "/api/announcements" && (request.method === "GET" || request.method === "POST")) {
     const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET);
@@ -152,13 +161,14 @@ async function handle(request, env) {
       const category = typeof item.category === "string" ? item.category.trim() : "お知らせ";
       const bodyText = typeof item.body === "string" ? item.body.trim() : "";
       const imageUrl = typeof item.imageUrl === "string" ? item.imageUrl.trim() : "";
+      const published = item.published === true;
       const allowedImageUrl = !imageUrl || /^https:\/\/hamoso-admin-auth\.hamososaitoguanli\.workers\.dev\/media\/[a-zA-Z0-9_-]{1,60}$/.test(imageUrl);
       if (!title || title.length > 120 || date.length > 20 || category.length > 30 || bodyText.length > 3000 || imageUrl.length > 200 || !allowedImageUrl) {
         return json({ error: "invalid_item_fields" }, 400, headers);
       }
       clean.push({
         id: typeof item.id === "string" && /^[a-zA-Z0-9_-]{1,40}$/.test(item.id) ? item.id : crypto.randomUUID(),
-        title, date, category, body: bodyText, imageUrl,
+        title, date, category, body: bodyText, imageUrl, published,
         updatedAt: new Date().toISOString(),
       });
     }
