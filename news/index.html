@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -30,6 +29,8 @@
 .year-archive p {
   color: #73766c;
 }
+
+.year-archive-links { display: flex; flex-wrap: wrap; gap: 10px 18px; }
 
 .year-archive a {
   color: #8b9f40;
@@ -344,8 +345,16 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
 
 <section class="year-archive">
   <h2>ARCHIVE</h2>
-  <p>年度ごとにお知らせ・活動報告を確認できます。</p>
-  <a href="2026/">2026年度（最新）を見る →</a>
+  <p>日本の年度（4月〜翌年3月）ごとに、お知らせ・活動報告を確認できます。</p>
+  <nav class="year-archive-links" aria-label="年度別アーカイブ">
+    <a href="2026/">2026年度（最新） →</a>
+    <a href="2025/">2025年度 →</a>
+    <a href="2024/">2024年度 →</a>
+    <a href="2023/">2023年度 →</a>
+    <a href="2022/">2022年度 →</a>
+    <a href="2021/">2021年度 →</a>
+    <a href="2020/">2020年度 →</a>
+  </nav>
 </section>
 
 
