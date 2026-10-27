@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="明治大学ハーモニカソサエティーの2019年度のお知らせ・活動報告アーカイブです。">
+  <title>2019年度のNEWS｜ハモソ</title>
+  <link rel="icon" href="../../images/logo.jpg" type="image/jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--paper:#f8f8f3;--ink:#20231c;--muted:#73766c;--accent:#8b9f40;--line:#dedfd4;--white:#fff}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans","Noto Sans JP",sans-serif;line-height:1.8}
+    a{color:inherit}
+    .wrap{width:min(100% - 40px,900px);margin-inline:auto}
+    header{padding:22px 0;border-bottom:1px solid var(--line)}
+    .header-inner{display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .brand{font-weight:900;text-decoration:none;letter-spacing:.04em}
+    .back{font-size:13px;color:var(--muted);text-decoration:none}
+    .hero{padding:64px 0 42px;border-bottom:1px solid var(--line)}
+    .eyebrow{font-size:12px;color:var(--accent);font-weight:800;letter-spacing:.18em}
+    h1{margin:8px 0;font-size:clamp(36px,7vw,62px);line-height:1.2;letter-spacing:-.04em}
+    .intro{color:var(--muted)}
+    .section-heading{margin:38px 0 16px;font-size:22px}
+    #news-list{display:grid;gap:14px}
+    .news-card{padding:22px 24px;background:var(--white);border:1px solid var(--line);border-radius:12px}
+    .meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:13px}
+    .category{color:var(--accent);font-weight:700}
+    .news-card h3{margin:8px 0;font-size:20px}
+    .news-card p{margin:0;color:var(--muted);font-size:14px;white-space:pre-wrap}
+    .empty-note{padding:20px;border-left:3px solid var(--accent);background:#f0f1e8;color:var(--muted)}
+    .archive{margin:44px 0;padding:22px;border:1px solid var(--line);border-radius:12px}
+    .archive h2{margin-top:0}.archive-links{display:flex;flex-wrap:wrap;gap:8px 16px}.archive a{color:var(--accent)}
+    footer{padding:28px 0;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    @media(max-width:600px){.hero{padding-top:46px}.news-card{padding:18px}}
+  </style>
+</head>
+<body>
+  <header><div class="wrap header-inner">
+    <a class="brand" href="../../index.html">明治大学ハーモニカソサエティー</a>
+    <a class="back" href="../index.html">NEWS一覧へ戻る ←</a>
+  </div></header>
+  <section class="hero"><div class="wrap">
+    <div class="eyebrow">NEWS ARCHIVE</div>
+    <h1>2019年度</h1>
+    <p class="intro">2019年4月〜2021年3月のお知らせ・活動報告</p>
+  </div></section>
+  <main class="wrap">
+    <h2 class="section-heading">お知らせ・活動報告</h2>
+    <div id="news-list" aria-live="polite"><p class="empty-note">お知らせを読み込んでいます…</p></div>
+    <nav class="archive"><h2>年度別アーカイブ</h2><div class="archive-links">
+      <a href="../2026/">2026年度</a>
+      <a href="../2025/">2025年度</a>
+      <a href="../2024/">2024年度</a>
+      <a href="../2023/">2023年度</a>
+      <a href="../2022/">2022年度</a>
+      <a href="../2021/">2021年度</a>
+      <a href="../2019/">2019年度</a>
+      <a href="../2018/">2018年度</a>
+      <a href="../2017/">2017年度</a>
+    </div></nav>
+  </main>
+  <footer><div class="wrap">© 明治大学ハーモニカソサエティー</div></footer>
+  <script>
+    (async function(){
+      const host=document.getElementById('news-list');
+      const targetYear=2019;
+      function fiscalYear(date){
+        const match=String(date||'').match(/^(\d{4})[.\/-年](\d{1,2})/);
+        if(!match)return null;
+        const year=Number(match[1]),month=Number(match[2]);
+        return month>=4?year:year-1;
+      }
+      try{
+        const response=await fetch('https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/announcements');
+        if(!response.ok)throw new Error('API response not OK');
+        const data=await response.json();
+        const items=(Array.isArray(data.items)?data.items:[])
+          .filter(item=>fiscalYear(item.date)===targetYear)
+          .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+        host.replaceChildren();
+        if(!items.length){
+          const note=document.createElement('p');
+          note.className='empty-note';
+          note.textContent='この年度に公開中のお知らせはありません。';
+          host.appendChild(note);
+          return;
+        }
+        items.forEach(item=>{
+          const card=document.createElement('article');card.className='news-card';
+          const meta=document.createElement('div');meta.className='meta';
+          const date=document.createElement('span');date.textContent=item.date||'日付未設定';
+          const category=document.createElement('span');category.className='category';category.textContent=item.category||'お知らせ';
+          meta.append(date,category);
+          const title=document.createElement('h3');title.textContent=item.title||'タイトル未設定';
+          const body=document.createElement('p');body.textContent=item.body||'';
+          card.append(meta,title,body);
+          host.appendChild(card);
+        });
+      }catch(error){
+        host.replaceChildren();
+        const note=document.createElement('p');note.className='empty-note';
+        note.textContent='お知らせを取得できませんでした。時間をおいて再度ご確認ください。';
+        host.appendChild(note);
+      }
+    })();
+  </script>
+</body>
+</html>
