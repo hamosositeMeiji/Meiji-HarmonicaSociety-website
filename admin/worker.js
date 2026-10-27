@@ -133,6 +133,42 @@ async function handle(request, env) {
     return json({ ok: true, id, url: "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/media/" + id }, 201, headers);
   }
 
+  // Site content editor: private read/write endpoints for activity, media, recruitment and schedule.
+  if (url.pathname === "/api/site-content" && (request.method === "GET" || request.method === "POST")) {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    const siteContentKey = "content:site-content";
+    if (request.method === "GET") {
+      const content = await env.LOGIN_LIMITS.get(siteContentKey, "json");
+      return json({ content: content && typeof content === "object" ? content : {} }, 200, headers);
+    }
+    let body;
+    try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
+    const content = body && body.content;
+    if (!content || typeof content !== "object" || Array.isArray(content)) return json({ error: "invalid_content" }, 400, headers);
+    const serialized = JSON.stringify(content);
+    if (serialized.length > 30000) return json({ error: "content_too_large" }, 413, headers);
+    const safeUrl = value => typeof value === "string" && value.length <= 500 && (!value || /^https:\/\//i.test(value));
+    const listOfUrls = value => Array.isArray(value) && value.length <= 30 && value.every(safeUrl);
+    const a = content.activities || {}, m = content.media || {}, social = m.social || {}, r = content.recruit || {};
+    if (typeof a.title !== "string" || a.title.length > 120 || typeof a.text !== "string" || a.text.length > 5000 ||
+        !listOfUrls(a.photos || []) || typeof m.videoTitle !== "string" || m.videoTitle.length > 120 ||
+        !listOfUrls(m.videos || []) || !safeUrl(social.instagram || "") || !safeUrl(social.x || "") ||
+        !safeUrl(social.youtube || "") || !listOfUrls(social.other || []) ||
+        typeof r.title !== "string" || r.title.length > 120 || typeof r.text !== "string" || r.text.length > 5000 ||
+        !safeUrl(r.contactUrl || "")) return json({ error: "invalid_content_fields" }, 400, headers);
+    await env.LOGIN_LIMITS.put(siteContentKey, serialized);
+    return json({ ok: true }, 200, headers);
+  }
+
+  // Public site-content endpoint is available for future public-page integration.
+  if (url.pathname === "/api/public/site-content" && request.method === "GET") {
+    const content = await env.LOGIN_LIMITS.get("content:site-content", "json");
+    return json({ content: content && typeof content === "object" ? content : {} }, 200, {
+      ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60"
+    });
+  }
+
   // Public endpoint exposes only explicitly published announcements and safe display fields.
   if (url.pathname === "/api/public/announcements" && request.method === "GET") {
     const stored = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
