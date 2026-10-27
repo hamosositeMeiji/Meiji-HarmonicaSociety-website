@@ -151,12 +151,14 @@ async function handle(request, env) {
       const date = typeof item.date === "string" ? item.date.trim() : "";
       const category = typeof item.category === "string" ? item.category.trim() : "お知らせ";
       const bodyText = typeof item.body === "string" ? item.body.trim() : "";
-      if (!title || title.length > 120 || date.length > 20 || category.length > 30 || bodyText.length > 3000) {
+      const imageUrl = typeof item.imageUrl === "string" ? item.imageUrl.trim() : "";
+      const allowedImageUrl = !imageUrl || /^https:\/\/hamoso-admin-auth\.hamososaitoguanli\.workers\.dev\/media\/[a-zA-Z0-9_-]{1,60}$/.test(imageUrl);
+      if (!title || title.length > 120 || date.length > 20 || category.length > 30 || bodyText.length > 3000 || imageUrl.length > 200 || !allowedImageUrl) {
         return json({ error: "invalid_item_fields" }, 400, headers);
       }
       clean.push({
         id: typeof item.id === "string" && /^[a-zA-Z0-9_-]{1,40}$/.test(item.id) ? item.id : crypto.randomUUID(),
-        title, date, category, body: bodyText,
+        title, date, category, body: bodyText, imageUrl,
         updatedAt: new Date().toISOString(),
       });
     }
