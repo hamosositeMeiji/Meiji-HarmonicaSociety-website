@@ -1939,6 +1939,8 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
         const currentItems = data.items
           .filter(item => fiscalYearOf(item) === currentFiscalYear)
           .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+        // API取得に成功した場合は、古い年度の静的サンプル記事も残さない。
+        host.replaceChildren();
         if (currentItems.length === 0) return;
         const fragment = document.createDocumentFragment();
         currentItems.forEach(item => {
