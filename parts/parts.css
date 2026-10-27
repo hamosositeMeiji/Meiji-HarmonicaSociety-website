@@ -155,9 +155,8 @@ h1 {
 .detail h1 { margin: 8px 0 22px; }
 .detail-intro { margin: 0; font-size: clamp(18px, 2.4vw, 25px); line-height: 1.6; }
 .part-photo-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  display: block;
+  max-width: 680px;
   margin: 28px 0 30px;
 }
 .part-photo {
@@ -174,7 +173,7 @@ h1 {
 .part-photo img {
   display: block;
   width: 100%;
-  aspect-ratio: 12 / 9;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border: 1px solid var(--line);
   background: #eeefe7;
@@ -225,6 +224,6 @@ footer {
   .grid { grid-template-columns: 1fr; padding-bottom: 64px; }
   .card { min-height: 190px; }
   .detail { grid-template-columns: 1fr; padding-top: 46px; }
-  .part-photo-grid { grid-template-columns: 1fr; gap: 24px; }
+  .part-photo-grid { margin: 24px 0 28px; }
 }
 
