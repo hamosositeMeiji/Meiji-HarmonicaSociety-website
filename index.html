@@ -1937,7 +1937,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
           const arrow = document.createElement("span"); arrow.className = "news-arrow"; arrow.textContent = "↗";
           card.append(date, category, title, arrow);
           if (item.imageUrl) { const img = document.createElement("img"); img.src = item.imageUrl; img.alt = ""; img.loading = "lazy"; img.style.cssText = "width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px"; card.append(img); }
-          if (item.body) { const summary = document.createElement("span"); summary.textContent = item.body; summary.style.cssText = "display:block;white-space:pre-wrap;margin-top:8px"; card.append(summary); }
+          if (item.body) { const summary = document.createElement("span"); summary.textContent = String(item.body).replace(/\/n/g, "\n"); summary.style.cssText = "display:block;white-space:pre-wrap;margin-top:8px"; card.append(summary); }
           fragment.append(card);
         });
         host.replaceChildren(fragment);
