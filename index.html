@@ -1775,7 +1775,11 @@ button:focus-visible {
         }
         adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2500);
       };
-      adminTrigger.addEventListener("click", countAdminClick);
+      adminTrigger.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        countAdminClick(event);
+      }, true);
       adminTrigger.addEventListener("keydown", event => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
