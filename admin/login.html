@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#f8f8f3">
-  <title>管理者ログイン準備中｜ハモソ</title>
+  <title>管理者ログイン｜ハモソ</title>
   <style>
     :root{color-scheme:light;--paper:#faf9f5;--ink:#242820;--muted:#73776d;--green:#a6b86a;--line:#e5e3d9}
     *{box-sizing:border-box}
@@ -14,17 +14,113 @@
     .eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;color:#65783d}
     h1{margin:12px 0;font-size:clamp(28px,5vw,40px);line-height:1.3}
     p{color:var(--muted);font-size:14px}
-    .notice{margin:24px 0;padding:16px;border-radius:12px;background:#f2f2ec;color:var(--ink);font-size:13px}
-    a{display:inline-flex;margin-top:8px;padding:12px 18px;border-radius:999px;background:var(--ink);color:#fff;text-decoration:none;font-size:13px;font-weight:700}
+    label{display:block;margin:20px 0 6px;font-size:13px;font-weight:700}
+    input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;font:inherit}
+    button{margin-top:16px;width:100%;padding:13px 18px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.6;cursor:wait}
+    .notice{margin:18px 0;padding:12px 14px;border-radius:10px;background:#f2f2ec;color:var(--ink);font-size:13px}
+    .error{color:#a12b24;min-height:1.5em;font-size:13px}
+    a{display:inline-flex;margin-top:8px;color:var(--ink);font-size:13px}
+    [hidden]{display:none!important}
   </style>
 </head>
 <body>
   <main>
     <div class="eyebrow">HAMO-SO / ADMIN</div>
-    <h1>管理画面</h1>
-    <p>運営メンバー向け管理機能の準備ページです。</p>
-    <div class="notice"><strong>認証機能はまだ設定されていません。</strong><br>安全なログインと権限管理が完成するまでは、管理機能や問い合わせ情報にはアクセスできません。</div>
+    <h1>管理画面ログイン</h1>
+    <p>運営メンバー向けのログインページです。</p>
+    <div class="notice">管理者用パスワードを入力してください。認証後のセッションは最大8時間で期限切れになります。</div>
+    <form id="login-form">
+      <label for="password">年度共通パスワード</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024">
+      <button id="submit" type="submit">ログイン</button>
+      <p id="error" class="error" role="status" aria-live="polite"></p>
+    </form>
+    <section id="signed-in" hidden>
+      <h2>認証しました</h2>
+      <p>ログイン認証は成功しました。管理機能はまだ接続されていません。</p>
+      <button id="logout" type="button">ログアウト</button>
+    </section>
     <a href="../index.html">公式サイトに戻る</a>
   </main>
+  <script>
+    (() => {
+      const API = "https://hamoso-admin-auth.hamososaitoguanli.workers.dev";
+      const TOKEN_KEY = "hamoso_admin_token";
+      const form = document.getElementById("login-form");
+      const password = document.getElementById("password");
+      const submit = document.getElementById("submit");
+      const error = document.getElementById("error");
+      const signedIn = document.getElementById("signed-in");
+      const logoutButton = document.getElementById("logout");
+
+      function showSignedIn() {
+        form.hidden = true;
+        signedIn.hidden = false;
+        error.textContent = "";
+      }
+      function showLogin() {
+        form.hidden = false;
+        signedIn.hidden = true;
+        password.value = "";
+      }
+      async function checkSession() {
+        const token = sessionStorage.getItem(TOKEN_KEY);
+        if (!token) return;
+        try {
+          const response = await fetch(API + "/api/session", {
+            headers: { "Authorization": "Bearer " + token },
+          });
+          const data = await response.json();
+          if (response.ok && data.authenticated) showSignedIn();
+          else sessionStorage.removeItem(TOKEN_KEY);
+        } catch {
+          error.textContent = "認証サーバーに接続できません。通信環境を確認してください。";
+        }
+      }
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        error.textContent = "";
+        submit.disabled = true;
+        submit.textContent = "確認中…";
+        try {
+          const response = await fetch(API + "/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: password.value }),
+          });
+          const data = await response.json();
+          if (!response.ok || !data.ok || !data.token) {
+            if (response.status === 429) error.textContent = "試行回数の上限に達しました。時間をおいて再試行してください。";
+            else if (response.status === 401) error.textContent = "パスワードが正しくありません。";
+            else error.textContent = "ログインできませんでした。設定と通信状態を確認してください。";
+            return;
+          }
+          sessionStorage.setItem(TOKEN_KEY, data.token);
+          showSignedIn();
+        } catch {
+          error.textContent = "認証サーバーに接続できません。Workerの設定とURLを確認してください。";
+        } finally {
+          submit.disabled = false;
+          submit.textContent = "ログイン";
+        }
+      });
+      logoutButton.addEventListener("click", async () => {
+        const token = sessionStorage.getItem(TOKEN_KEY);
+        sessionStorage.removeItem(TOKEN_KEY);
+        if (token) {
+          try {
+            await fetch(API + "/api/logout", {
+              method: "POST",
+              headers: { "Authorization": "Bearer " + token },
+            });
+          } catch {}
+        }
+        showLogin();
+        error.textContent = "ログアウトしました。";
+      });
+      checkSession();
+    })();
+  </script>
 </body>
 </html>
