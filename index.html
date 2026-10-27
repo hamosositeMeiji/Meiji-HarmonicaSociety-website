@@ -1926,8 +1926,22 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
         if (!response.ok) return;
         const data = await response.json();
         if (!Array.isArray(data.items) || data.items.length === 0) return;
+        // 年度は4月始まり。トップページには2026年度の記事だけを表示する。
+        const currentFiscalYear = 2026;
+        const fiscalYearOf = item => {
+          const match = String(item.date || "").match(/^(\\d{4})[.\\-/年]/);
+          if (!match) return null;
+          const year = Number(match[1]);
+          const monthMatch = String(item.date || "").match(/^\\d{4}[.\\-/年](\\d{1,2})/);
+          const month = monthMatch ? Number(monthMatch[1]) : 4;
+          return month >= 4 ? year : year - 1;
+        };
+        const currentItems = data.items
+          .filter(item => fiscalYearOf(item) === currentFiscalYear)
+          .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+        if (currentItems.length === 0) return;
         const fragment = document.createDocumentFragment();
-        data.items.forEach(item => {
+        currentItems.forEach(item => {
           const card = document.createElement("a");
           card.className = "news-card";
           card.href = "news/index.html";
