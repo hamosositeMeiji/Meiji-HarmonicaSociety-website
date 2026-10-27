@@ -2,8 +2,8 @@ name: Expire old news archives
 
 on:
   schedule:
-    # Run every April 1 at 03:20 JST (18:20 UTC on March 31).
-    - cron: "20 18 31 3 *"
+    # Run shortly after the Japanese fiscal year begins (UTC schedule).
+    - cron: "20 18 1 4 *"
   workflow_dispatch:
 
 permissions:
