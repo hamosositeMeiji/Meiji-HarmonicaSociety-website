@@ -60,6 +60,35 @@ html{scroll-behavior:smooth;font-size:var(--hm-font-scale,100%)}body{position:re
 #hamoso-accessibility #hm-contrast[aria-pressed="true"]{background:#34452b!important;color:#fff!important}
 @media(max-width:600px){#hm-settings-toggle{right:10px!important;bottom:132px!important;width:38px!important;height:38px!important;min-height:38px!important;font-size:16px!important}#hamoso-accessibility{right:10px!important;bottom:178px!important;width:168px!important;padding:9px!important}}
 </style>
+<style id="hamoso-aqua-glass">
+/* Aqua-glass floating controls: translucent, luminous, iOS-inspired */
+.hamoso-social-float a,#hm-settings-toggle{
+  background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(225,241,236,.34))!important;
+  color:#263d35!important;
+  border:1px solid rgba(255,255,255,.88)!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.92),0 5px 18px rgba(26,54,47,.18)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(165%)!important;
+  backdrop-filter:blur(18px) saturate(165%)!important;
+  transition:transform .2s ease,box-shadow .2s ease,background .2s ease!important;
+}
+.hamoso-social-float a svg{filter:drop-shadow(0 1px 1px rgba(255,255,255,.55))}
+.hamoso-social-float a:hover,#hm-settings-toggle:hover{
+  transform:translateY(-2px)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(207,233,225,.62))!important;
+  box-shadow:inset 0 1px 1px #fff,0 8px 22px rgba(26,54,47,.24)!important;
+}
+#hm-settings-toggle{color:#29463c!important;font-weight:750!important;text-shadow:0 1px 0 rgba(255,255,255,.8)!important}
+#hamoso-accessibility{
+  background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(226,242,237,.68))!important;
+  border:1px solid rgba(255,255,255,.92)!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.96),0 10px 28px rgba(26,54,47,.2)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(170%)!important;
+  backdrop-filter:blur(22px) saturate(170%)!important;
+}
+#hamoso-accessibility button{background:rgba(255,255,255,.62)!important;border-color:rgba(255,255,255,.9)!important}
+#hamoso-accessibility button[aria-pressed="true"]{background:rgba(52,69,43,.88)!important;color:#fff!important}
+@media(prefers-reduced-motion:reduce){.hamoso-social-float a,#hm-settings-toggle{transition:none!important}}
+</style>
 </head>
 <body>
   <a class="skip-link" href="#main-content">本文へ移動</a>
