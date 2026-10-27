@@ -161,14 +161,6 @@ async function handle(request, env) {
     return json({ ok: true }, 200, headers);
   }
 
-  // Public site-content endpoint is available for future public-page integration.
-  if (url.pathname === "/api/public/site-content" && request.method === "GET") {
-    const content = await env.LOGIN_LIMITS.get("content:site-content", "json");
-    return json({ content: content && typeof content === "object" ? content : {} }, 200, {
-      ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60"
-    });
-  }
-
   // Public endpoint exposes only explicitly published announcements and safe display fields.
   if (url.pathname === "/api/public/announcements" && request.method === "GET") {
     const stored = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
