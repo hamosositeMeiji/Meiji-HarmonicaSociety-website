@@ -68,7 +68,7 @@
       bass: { name: "ベース", english: "BASS", image: "images/part-bass.jpg", fallback: "images/BASS-SAMPLE.svg", role: "06 / LOW END", intro: "低音で全体をしっかり支える、縁の下の力持ちです。", detail: "曲の土台をつくりながら、ときにはぐっと目立つフレーズも担当します。バンド全体を前に進める存在です。", group: "キーボード、ギター、パーカッションとともに、後ろから演奏を支える『コンボ』の一つです。" },
       percussion: { name: "パーカッション", english: "PERCUSSION", image: "images/part-percussion.jpg", fallback: "images/PERCUSSION-SAMPLE.svg", role: "07 / RHYTHM", intro: "ドラムを中心に、演奏のリズムと勢いをつくるパートです。", detail: "グロッケンやタンバリンなど、さまざまな小物楽器でも演奏を盛り上げます。曲に合う音を選ぶ楽しさがあります。", group: "キーボード、ギター、ベースとともに、後ろから演奏を支える『コンボ』の一つです。" },
       other: { name: "その他の楽器", english: "OTHER INSTRUMENTS", image: "images/part-other.jpg", fallback: "images/PERCUSSION-SAMPLE.svg", role: "08 / COLORS", intro: "マリンバなど、曲に彩りを加える楽器も活躍します。", detail: "ハモソでは編成や曲に応じてさまざまな楽器を取り入れています。音色の違いが、演奏に豊かな表情を加えます。", group: "曲に合わせて必要な音色を加え、バンド全体の表現の幅を広げます。" }
-    }
+    };
 
     const requestedPart = new URLSearchParams(window.location.search).get("part");
     const part = partData[requestedPart] || partData.harmonica;
