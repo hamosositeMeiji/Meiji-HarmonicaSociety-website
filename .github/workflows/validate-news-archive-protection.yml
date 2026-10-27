@@ -1,0 +1,71 @@
+name: Validate news archive protection (dry run)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-archive-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Calculate the plan without changing files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          current_year=$(date -u +%Y)
+          current_month=$(date -u +%m)
+          if [ "$current_month" -lt 4 ]; then
+            fiscal_year=$((current_year - 1))
+          else
+            fiscal_year=$current_year
+          fi
+          oldest_kept=$((fiscal_year - 9))
+          protected_label="削除保護（${oldest_kept}年度以前の記事）"
+          protected_dir="news/${protected_label}"
+
+          echo "=== Archive protection dry run ==="
+          echo "UTC date: $(date -u +%F)"
+          echo "Calculated fiscal year: ${fiscal_year}"
+          echo "Active archive boundary: ${oldest_kept}"
+          echo "Protected destination: ${protected_dir}"
+          echo
+          echo "No files will be created, moved, overwritten, or deleted by this workflow."
+
+          errors=0
+          for dir in news/[0-9][0-9][0-9][0-9]; do
+            [ -d "$dir" ] || continue
+            year="${dir#news/}"
+            if [ "$year" -lt "$oldest_kept" ]; then
+              destination="${protected_dir}/${year}"
+              echo "PLAN: ${dir} -> ${destination}"
+              if [ -e "$destination" ]; then
+                echo "::warning::Destination already exists: ${destination}. The production workflow must reconcile this folder without overwriting files."
+                errors=$((errors + 1))
+              fi
+            else
+              echo "KEEP: ${dir}"
+            fi
+          done
+
+          for old_dir in news/削除保護*; do
+            [ -d "$old_dir" ] || continue
+            [ "$old_dir" = "$protected_dir" ] && continue
+            echo "REVIEW: legacy protected folder exists: ${old_dir}"
+            echo "REVIEW: check for filename conflicts before merging this folder."
+          done
+
+          echo
+          echo "=== Safety checks ==="
+          echo "This dry run does not prove that relative links, images, or existing public URLs will keep working after a move."
+          echo "Do not run the production mover until destination conflicts and link/URL preservation are resolved."
+          if [ "$errors" -gt 0 ]; then
+            echo "::warning::Found ${errors} destination collision(s); production move is not safe to run yet."
+          fi
