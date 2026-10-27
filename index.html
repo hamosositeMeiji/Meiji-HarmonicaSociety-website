@@ -990,7 +990,10 @@ a:hover .arrow {
 
     .footer-links a:hover { color: var(--green); }
 
-    .footer-bottom {
+    .footer-admin-trigger { cursor: pointer; }
+.footer-admin-trigger:focus-visible { outline: 2px solid var(--green-dark); outline-offset: 4px; border-radius: 4px; }
+
+.footer-bottom {
       display: flex;
       justify-content: space-between;
       gap: 20px;
@@ -1700,7 +1703,7 @@ button:focus-visible {
     <div class="wrap">
       <div class="footer-top">
         <a class="footer-brand" href="#top">
-          <img src="images/logo.jpg" alt="">
+          <img class="footer-admin-trigger" src="images/logo.jpg" alt="管理者入口" title="サイト管理者入口">
           <span>
             <strong>明治大学ハーモニカソサエティー</strong>
             <span>MEIJI UNIVERSITY HARMONICA SOCIETY</span>
@@ -1747,6 +1750,46 @@ button:focus-visible {
         menuToggle.setAttribute("aria-label", "メニューを開く");
         menuToggle.textContent = "☰";
       });
+    });
+
+    // 管理者入口：フッター左下のロゴを7回クリック、または HAM OSO を続けて入力
+    const adminTrigger = document.querySelector(".footer-admin-trigger");
+    let adminClickCount = 0;
+    let adminClickTimer;
+    let adminKeyBuffer = "";
+    const adminKeySequence = "HAMOSO";
+    const adminEntryUrl = "admin/login.html";
+
+    if (adminTrigger) {
+      adminTrigger.setAttribute("tabindex", "0");
+      adminTrigger.setAttribute("role", "button");
+      adminTrigger.setAttribute("aria-label", "管理者入口。7回クリックで認証画面へ");
+
+      const countAdminClick = (event) => {
+        event.preventDefault();
+        adminClickCount += 1;
+        clearTimeout(adminClickTimer);
+        if (adminClickCount >= 7) {
+          window.location.href = adminEntryUrl;
+          return;
+        }
+        adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2500);
+      };
+      adminTrigger.addEventListener("click", countAdminClick);
+      adminTrigger.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          countAdminClick(event);
+        }
+      });
+    }
+
+    document.addEventListener("keydown", event => {
+      if (event.ctrlKey || event.altKey || event.metaKey || event.key.length !== 1) return;
+      adminKeyBuffer = (adminKeyBuffer + event.key.toUpperCase()).slice(-adminKeySequence.length);
+      if (adminKeyBuffer === adminKeySequence) {
+        window.location.href = adminEntryUrl;
+      }
     });
 
     // スクロールに合わせてコンテンツを表示
