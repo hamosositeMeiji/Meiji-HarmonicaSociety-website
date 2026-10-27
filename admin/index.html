@@ -1,14 +1,31 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>ハモソサイト管理画面</title>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#faf9f5">
+<title>運営ダッシュボード｜ハモソ</title>
+<style>
+:root{color-scheme:light;--paper:#faf9f5;--ink:#242820;--muted:#73776d;--green:#a6b86a;--dark:#65783d;--line:#e5e3d9}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;line-height:1.75}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.shell{width:min(1100px,calc(100% - 36px));margin:auto}
+header{border-bottom:1px solid var(--line)}.top{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:11px;font-weight:800}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:var(--ink);color:#fff;font-size:12px}.brand small{display:block;font-size:10px;letter-spacing:.15em;color:var(--muted)}.actions{display:flex;align-items:center;gap:16px;font-size:13px;font-weight:700}.logout{border:1px solid var(--line);background:#fff;border-radius:99px;padding:9px 14px}
+main{padding:50px 0 70px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.17em;color:var(--dark)}h1{font-size:clamp(30px,5vw,44px);line-height:1.25;letter-spacing:-.04em;margin:9px 0 12px}.intro{max-width:690px;color:var(--muted);margin:0}.welcome{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:30px}.status{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:99px;padding:7px 12px;font-size:12px;font-weight:700}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#6f8c40;margin-right:7px}
+.notice{display:flex;gap:14px;padding:18px 20px;border:1px solid #dce4c8;border-radius:16px;background:#f2f5e9;margin-bottom:34px}.notice strong{display:block;font-size:14px}.notice p{margin:4px 0 0;color:#59614c;font-size:13px}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:15px}h2{font-size:19px;margin:0}.sectionhead p{margin:0;color:var(--muted);font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{padding:22px;border:1px solid var(--line);border-radius:17px;background:#fff;min-height:165px}.cardtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.ico{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#f0f2e8;font-size:20px}.tag{font-size:10px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:4px 8px}.card h3{margin:0 0 5px;font-size:16px}.card p{margin:0;color:var(--muted);font-size:13px}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}.panel{border:1px solid var(--line);border-radius:17px;background:#fff;padding:22px}.panel p{font-size:13px;color:var(--muted)}.steps{padding-left:22px;color:var(--muted);font-size:13px}.steps li{padding:4px 0}.steps strong{color:var(--ink)}.preview{display:inline-block;border-radius:99px;background:var(--ink);color:#fff;padding:10px 15px;font-size:12px;font-weight:700}footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font-size:11px}#message{font-size:12px;color:#a12b24;min-height:1em}[hidden]{display:none!important}
+@media(max-width:650px){.shell{width:calc(100% - 28px)}.top{min-height:70px}.actions{gap:9px}.site-link{display:none}main{padding-top:34px}.welcome{align-items:start;flex-direction:column}.grid,.bottom{grid-template-columns:1fr}.sectionhead{align-items:start;flex-direction:column;gap:3px}}
+</style>
 </head>
 <body>
-  <noscript>この管理画面を使うにはJavaScriptを有効にしてください。</noscript>
-</body>
-</html>
-
+<header><div class="shell top"><a class="brand" href="./index.html"><span class="mark">HM</span><span>ハモソ運営室<small>HAMO-SO / ADMIN</small></span></a><div class="actions"><a class="site-link" href="../index.html" target="_blank" rel="noopener">公式サイト ↗</a><button class="logout" id="logout">ログアウト</button></div></div></header>
+<main class="shell">
+<section class="welcome"><div><div class="eyebrow">ADMIN DASHBOARD</div><h1>運営ダッシュボード</h1><p class="intro">公式サイトの更新準備と運営情報を、ここからまとめて管理できるようにしていきます。</p></div><div class="status"><span class="dot"></span>認証済みセッション</div></section>
+<section class="notice"><div aria-hidden="true">✳</div><div><strong>管理画面の初期版を準備しました</strong><p>現在はログイン認証とこのダッシュボードまでが動作します。下の編集機能はまだ未接続のため、公開サイトの内容は変更されません。</p></div></section>
+<section><div class="sectionhead"><h2>コンテンツ管理</h2><p>編集機能は順次追加します</p></div><div class="grid">
+<article class="card"><div class="cardtop"><span class="ico">✎</span><span class="tag">準備中</span></div><h3>お知らせ・演奏会情報</h3><p>新着情報、演奏会の日程、会場、告知文を管理。</p></article>
+<article class="card"><div class="cardtop"><span class="ico">▧</span><span class="tag">準備中</span></div><h3>写真・活動紹介</h3><p>活動写真や紹介文を整理し、掲載内容を管理。</p></article>
+<article class="card"><div class="cardtop"><span class="ico">♫</span><span class="tag">準備中</span></div><h3>演奏動画・SNS</h3><p>動画リンクや公式SNSへの導線を管理。</p></article>
+<article class="card"><div class="cardtop"><span class="ico">☷</span><span class="tag">準備中</span></div><h3>サイト情報・入会案内</h3><p>活動内容、楽器パート、見学案内などを管理。</p></article>
+</div></section>
+<div class="bottom"><section class="panel"><h2>これからの実装手順</h2><ol class="steps"><li><strong>保存先を用意</strong> — 編集内容を安全に保存</li><li><strong>編集フォームを追加</strong> — お知らせ・演奏会情報から対応</li><li><strong>公開前に確認</strong> — プレビューと公開反映を分離</li></ol></section><section class="panel"><h2>公開サイト</h2><p>公式サイトはこれまで通り閲覧できます。この画面を開くだけで公開内容が変わることはありません。</p><a class="preview" href="../index.html" target="_blank" rel="noopener">公式サイトを開く ↗</a><p id="message" role="status" aria-live="polite"></p></section></div>
+</main><footer><div class="shell">明治大学ハーモニカソサエティー（ハモソ）｜運営メンバー専用</div></footer>
+<script>
+(()=>{const API="https://hamoso-admin-auth.hamososaitoguanli.workers.dev";const KEY="hamoso_admin_token";const msg=document.getElementById("message");const token=sessionStorage.getItem(KEY);if(!token){location.replace("./login.html");return;}fetch(API+"/api/session",{headers:{"Authorization":"Bearer "+token}}).then(async r=>{const d=await r.json();if(!r.ok||!d.authenticated){sessionStorage.removeItem(KEY);location.replace("./login.html");}}).catch(()=>{msg.textContent="認証状態を確認できません。通信を確認して再読み込みしてください。";});document.getElementById("logout").addEventListener("click",async()=>{const t=sessionStorage.getItem(KEY);sessionStorage.removeItem(KEY);if(t){try{await fetch(API+"/api/logout",{method:"POST",headers:{"Authorization":"Bearer "+t}});}catch{}}location.replace("./login.html");});})();
+</script></body></html>
