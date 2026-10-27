@@ -8,6 +8,8 @@ const SESSION_SECONDS = 8 * 60 * 60;
 const LIMIT_WINDOW_SECONDS = 15 *  60;
 const MAX_ATTEMPTS = 5;
 const CONTENT_KEY = "content:announcements";
+const MEDIA_PREFIX = "media:";
+const MAX_MEDIA_BYTES = 1500 * 1024;
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -97,6 +99,38 @@ async function handle(request, env) {
   }
   if (url.pathname === "/api/logout" && request.method === "POST") {
     return json({ ok: true }, 200, headers);
+  }
+
+  // Public media is served by an opaque ID; uploads require an authenticated admin session.
+  if (url.pathname.startsWith("/media/") && request.method === "GET") {
+    const id = url.pathname.slice("/media/".length);
+    if (!/^[a-zA-Z0-9_-]{1,60}$/.test(id)) return json({ error: "not_found" }, 404, headers);
+    const stored = await env.LOGIN_LIMITS.get(MEDIA_PREFIX + id, "json");
+    if (!stored || typeof stored.data !== "string" || typeof stored.type !== "string") return json({ error: "not_found" }, 404, headers);
+    const raw = atob(stored.data);
+    const bytes = Uint8Array.from(raw, c => c.charCodeAt(0));
+    return new Response(bytes, { status: 200, headers: { ...headers, "Content-Type": stored.type, "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" } });
+  }
+
+  if (url.pathname === "/api/media" && request.method === "POST") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    let body;
+    try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
+    const allowed = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+    if (!allowed[body.type] || typeof body.data !== "string") return json({ error: "unsupported_image_type" }, 400, headers);
+    const estimatedBytes = Math.floor(body.data.length * 3 / 4);
+    if (estimatedBytes < 1 || estimatedBytes > MAX_MEDIA_BYTES || !/^[A-Za-z0-9+/]*={0,2}$/.test(body.data)) return json({ error: "image_too_large_or_invalid" }, 413, headers);
+    let bytes;
+    try { bytes = Uint8Array.from(atob(body.data), c => c.charCodeAt(0)); } catch { return json({ error: "invalid_image_data" }, 400, headers); }
+    if (bytes.length > MAX_MEDIA_BYTES) return json({ error: "image_too_large" }, 413, headers);
+    const signatureOK = body.type === "image/jpeg" ? bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff
+      : body.type === "image/png" ? bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47
+      : bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50;
+    if (!signatureOK) return json({ error: "image_content_mismatch" }, 400, headers);
+    const id = crypto.randomUUID().replace(/-/g, "");
+    await env.LOGIN_LIMITS.put(MEDIA_PREFIX + id, JSON.stringify({ type: body.type, data: body.data }), { expirationTtl: 60 * 60 * 24 * 365 });
+    return json({ ok: true, id, url: "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/media/" + id }, 201, headers);
   }
 
   // All content routes require a valid bearer token.
