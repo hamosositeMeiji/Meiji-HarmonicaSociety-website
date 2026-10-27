@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hamosositeMeiji.github.io/Meiji-HarmonicaSociety-website/sitemap.xml
