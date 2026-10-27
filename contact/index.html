@@ -35,6 +35,16 @@ html{scroll-behavior:smooth;font-size:var(--hm-font-scale,100%)}body{position:re
 #hamoso-accessibility button:focus-visible,.hamoso-social-float a:focus-visible{outline:3px solid #245fc7;outline-offset:3px}
 @media(max-width:600px){.hamoso-social-float{right:12px!important;bottom:264px!important;gap:8px!important}.hamoso-social-float a{width:44px;height:44px}#hamoso-accessibility{right:10px;bottom:10px;min-width:132px;padding:9px;gap:6px}#hamoso-accessibility button{min-height:38px;font-size:13px}}
 
+
+/* Compact floating controls and stronger, consistent text-size switching */
+.hamoso-social-float{bottom:244px!important;gap:7px!important}
+.hamoso-social-float a{width:42px;height:42px;border-width:1px}
+.hamoso-social-float svg{width:19px;height:19px}
+#hamoso-accessibility{right:14px!important;bottom:12px!important;gap:5px!important;min-width:0!important;width:112px;box-sizing:border-box;padding:7px!important;border-radius:12px!important;box-shadow:0 4px 14px rgba(31,42,24,.16)!important}
+#hamoso-accessibility .hm-a11y-label{font-size:10px!important;padding-bottom:0!important;letter-spacing:0!important}
+#hamoso-accessibility button{width:100%;min-height:30px!important;padding:5px 7px!important;border-radius:7px!important;font-size:12px!important;box-shadow:none!important}
+@media(max-width:600px){.hamoso-social-float{bottom:222px!important;gap:6px!important}.hamoso-social-float a{width:38px;height:38px}#hamoso-accessibility{right:8px!important;bottom:8px!important;width:104px;padding:6px!important}#hamoso-accessibility button{min-height:29px!important;font-size:11px!important}}
+
 </style>
 </head>
 <body>
@@ -98,7 +108,31 @@ html{scroll-behavior:smooth;font-size:var(--hm-font-scale,100%)}body{position:re
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
     </a>
   </nav>
-<nav id="hamoso-accessibility" aria-label="表示設定"><span class="hm-a11y-label">文字サイズ</span><button type="button" data-hm-size="small" aria-label="文字を小さくする">A−</button><button type="button" data-hm-size="normal" aria-label="文字サイズを標準にする">A</button><button type="button" data-hm-size="large" aria-label="文字を大きくする">A＋</button><button type="button" id="hm-contrast" aria-pressed="false">高コントラスト</button></nav><script id="hamoso-accessibility-script">(function(){const root=document.documentElement,body=document.body,bar=document.getElementById('hamoso-accessibility'),contrast=document.getElementById('hm-contrast');if(!bar||!body)return;let size='normal',high=false;try{size=localStorage.getItem('hm-text-size')||'normal';high=localStorage.getItem('hm-high-contrast')==='true'}catch(e){}const scales={small:'92%',normal:'100%',large:'120%'};function apply(){root.style.setProperty('--hm-font-scale',scales[size]||'100%');body.classList.toggle('hamoso-high-contrast',high);bar.querySelectorAll('[data-hm-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmSize===size)));contrast.setAttribute('aria-pressed',String(high))}bar.querySelectorAll('[data-hm-size]').forEach(b=>b.addEventListener('click',()=>{size=b.dataset.hmSize;try{localStorage.setItem('hm-text-size',size)}catch(e){}apply()}));contrast.addEventListener('click',()=>{high=!high;try{localStorage.setItem('hm-high-contrast',String(high))}catch(e){}apply()});apply()})();</script>
+<nav id="hamoso-accessibility" aria-label="表示設定"><span class="hm-a11y-label">文字サイズ</span><button type="button" data-hm-size="small" aria-label="文字を小さくする">A−</button><button type="button" data-hm-size="normal" aria-label="文字サイズを標準にする">A</button><button type="button" data-hm-size="large" aria-label="文字を大きくする">A＋</button><button type="button" id="hm-contrast" aria-pressed="false">高コントラスト</button></nav><script id="hamoso-accessibility-script">
+(function(){
+ const root=document.documentElement,body=document.body,bar=document.getElementById('hamoso-accessibility'),contrast=document.getElementById('hm-contrast');
+ if(!bar||!body)return;
+ let size='normal',high=false;
+ try{size=localStorage.getItem('hm-text-size')||'normal';high=localStorage.getItem('hm-high-contrast')==='true'}catch(e){}
+ const scales={small:0.85,normal:1,large:1.3};
+ const textSelector='h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small,strong,em,b,i,span,div';
+ const targets=Array.from(body.querySelectorAll(textSelector)).filter(el=>el!==bar&&!bar.contains(el)&&el.children.length===0||el.matches('h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small'));
+ const baseSizes=new WeakMap();
+ targets.forEach(el=>{const n=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(n))baseSizes.set(el,n)});
+ function apply(){
+  const factor=scales[size]||1;
+  root.style.setProperty('--hm-font-scale',factor===1?'100%':(factor*100)+'%');
+  root.style.setProperty('--hm-font-scale-factor',String(factor));
+  targets.forEach(el=>{const n=baseSizes.get(el);if(n)el.style.setProperty('font-size',(n*factor)+'px','important')});
+  body.classList.toggle('hamoso-high-contrast',high);
+  bar.querySelectorAll('[data-hm-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmSize===size)));
+  contrast.setAttribute('aria-pressed',String(high));
+ }
+ bar.querySelectorAll('[data-hm-size]').forEach(b=>b.addEventListener('click',()=>{size=b.dataset.hmSize;try{localStorage.setItem('hm-text-size',size)}catch(e){}apply()}));
+ contrast.addEventListener('click',()=>{high=!high;try{localStorage.setItem('hm-high-contrast',String(high))}catch(e){}apply()});
+ apply();
+})();
+</script>
 </body>
 </html>
 
