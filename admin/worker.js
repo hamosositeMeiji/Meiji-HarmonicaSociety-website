@@ -27,7 +27,7 @@ function cors(origin) {
 function b64url(bytes) {
   let s = "";
   for (const b of new Uint8Array(bytes)) s += String.fromCharCode(b);
-  return btoa(s).replace(/=/g, "").replace(/\\+/g, "-").replace(/\\//g, "_");
+  return btoa(s).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
 }
 function unb64url(s) {
   const raw = atob(s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4));
