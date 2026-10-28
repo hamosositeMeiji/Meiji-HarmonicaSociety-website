@@ -1365,14 +1365,15 @@ body.hm-lightweight::before,body.hm-lightweight::after{-webkit-backdrop-filter:n
 body.hm-lightweight header,body.hm-lightweight .site-header,body.hm-lightweight .header,body.hm-lightweight .hamoso-social-float a,body.hm-lightweight #hm-settings-toggle,body.hm-lightweight #hamoso-accessibility{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 </style>
 <style id="hamoso-liquid-wave-background">
-/* Clearly visible moving color fields; motion is controlled by the site's own display setting. */
+/* Animated SVG turbulence distorts a soft color field into flowing, water-like currents. */
 html,body{min-height:100%}
 body{position:relative!important;isolation:isolate;background:transparent!important}
-body:before{content:""!important;display:block!important;position:fixed!important;inset:-35%!important;z-index:-1!important;pointer-events:none!important;opacity:1!important;background:radial-gradient(ellipse at 22% 30%,rgba(255,255,255,.98) 0%,rgba(255,255,255,.82) 18%,rgba(255,255,255,0) 43%),radial-gradient(ellipse at 78% 28%,rgba(44,157,132,.62) 0%,rgba(92,186,160,.38) 22%,rgba(92,186,160,0) 48%),radial-gradient(ellipse at 55% 82%,rgba(181,224,208,.95) 0%,rgba(181,224,208,.5) 25%,rgba(181,224,208,0) 52%),linear-gradient(135deg,#f8f7ef 0%,#d5eee5 45%,#c0e4d8 70%,#f4f2e8 100%)!important;background-size:100% 100%!important;animation:hm-liquid-drift 12s ease-in-out infinite alternate!important;will-change:transform}
-@keyframes hm-liquid-drift{0%{transform:translate3d(-5%,-3%,0) scale(1)}50%{transform:translate3d(4%,3%,0) scale(1.08)}100%{transform:translate3d(-2%,6%,0) scale(1.03)}}
-body.hm-motion-standard:before{animation:hm-liquid-drift 12s ease-in-out infinite alternate!important}
-body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!important;transform:none!important}
-@media(prefers-reduced-motion:reduce){body:not(.hm-motion-standard):before{animation:none!important;transform:none!important}}
+#hm-water-filter-defs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+body:before{content:""!important;display:block!important;position:fixed!important;inset:-5%!important;z-index:-1!important;pointer-events:none!important;opacity:1!important;background:radial-gradient(ellipse at 18% 24%,rgba(255,255,255,.98) 0%,rgba(255,255,255,.58) 18%,transparent 45%),radial-gradient(ellipse at 82% 32%,rgba(47,158,133,.62) 0%,rgba(110,197,174,.34) 24%,transparent 52%),radial-gradient(ellipse at 46% 82%,rgba(180,225,210,.94) 0%,rgba(111,190,170,.38) 30%,transparent 58%),linear-gradient(135deg,#f8f7ef 0%,#d4eee5 45%,#acd9cc 72%,#f4f2e8 100%)!important;background-size:140% 140%!important;background-position:center!important;filter:url(#hm-water-displacement)!important;animation:hm-water-flow 18s ease-in-out infinite alternate!important;will-change:transform,filter}
+@keyframes hm-water-flow{0%{transform:scale(1) translate3d(-1.5%,-1%,0)}50%{transform:scale(1.06) translate3d(1.5%,1%,0)}100%{transform:scale(1.02) translate3d(-1%,2%,0)}}
+body.hm-motion-standard:before{animation:hm-water-flow 18s ease-in-out infinite alternate!important}
+body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!important;transform:none!important;filter:none!important}
+@media(prefers-reduced-motion:reduce){body:not(.hm-motion-standard):before{animation:none!important;transform:none!important;filter:none!important}}
 </style><style id="hamoso-eye-settings-icon">#hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}</style>
   <style id="latest-news-scroll">
     /* LATEST NEWS：記事カードを横スクロールできるようにする */
@@ -1388,6 +1389,8 @@ body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!importan
 </head>
 
 <body>
+<svg id="hm-water-filter-defs" aria-hidden="true" focusable="false"><filter id="hm-water-displacement" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB"><feTurbulence id="hm-water-turbulence" type="fractalNoise" baseFrequency="0.009 0.014" numOctaves="2" seed="8" result="noise"><animate attributeName="baseFrequency" dur="14s" values="0.008 0.012;0.014 0.009;0.009 0.016;0.008 0.012" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" in2="noise" scale="42" xChannelSelector="R" yChannelSelector="G"><animate attributeName="scale" dur="11s" values="28;55;36;48;28" repeatCount="indefinite"/></feDisplacementMap></filter></svg>
+
   <header class="header">
     <div class="wrap nav">
       <a class="brand" href="#top" aria-label="ハモソ トップ">
