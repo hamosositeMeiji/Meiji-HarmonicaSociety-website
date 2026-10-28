@@ -2037,6 +2037,10 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     if (!data || typeof data !== "object") return;
 
     const activities = data.activities || {};
+    if (activities.title) {
+      const title = document.querySelector("#activities .section-head h2");
+      if (title) title.textContent = activities.title;
+    }
     if (activities.text) {
       const paragraphs = document.querySelectorAll("#about .about-copy > p");
       if (paragraphs[0]) paragraphs[0].textContent = activities.text;
@@ -2100,6 +2104,8 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     });
     const join = document.querySelector("#join .join-inner > div:first-child > p");
     const recruit = data.recruit || {};
+    const recruitTitle = document.querySelector("#join .join-inner > div:first-child h2");
+    if (recruitTitle && recruit.title) { recruitTitle.textContent = recruit.title; recruitTitle.style.whiteSpace = "pre-line"; }
     if (join && recruit.text) join.textContent = recruit.text;
     const contact = document.querySelector('#join .join-actions a[href="contact/index.html"]');
     if (contact && recruit.contactUrl && isHttpsUrl(recruit.contactUrl)) {
