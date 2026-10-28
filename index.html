@@ -2079,24 +2079,75 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
       section.className = "section wrap managed-video-section";
       section.id = "managed-videos";
       section.append(addText("div", "eyebrow", "HAMO-SO / PERFORMANCE"));
-      const heading = addText("h2", "", media.videoTitle || "演奏動画");
+      // A URL accidentally entered as the heading should not be displayed as a title.
+      const rawTitle = typeof media.videoTitle === "string" ? media.videoTitle.trim() : "";
+      const headingText = rawTitle && !/^https?:\/\//i.test(rawTitle) ? rawTitle : "演奏動画";
+      const heading = addText("h2", "", headingText);
       heading.style.cssText = "font-size:clamp(30px,4vw,48px);margin:12px 0 24px";
       section.append(heading);
       const list = document.createElement("div");
-      list.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px";
+      list.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px";
       videoUrls.forEach((url, index) => {
-        const link = addText("a", "pill", "演奏動画 " + (index + 1) + " ↗");
-        link.href = url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.style.cssText = "justify-content:center;padding:18px;border-radius:10px;background:white";
-        list.append(link);
+        const card = document.createElement("article");
+        card.style.cssText = "overflow:hidden;border-radius:12px;background:var(--surface, #fff);border:1px solid rgba(0,0,0,.08)";
+        const videoId = (() => {
+          try {
+            const parsed = new URL(url);
+            if (parsed.hostname === "youtu.be") return parsed.pathname.split("/").filter(Boolean)[0] || "";
+            if (parsed.hostname === "youtube.com" || parsed.hostname.endsWith(".youtube.com")) {
+              if (parsed.pathname === "/watch") return parsed.searchParams.get("v") || "";
+              const match = parsed.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/);
+              return match ? match[1] : "";
+            }
+          } catch (_) {}
+          return "";
+        })();
+        if (videoId) {
+          const preview = document.createElement("button");
+          preview.type = "button";
+          preview.setAttribute("aria-label", "演奏動画 " + (index + 1) + " を再生");
+          preview.style.cssText = "display:block;position:relative;width:100%;padding:0;border:0;background:#111;cursor:pointer;aspect-ratio:16/9;overflow:hidden";
+          const thumbnail = document.createElement("img");
+          thumbnail.src = "https://i.ytimg.com/vi/" + encodeURIComponent(videoId) + "/hqdefault.jpg";
+          thumbnail.alt = "演奏動画 " + (index + 1) + " のサムネイル";
+          thumbnail.loading = "lazy";
+          thumbnail.style.cssText = "display:block;width:100%;height:100%;object-fit:cover";
+          const play = document.createElement("span");
+          play.textContent = "▶";
+          play.setAttribute("aria-hidden", "true");
+          play.style.cssText = "position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:64px;height:46px;border-radius:12px;background:rgba(220,0,0,.94);color:white;font-size:25px;box-shadow:0 2px 12px rgba(0,0,0,.25)";
+          preview.append(thumbnail, play);
+          preview.addEventListener("click", () => {
+            const frame = document.createElement("iframe");
+            frame.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(videoId) + "?autoplay=1&rel=0";
+            frame.title = "ハモソ演奏動画 " + (index + 1);
+            frame.loading = "lazy";
+            frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+            frame.allowFullscreen = true;
+            frame.referrerPolicy = "strict-origin-when-cross-origin";
+            frame.style.cssText = "display:block;width:100%;height:100%;position:absolute;inset:0;border:0";
+            preview.replaceChildren(frame);
+            preview.style.cursor = "default";
+            preview.setAttribute("aria-label", "演奏動画 " + (index + 1) + " の再生中");
+          }, { once: true });
+          card.append(preview);
+        } else {
+          const link = addText("a", "pill", "動画をYouTubeで見る ↗");
+          link.href = url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.style.cssText = "display:flex;justify-content:center;align-items:center;min-height:168px;padding:18px;border-radius:10px;background:#f5f5f5";
+          card.append(link);
+        }
+        const caption = addText("p", "", "演奏動画 " + (index + 1));
+        caption.style.cssText = "margin:0;padding:12px 14px;font-size:14px;font-weight:600";
+        card.append(caption);
+        list.append(card);
       });
       section.append(list);
       const concert = document.querySelector("#concert");
       if (concert) {
-        // Keep managed performance links inside the concert section so they
-        // are included when visitors use the site's CONCERT navigation tab.
+        // Keep the video gallery inside the concert section used by the navigation.
         section.style.marginTop = "28px";
         concert.append(section);
       }
