@@ -2294,45 +2294,45 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
 
 <script id="hamoso-admin-entry-trigger">
 (function () {
-  const trigger = document.querySelector(".footer-brand");
-  if (!trigger) return;
+  // Document-level capture handles clicks on the logo image, its text, or the surrounding footer brand.
+  const adminPath = new URL("admin/login.html", document.baseURI).href;
+  let tapCount = 0;
+  let resetTimer = 0;
+  let keyBuffer = "";
 
-  let taps = 0;
-  let resetTimer = null;
-  const adminUrl = new URL("./admin/login.html", window.location.href);
+  function resetTapCount() {
+    tapCount = 0;
+    resetTimer = 0;
+  }
 
-  function registerTap(event) {
+  document.addEventListener("click", function (event) {
+    const target = event.target instanceof Element ? event.target : null;
+    const trigger = target && target.closest(".footer-brand");
+    if (!trigger) return;
+
+    // Explicitly suppress any link/default navigation from this footer area.
     event.preventDefault();
-    event.stopPropagation();
-
-    taps += 1;
+    tapCount += 1;
     if (resetTimer) window.clearTimeout(resetTimer);
 
-    if (taps >= 7) {
-      taps = 0;
-      window.location.href = adminUrl.href;
+    if (tapCount >= 7) {
+      resetTapCount();
+      window.location.assign(adminPath);
       return;
     }
 
-    resetTimer = window.setTimeout(function () {
-      taps = 0;
-    }, 5000);
-  }
+    resetTimer = window.setTimeout(resetTapCount, 5000);
+  }, true);
 
-  trigger.addEventListener("click", registerTap, true);
-  trigger.addEventListener("keydown", function (event) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      registerTap(event);
-    }
-  });
-
-  let keyBuffer = "";
-  document.addEventListener("keydown", function (event) {
+  // Capture at window level so the sequence is not dependent on bubbling through page components.
+  window.addEventListener("keydown", function (event) {
     if (event.ctrlKey || event.altKey || event.metaKey || event.key.length !== 1) return;
     keyBuffer = (keyBuffer + event.key.toUpperCase()).slice(-6);
-    if (keyBuffer === "HAMOSO") window.location.href = adminUrl.href;
-  });
+    if (keyBuffer === "HAMOSO") {
+      keyBuffer = "";
+      window.location.assign(adminPath);
+    }
+  }, true);
 })();
 </script>
 </body>
