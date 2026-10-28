@@ -2058,13 +2058,13 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
         const gallery = document.createElement("div");
         gallery.className = "managed-photo-gallery";
         gallery.setAttribute("aria-label", "活動写真");
-        gallery.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:28px";
+        gallery.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));align-items:start;gap:14px;margin-top:28px";
         activityPhotos.forEach((url, index) => {
           const img = document.createElement("img");
           img.src = url;
           img.alt = "ハモソの活動写真 " + (index + 1);
           img.loading = "lazy";
-          img.style.cssText = "display:block;width:100%;height:auto;max-height:360px;object-fit:contain;object-position:center;border-radius:8px;background:#e4e4da";
+          img.style.cssText = "display:block;width:100%;height:auto;max-height:360px;object-fit:contain;object-position:center;border-radius:8px;background:transparent";
           gallery.append(img);
         });
         host.insertAdjacentElement("afterend", gallery);
