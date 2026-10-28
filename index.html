@@ -2072,9 +2072,18 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     }
 
     const media = data.media || {};
-    const videoUrls = Array.isArray(media.videos)
-      ? media.videos.filter(url => typeof url === "string" && isHttpsUrl(url)).slice(0, 12) : [];
-    if (videoUrls.length) {
+    const videoItems = Array.isArray(media.videos)
+      ? media.videos.map((entry) => {
+          if (typeof entry !== "string") return null;
+          const line = entry.trim();
+          if (!line) return null;
+          const separator = line.indexOf("|");
+          const title = separator >= 0 ? line.slice(0, separator).trim() : "";
+          const url = separator >= 0 ? line.slice(separator + 1).trim() : line;
+          if (!isHttpsUrl(url)) return null;
+          return { title: title && !/^https?:\/\//i.test(title) ? title : "", url };
+        }).filter(Boolean).slice(0, 12) : [];
+    if (videoItems.length) {
       const section = document.createElement("section");
       section.className = "section wrap managed-video-section";
       section.id = "managed-videos";
@@ -2087,7 +2096,8 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
       section.append(heading);
       const list = document.createElement("div");
       list.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px";
-      videoUrls.forEach((url, index) => {
+      videoItems.forEach((video, index) => {
+        const url = video.url;
         const card = document.createElement("article");
         card.style.cssText = "overflow:hidden;border-radius:12px;background:var(--surface, #fff);border:1px solid rgba(0,0,0,.08)";
         const videoId = (() => {
@@ -2139,7 +2149,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
           link.style.cssText = "display:flex;justify-content:center;align-items:center;min-height:168px;padding:18px;border-radius:10px;background:#f5f5f5";
           card.append(link);
         }
-        const caption = addText("p", "", "演奏動画 " + (index + 1));
+        const caption = addText("p", "", video.title || "演奏動画 " + (index + 1));
         caption.style.cssText = "margin:0;padding:12px 14px;font-size:14px;font-weight:600";
         card.append(caption);
         list.append(card);
