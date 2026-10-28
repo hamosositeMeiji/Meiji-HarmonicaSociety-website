@@ -2094,7 +2094,12 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
       });
       section.append(list);
       const concert = document.querySelector("#concert");
-      if (concert) concert.insertAdjacentElement("beforebegin", section);
+      if (concert) {
+        // Keep managed performance links inside the concert section so they
+        // are included when visitors use the site's CONCERT navigation tab.
+        section.style.marginTop = "28px";
+        concert.append(section);
+      }
     }
 
     const social = media.social || {};
