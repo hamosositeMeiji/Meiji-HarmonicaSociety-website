@@ -161,6 +161,12 @@ async function handle(request, env) {
     return json({ ok: true }, 200, headers);
   }
 
+  // Public site-content endpoint. Data is intentionally published only through this explicit route.
+  if (url.pathname === "/api/public/site-content" && request.method === "GET") {
+    const stored = await env.LOGIN_LIMITS.get("content:site-content", "json");
+    const content = stored && typeof stored === "object" ? stored : {};
+    return json({ content }, 200, { ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60" });
+  }
   // Public endpoint exposes only explicitly published announcements and safe display fields.
   if (url.pathname === "/api/public/announcements" && request.method === "GET") {
     const stored = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
