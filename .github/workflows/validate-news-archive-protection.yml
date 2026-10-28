@@ -28,13 +28,14 @@ jobs:
             fiscal_year=$current_year
           fi
           oldest_kept=$((fiscal_year - 9))
-          protected_label="削除保護（${oldest_kept}年度以前の記事）"
+          protected_label="削除保護（${oldest_kept}年度より前の記事）"
           protected_dir="news/${protected_label}"
 
           echo "=== Archive protection dry run ==="
           echo "UTC date: $(date -u +%F)"
           echo "Calculated fiscal year: ${fiscal_year}"
-          echo "Active archive boundary: ${oldest_kept}"
+          echo "Oldest retained fiscal year: ${oldest_kept}"
+          echo "Move rule: fiscal years strictly less than ${oldest_kept} (2017 is retained; 2016 and earlier are candidates when boundary is 2017)."
           echo "Protected destination: ${protected_dir}"
           echo
           echo "No files will be created, moved, overwritten, or deleted by this workflow."
