@@ -2177,6 +2177,14 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     const recruitTitle = document.querySelector("#join .join-inner > div:first-child h2");
     if (recruitTitle && recruit.title) { recruitTitle.textContent = recruit.title; recruitTitle.style.whiteSpace = "pre-line"; }
     if (join && recruit.text) join.textContent = recruit.text;
+    const joinCopy = document.querySelector("#join .join-inner > div:first-child");
+    if (joinCopy && typeof recruit.visitInfo === "string" && recruit.visitInfo.trim()) {
+      const info = document.createElement("p");
+      info.className = "managed-visit-info";
+      info.textContent = recruit.visitInfo.trim();
+      info.style.cssText = "margin-top:18px;padding:16px 18px;border:1px solid rgba(255,255,255,.35);border-radius:10px;white-space:pre-line;line-height:1.8";
+      joinCopy.append(info);
+    }
     const contact = document.querySelector('#join .join-actions a[href="contact/index.html"]');
     if (contact && recruit.contactUrl && isHttpsUrl(recruit.contactUrl)) {
       contact.href = recruit.contactUrl;
