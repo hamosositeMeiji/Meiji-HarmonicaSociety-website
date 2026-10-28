@@ -1365,19 +1365,14 @@ body.hm-lightweight::before,body.hm-lightweight::after{-webkit-backdrop-filter:n
 body.hm-lightweight header,body.hm-lightweight .site-header,body.hm-lightweight .header,body.hm-lightweight .hamoso-social-float a,body.hm-lightweight #hm-settings-toggle,body.hm-lightweight #hamoso-accessibility{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 </style>
 <style id="hamoso-liquid-wave-background">
-/* A dedicated fixed layer makes the moving colors visible behind transparent page sections. */
+/* Clearly visible moving color fields; motion is controlled by the site's own display setting. */
 html,body{min-height:100%}
 body{position:relative!important;isolation:isolate;background:transparent!important}
-body:before{content:""!important;display:block!important;position:fixed!important;inset:-18%!important;z-index:-1!important;pointer-events:none!important;opacity:1!important;background-color:#e7f2ed!important;background-image:radial-gradient(ellipse at 18% 30%,rgba(255,255,255,.98) 0%,rgba(255,255,255,.26) 30%,transparent 58%),radial-gradient(ellipse at 78% 28%,rgba(55,160,139,.55) 0%,rgba(119,199,180,.2) 38%,transparent 66%),radial-gradient(ellipse at 55% 88%,rgba(188,226,213,.9) 0%,rgba(125,193,176,.25) 42%,transparent 70%),linear-gradient(135deg,#f8f7ef 0%,#d8eee6 34%,#b8ded3 62%,#f4f2e8 100%)!important;background-size:180% 180%,170% 170%,160% 160%,150% 150%!important;background-position:0% 20%,100% 10%,10% 100%,0% 20%!important;animation:hm-liquid-base 16s ease-in-out infinite alternate!important;will-change:background-position}
-body:after{content:none!important;display:none!important}
-@keyframes hm-liquid-base{
-0%{background-position:0% 20%,100% 10%,10% 100%,0% 20%}
-50%{background-position:70% 75%,15% 65%,90% 15%,55% 50%}
-100%{background-position:100% 80%,0% 100%,35% 0%,100% 80%}
-}
-body.hm-motion-standard:before{animation:hm-liquid-base 16s ease-in-out infinite alternate!important}
-body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!important;background-position:50% 50%,50% 50%,50% 50%,50% 50%!important;background-size:100% 100%,100% 100%,100% 100%,100% 100%!important}
-@media(prefers-reduced-motion:reduce){body:not(.hm-motion-standard):before{animation:none!important;background-position:50% 50%,50% 50%,50% 50%,50% 50%!important;background-size:100% 100%,100% 100%,100% 100%,100% 100%!important}}
+body:before{content:""!important;display:block!important;position:fixed!important;inset:-35%!important;z-index:-1!important;pointer-events:none!important;opacity:1!important;background:radial-gradient(ellipse at 22% 30%,rgba(255,255,255,.98) 0%,rgba(255,255,255,.82) 18%,rgba(255,255,255,0) 43%),radial-gradient(ellipse at 78% 28%,rgba(44,157,132,.62) 0%,rgba(92,186,160,.38) 22%,rgba(92,186,160,0) 48%),radial-gradient(ellipse at 55% 82%,rgba(181,224,208,.95) 0%,rgba(181,224,208,.5) 25%,rgba(181,224,208,0) 52%),linear-gradient(135deg,#f8f7ef 0%,#d5eee5 45%,#c0e4d8 70%,#f4f2e8 100%)!important;background-size:100% 100%!important;animation:hm-liquid-drift 12s ease-in-out infinite alternate!important;will-change:transform}
+@keyframes hm-liquid-drift{0%{transform:translate3d(-5%,-3%,0) scale(1)}50%{transform:translate3d(4%,3%,0) scale(1.08)}100%{transform:translate3d(-2%,6%,0) scale(1.03)}}
+body.hm-motion-standard:before{animation:hm-liquid-drift 12s ease-in-out infinite alternate!important}
+body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!important;transform:none!important}
+@media(prefers-reduced-motion:reduce){body:not(.hm-motion-standard):before{animation:none!important;transform:none!important}}
 </style><style id="hamoso-eye-settings-icon">#hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}</style>
   <style id="latest-news-scroll">
     /* LATEST NEWS：記事カードを横スクロールできるようにする */
