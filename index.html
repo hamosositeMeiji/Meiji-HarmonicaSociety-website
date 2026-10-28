@@ -2264,70 +2264,74 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
   canvas.id='hm-fluid-canvas';canvas.setAttribute('aria-hidden','true');
   document.body.prepend(canvas);
   const ctx=canvas.getContext('2d');if(!ctx)return;
-  let w=0,h=0,dpr=1,raf=0,last=0,time=0,particles=[];
+  let w=0,h=0,dpr=1,raf=0,last=0,time=0;
   const reduced=()=>document.body.classList.contains('hm-motion-reduced')||document.body.classList.contains('hm-lightweight');
   function resize(){
     dpr=Math.min(window.devicePixelRatio||1,1.5);w=window.innerWidth;h=window.innerHeight;
     canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
-    canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
-    const count=Math.max(90,Math.min(230,Math.round(w*h/6500)));
-    particles=Array.from({length:count},()=>({x:Math.random()*w,y:Math.random()*h,age:Math.random(),life:.45+Math.random()*.8,size:.5+Math.random()*1.7,speed:25+Math.random()*65,seed:Math.random()*Math.PI*2}));
-  }
-  // A curl-like vector field: particles travel through a changing current instead of moving as one wavy sheet.
-  function flow(x,y,t,seed){
-    const nx=x/Math.max(w,1),ny=y/Math.max(h,1);
-    const a=Math.sin(ny*5.1+t*.23+seed)*.72+Math.sin(nx*4.2-ny*2.7-t*.17)*.46;
-    const b=Math.cos(nx*4.5-t*.2+seed*.7)*.58+Math.sin(ny*3.4+nx*2.1+t*.15)*.42;
-    const angle=Math.atan2(b,a)+.48;
-    return {x:Math.cos(angle),y:Math.sin(angle)};
+    canvas.style.width=w+'px';canvas.style.height=h+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
   }
   function paintBase(){
     const g=ctx.createLinearGradient(0,0,w,h);
-    g.addColorStop(0,'#f8f7ef');g.addColorStop(.42,'#e2f1e9');g.addColorStop(.72,'#c8e7db');g.addColorStop(1,'#f4f2e8');
+    g.addColorStop(0,'#f8f7ef');g.addColorStop(.4,'#e4f1e9');g.addColorStop(.72,'#cce8dc');g.addColorStop(1,'#f4f2e8');
     ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
-    // Soft depth gradients stay restrained; the visible motion comes from directional flow lines.
-    const glow=ctx.createRadialGradient(w*.68,h*.32,0,w*.68,h*.32,Math.max(w,h)*.72);
-    glow.addColorStop(0,'rgba(69,169,140,.17)');glow.addColorStop(1,'rgba(69,169,140,0)');
+    const glow=ctx.createRadialGradient(w*.66,h*.38,0,w*.66,h*.38,Math.max(w,h)*.76);
+    glow.addColorStop(0,'rgba(69,169,140,.16)');glow.addColorStop(1,'rgba(69,169,140,0)');
     ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
+  }
+  // Stable, evenly spaced ribbons: one shared current, no random particles or abrupt respawns.
+  function centerY(x, lane, t){
+    const nx=x/Math.max(w,1);
+    const broad=Math.sin(nx*3.7-lane*.24+t*.18)*h*.055;
+    const bend=Math.sin(nx*7.2-lane*.42-t*.11)*h*.018;
+    const eddy=Math.exp(-Math.pow((nx-.72)/.24,2))*Math.sin(nx*5.4-lane*.3+t*.12)*h*.025;
+    return h*(.13+lane*.074)+broad+bend+eddy;
   }
   function draw(now){
     raf=0;if(!document.body.isConnected)return;
-    if(!last)last=now;const dt=Math.min((now-last)/1000,.035);last=now;
+    if(!last)last=now;const dt=Math.min(Math.max((now-last)/1000,0),.035);last=now;
     if(!reduced())time+=dt;
     paintBase();
-    // Draw short trails behind moving tracers so the eye can read the current's direction and speed.
-    ctx.lineCap='round';ctx.globalCompositeOperation='screen';
-    for(const p of particles){
-      const v=flow(p.x,p.y,time,p.seed),step=p.speed*dt*(reduced()?0:1);
-      const tail=Math.min(24,7+p.speed*.19);
-      const x0=p.x,y0=p.y;
-      p.x+=v.x*step;p.y+=v.y*step;
-      // Gentle cross-current makes paths bend and braid instead of forming parallel waves.
-      p.x+=Math.sin(y0*.009+time*.7+p.seed)*step*.38;
-      p.y+=Math.cos(x0*.007-time*.55+p.seed)*step*.28;
-      ctx.beginPath();ctx.moveTo(x0-v.x*tail,y0-v.y*tail);ctx.quadraticCurveTo(x0,y0,p.x,p.y);
-      const alpha=.12+(.16*(.5+.5*Math.sin(p.seed+time)));
-      ctx.strokeStyle='rgba(255,255,255,'+alpha+')';ctx.lineWidth=p.size;ctx.stroke();
-      ctx.beginPath();ctx.arc(p.x,p.y,p.size*.72,0,Math.PI*2);
-      ctx.fillStyle='rgba(45,139,115,'+(alpha*.8)+')';ctx.fill();
-      p.age+=dt*.14;
-      if(p.x<-35||p.x>w+35||p.y<-35||p.y>h+35||p.age>p.life){
-        p.x=Math.random()*w;p.y=Math.random()*h;p.age=0;p.life=.45+Math.random()*.8;p.seed=Math.random()*Math.PI*2;
-      }
-    }
-    ctx.globalCompositeOperation='source-over';
-    // A few longer streamlines make the overall current direction legible at a glance.
-    ctx.globalCompositeOperation='screen';
-    for(let j=0;j<7;j++){
-      const y=h*(.12+j*.13),phase=j*1.73;
+    const lanes=11;
+    // Soft wide bands create depth; their slow, shared phase gives a continuous left-to-right current.
+    ctx.lineCap='round';ctx.lineJoin='round';
+    for(let lane=0;lane<lanes;lane++){
       ctx.beginPath();
-      for(let x=-20;x<=w+20;x+=10){
-        const yy=y+Math.sin(x*.004+time*.22+phase)*h*.045+Math.sin(x*.009-time*.18+phase)*h*.018;
-        if(x===-20)ctx.moveTo(x,yy);else ctx.lineTo(x,yy);
+      for(let x=-20;x<=w+20;x+=8){
+        const y=centerY(x,lane,time);
+        if(x===-20)ctx.moveTo(x,y);else ctx.lineTo(x,y);
       }
-      ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=1.2;ctx.stroke();
+      ctx.strokeStyle=lane%2===0?'rgba(255,255,255,.18)':'rgba(77,158,132,.055)';
+      ctx.lineWidth=lane%3===0?10:5.5;
+      ctx.stroke();
+      ctx.beginPath();
+      for(let x=-20;x<=w+20;x+=8){
+        const y=centerY(x,lane,time)-2.2;
+        if(x===-20)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle='rgba(255,255,255,.24)';ctx.lineWidth=1.1;ctx.stroke();
+      // A restrained moving glint travels along each ribbon, making direction readable.
+      const period=w+260;
+      const glintX=((time*(24+lane%4*3)+lane*period/lanes)%(period))-130;
+      if(glintX>-100&&glintX<w+100){
+        const gy=centerY(glintX,lane,time);
+        const grad=ctx.createLinearGradient(glintX-58,gy,glintX+58,gy);
+        grad.addColorStop(0,'rgba(255,255,255,0)');
+        grad.addColorStop(.5,'rgba(255,255,255,.48)');
+        grad.addColorStop(1,'rgba(255,255,255,0)');
+        ctx.beginPath();ctx.moveTo(glintX-58,gy);ctx.lineTo(glintX+58,gy);
+        ctx.strokeStyle=grad;ctx.lineWidth=2;ctx.stroke();
+      }
     }
-    ctx.globalCompositeOperation='source-over';
+    // One very broad, faint current bend—suggestive of an eddy, never a spinning vortex.
+    ctx.beginPath();
+    for(let x=-20;x<=w+20;x+=8){
+      const nx=x/Math.max(w,1);
+      const y=h*.79+Math.sin(nx*3.1-time*.13)*h*.025+Math.sin(nx*5.2-time*.09)*h*.012;
+      if(x===-20)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle='rgba(255,255,255,.14)';ctx.lineWidth=18;ctx.stroke();
     if(!reduced())raf=requestAnimationFrame(draw);
   }
   function start(){if(!raf)raf=requestAnimationFrame(draw)}
