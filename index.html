@@ -1832,13 +1832,13 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
   <footer class="footer">
     <div class="wrap">
       <div class="footer-top">
-        <a class="footer-brand" href="#top">
+        <div class="footer-brand" role="button" tabindex="0" aria-label="ハモソ公式サイト。管理者入口はロゴを7回タップ">
           <img class="footer-admin-trigger" src="images/logo.jpg" alt="管理者入口" title="サイト管理者入口" loading="lazy" decoding="async">
           <span>
             <strong>明治大学ハーモニカソサエティー</strong>
             <span>MEIJI UNIVERSITY HARMONICA SOCIETY</span>
           </span>
-        </a>
+        </div>
 
         <nav class="footer-links" aria-label="フッターメニュー">
   <a href="#about">ABOUT</a>
@@ -1883,7 +1883,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     });
 
     // 管理者入口：フッター左下のロゴを5秒以内に7回タップ
-    // タップごとに #top へ移動してしまわないよう、フッターのロゴリンクを毎回キャンセルする。
+    // footer-brand はリンクではないため、タップしても #top へ移動しない。
     const adminTrigger = document.querySelector(".footer-brand");
     let adminClickCount = 0;
     let adminClickTimer;
@@ -1892,7 +1892,6 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     const adminEntryUrl = new URL("admin/login.html", document.baseURI).href;
 
     if (adminTrigger) {
-      adminTrigger.setAttribute("aria-label", "ハモソ公式サイト。管理者入口はロゴを7回タップ");
       adminTrigger.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -1904,6 +1903,12 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
         }
         adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 5000);
       }, true);
+      adminTrigger.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          adminTrigger.click();
+        }
+      });
     }
 
     document.addEventListener("keydown", event => {
