@@ -1344,6 +1344,9 @@ body.hamoso-high-contrast header,body.hamoso-high-contrast .site-header,body.ham
 }
 #hamoso-accessibility button{background:rgba(255,255,255,.62)!important;border-color:rgba(255,255,255,.9)!important}
 #hamoso-accessibility button[aria-pressed="true"]{background:rgba(52,69,43,.88)!important;color:#fff!important}
+#hamoso-accessibility .hm-motion-controls{display:grid;grid-template-columns:1fr;gap:5px;margin-top:4px;padding-top:9px;border-top:1px solid rgba(52,69,43,.16)}
+#hamoso-accessibility .hm-motion-title{font-size:11px;font-weight:800;line-height:1.4}
+#hamoso-accessibility .hm-motion-help{font-size:10px;line-height:1.45;color:#526057}
 @media(prefers-reduced-motion:reduce){.hamoso-social-float a,#hm-settings-toggle{transition:none!important}}
 </style>
 \n<style id="hamoso-logo-glass-button">\n#hm-settings-toggle{overflow:hidden!important;padding:3px!important;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(210,238,230,.4))!important}\n#hm-settings-toggle img{display:block;width:100%;height:100%;object-fit:contain;border-radius:50%;filter:drop-shadow(0 1px 1px rgba(255,255,255,.8))}\n#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}\n</style>\n
@@ -1354,6 +1357,16 @@ body.hamoso-high-contrast header,body.hamoso-high-contrast .site-header,body.ham
 #hm-settings-toggle{right:23px!important;bottom:82px!important;z-index:1004!important;width:42px!important;height:42px!important;min-height:42px!important}
 #hamoso-accessibility{right:18px!important;bottom:132px!important;z-index:1003!important;max-height:min(55vh,360px)!important;overflow-y:auto!important}
 @media(max-width:600px){.hamoso-social-float{right:12px!important;bottom:14px!important;gap:7px!important}.hamoso-social-float a{width:42px!important;height:42px!important}#hm-settings-toggle{right:14px!important;bottom:68px!important;width:38px!important;height:38px!important;min-height:38px!important}#hamoso-accessibility{right:10px!important;bottom:112px!important;width:168px!important;max-height:55vh!important;padding:9px!important}}
+</style>
+<style id="hamoso-motion-controls">
+body.hm-motion-reduced *,body.hm-motion-reduced *::before,body.hm-motion-reduced *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+body.hm-motion-reduced .reveal{opacity:1!important;transform:none!important}
+body.hm-motion-reduced .ticker-track{animation:none!important;transform:none!important}
+body.hm-lightweight *,body.hm-lightweight *::before,body.hm-lightweight *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;filter:none!important}
+body.hm-lightweight .reveal{opacity:1!important;transform:none!important}
+body.hm-lightweight .ticker-track{animation:none!important;transform:none!important}
+body.hm-lightweight::before,body.hm-lightweight::after{display:none!important}
+body.hm-lightweight header,body.hm-lightweight .site-header,body.hm-lightweight .header,body.hm-lightweight .hamoso-social-float a,body.hm-lightweight #hm-settings-toggle,body.hm-lightweight #hamoso-accessibility{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 </style>
 <style id="hamoso-liquid-wave-background">
 body{position:relative!important;isolation:isolate;background:#e7f2ed!important;background-image:linear-gradient(135deg,#f8f7ef 0%,#d8eee6 34%,#b8ded3 62%,#f4f2e8 100%)!important;background-size:180% 180%!important;animation:hm-liquid-base 22s ease-in-out infinite alternate}
@@ -1986,17 +1999,19 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     <a class="instagram" href="https://www.instagram.com/meiji_hamoso/" target="_blank" rel="noopener noreferrer" aria-label="ハモソ公式Instagram（新しいタブで開く）" title="公式Instagram">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
     </a>
+    <a class="youtube" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="ハモソ公式YouTube（新しいタブで開く）" title="公式YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4L15.8 12l-6.2 3.6Z"/></svg></a>
   </nav>
 <button type="button" id="hm-settings-toggle" aria-label="表示設定を開く" aria-expanded="false" aria-controls="hamoso-accessibility" title="表示設定"><svg class="hm-eye-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>
-<nav id="hamoso-accessibility" aria-label="表示設定" hidden><span class="hm-a11y-label">表示設定</span><div class="hm-size-controls"><button type="button" data-hm-size="small" aria-label="文字を小さくする">A−</button><button type="button" data-hm-size="normal" aria-label="文字サイズを標準にする">A</button><button type="button" data-hm-size="large" aria-label="文字を大きくする">A＋</button></div><button type="button" id="hm-contrast" aria-pressed="false">高コントラスト</button></nav>
+<nav id="hamoso-accessibility" aria-label="表示設定" hidden><span class="hm-a11y-label">表示設定</span><div class="hm-size-controls"><button type="button" data-hm-size="small" aria-label="文字を小さくする">A−</button><button type="button" data-hm-size="normal" aria-label="文字サイズを標準にする">A</button><button type="button" data-hm-size="large" aria-label="文字を大きくする">A＋</button></div><button type="button" id="hm-contrast" aria-pressed="false">高コントラスト</button><div class="hm-motion-controls" role="group" aria-label="アニメーションと動作負荷"><span class="hm-motion-title">動き・軽量表示</span><button type="button" data-hm-motion="standard" aria-pressed="false">標準</button><button type="button" data-hm-motion="reduced" aria-pressed="false">アニメーション軽減</button><button type="button" data-hm-motion="light" aria-pressed="false">軽量表示</button><span class="hm-motion-help">設定はこのブラウザに保存されます。</span></div></nav>
 <script id="hamoso-accessibility-script">
 (function(){
  const root=document.documentElement,body=document.body,bar=document.getElementById('hamoso-accessibility'),contrast=document.getElementById('hm-contrast'),toggle=document.getElementById('hm-settings-toggle');
  if(!bar||!body||!toggle)return;
  toggle.addEventListener('click',()=>{const open=bar.hidden;bar.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'表示設定を閉じる':'表示設定を開く');});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!bar.hidden){bar.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','表示設定を開く');}});
- let size='normal',high=false;
- try{size=localStorage.getItem('hm-text-size')||'normal';high=localStorage.getItem('hm-high-contrast')==='true'}catch(e){}
+ let size='normal',high=false,motion='';
+ try{size=localStorage.getItem('hm-text-size')||'normal';high=localStorage.getItem('hm-high-contrast')==='true';motion=localStorage.getItem('hm-motion-mode')||''}catch(e){}
+ if(!motion)motion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'standard';
  const scales={small:0.85,normal:1,large:1.3};
  const textSelector='h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small,strong,em,b,i,span,div';
  const targets=Array.from(body.querySelectorAll(textSelector)).filter(el=>el!==bar&&!bar.contains(el)&&el.children.length===0||el.matches('h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small'));
@@ -2010,9 +2025,13 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
   body.classList.toggle('hamoso-high-contrast',high);
   bar.querySelectorAll('[data-hm-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmSize===size)));
   contrast.setAttribute('aria-pressed',String(high));
+  body.classList.toggle('hm-motion-reduced',motion==='reduced');
+  body.classList.toggle('hm-lightweight',motion==='light');
+  bar.querySelectorAll('[data-hm-motion]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmMotion===motion)));
  }
  bar.querySelectorAll('[data-hm-size]').forEach(b=>b.addEventListener('click',()=>{size=b.dataset.hmSize;try{localStorage.setItem('hm-text-size',size)}catch(e){}apply()}));
  contrast.addEventListener('click',()=>{high=!high;try{localStorage.setItem('hm-high-contrast',String(high))}catch(e){}apply()});
+ bar.querySelectorAll('[data-hm-motion]').forEach(b=>b.addEventListener('click',()=>{motion=b.dataset.hmMotion;try{localStorage.setItem('hm-motion-mode',motion)}catch(e){}apply()}));
  apply();
 })();
 </script>
@@ -2166,12 +2185,18 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     const social = media.social || {};
     const socialLinks = [
       { key: "x", selector: '.hamoso-social-float a[aria-label*="公式X"]' },
-      { key: "instagram", selector: '.hamoso-social-float a[aria-label*="公式Instagram"]' }
+      { key: "instagram", selector: '.hamoso-social-float a[aria-label*="公式Instagram"]' },
+      { key: "youtube", selector: '.hamoso-social-float a[aria-label*="公式YouTube"]' }
     ];
     socialLinks.forEach(({key, selector}) => {
       const link = document.querySelector(selector);
       if (link && social[key] && isHttpsUrl(social[key])) link.href = social[key];
     });
+    const youtubeLink = document.querySelector('.hamoso-social-float a[aria-label*="公式YouTube"]');
+    if (youtubeLink && !social.youtube) {
+      const firstVideo = Array.isArray(media.videos) ? media.videos.map(item => typeof item === "string" ? item : item && item.url).find(url => typeof url === "string" && isHttpsUrl(url) && /youtube\\.com|youtu\\.be/i.test(url)) : "";
+      if (firstVideo) youtubeLink.href = firstVideo;
+    }
     const join = document.querySelector("#join .join-inner > div:first-child > p");
     const recruit = data.recruit || {};
     const recruitTitle = document.querySelector("#join .join-inner > div:first-child h2");
