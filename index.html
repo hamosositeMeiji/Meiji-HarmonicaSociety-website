@@ -1882,41 +1882,29 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       });
     });
 
-    // 管理者入口：ヘッダーまたはフッターのロゴを2.5秒以内に7回タップ
-    // 通常の1回タップはこれまでどおりトップへ戻る。
-    const adminTriggers = document.querySelectorAll(".brand, .footer-admin-trigger");
+    // 管理者入口：フッター左下のロゴを5秒以内に7回タップ
+    // タップごとに #top へ移動してしまわないよう、フッターのロゴリンクを毎回キャンセルする。
+    const adminTrigger = document.querySelector(".footer-brand");
     let adminClickCount = 0;
     let adminClickTimer;
     let adminKeyBuffer = "";
     const adminKeySequence = "HAMOSO";
-    const adminEntryUrl = "admin/login.html";
+    const adminEntryUrl = new URL("admin/login.html", document.baseURI).href;
 
-    adminTriggers.forEach((adminTrigger) => {
+    if (adminTrigger) {
+      adminTrigger.setAttribute("aria-label", "ハモソ公式サイト。管理者入口はロゴを7回タップ");
       adminTrigger.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         adminClickCount += 1;
         clearTimeout(adminClickTimer);
         if (adminClickCount >= 7) {
-          event.preventDefault();
-          event.stopPropagation();
-          window.location.href = adminEntryUrl;
+          window.location.assign(adminEntryUrl);
           return;
         }
-        adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2500);
+        adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 5000);
       }, true);
-      adminTrigger.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          // キーボード操作でもロゴを連続操作して管理者入口へ進める
-          adminClickCount += 1;
-          clearTimeout(adminClickTimer);
-          if (adminClickCount >= 7) {
-            event.preventDefault();
-            window.location.href = adminEntryUrl;
-            return;
-          }
-          adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2500);
-        }
-      });
-    });
+    }
 
     document.addEventListener("keydown", event => {
       if (event.ctrlKey || event.altKey || event.metaKey || event.key.length !== 1) return;
