@@ -1882,41 +1882,41 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       });
     });
 
-    // 管理者入口：フッター左下のロゴを7回クリック、または HAM OSO を続けて入力
-    const adminTrigger = document.querySelector(".footer-admin-trigger");
+    // 管理者入口：ヘッダーまたはフッターのロゴを2.5秒以内に7回タップ
+    // 通常の1回タップはこれまでどおりトップへ戻る。
+    const adminTriggers = document.querySelectorAll(".brand, .footer-admin-trigger");
     let adminClickCount = 0;
     let adminClickTimer;
     let adminKeyBuffer = "";
     const adminKeySequence = "HAMOSO";
     const adminEntryUrl = "admin/login.html";
 
-    if (adminTrigger) {
-      adminTrigger.setAttribute("tabindex", "0");
-      adminTrigger.setAttribute("role", "button");
-      adminTrigger.setAttribute("aria-label", "管理者入口。7回クリックで認証画面へ");
-
-      const countAdminClick = (event) => {
-        event.preventDefault();
+    adminTriggers.forEach((adminTrigger) => {
+      adminTrigger.addEventListener("click", (event) => {
         adminClickCount += 1;
         clearTimeout(adminClickTimer);
         if (adminClickCount >= 7) {
+          event.preventDefault();
+          event.stopPropagation();
           window.location.href = adminEntryUrl;
           return;
         }
         adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2500);
-      };
-      adminTrigger.addEventListener("click", event => {
-        event.preventDefault();
-        event.stopPropagation();
-        countAdminClick(event);
       }, true);
-      adminTrigger.addEventListener("keydown", event => {
+      adminTrigger.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          countAdminClick(event);
+          // キーボード操作でもロゴを連続操作して管理者入口へ進める
+          adminClickCount += 1;
+          clearTimeout(adminClickTimer);
+          if (adminClickCount >= 7) {
+            event.preventDefault();
+            window.location.href = adminEntryUrl;
+            return;
+          }
+          adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2500);
         }
       });
-    }
+    });
 
     document.addEventListener("keydown", event => {
       if (event.ctrlKey || event.altKey || event.metaKey || event.key.length !== 1) return;
