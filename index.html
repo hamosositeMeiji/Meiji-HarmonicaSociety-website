@@ -1365,15 +1365,12 @@ body.hm-lightweight::before,body.hm-lightweight::after{-webkit-backdrop-filter:n
 body.hm-lightweight header,body.hm-lightweight .site-header,body.hm-lightweight .header,body.hm-lightweight .hamoso-social-float a,body.hm-lightweight #hm-settings-toggle,body.hm-lightweight #hamoso-accessibility{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 </style>
 <style id="hamoso-liquid-wave-background">
-/* Animated SVG turbulence distorts a soft color field into flowing, water-like currents. */
 html,body{min-height:100%}
+html{background:#eaf4ef!important}
 body{position:relative!important;isolation:isolate;background:transparent!important}
-#hm-water-filter-defs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
-body:before{content:""!important;display:block!important;position:fixed!important;inset:-5%!important;z-index:-1!important;pointer-events:none!important;opacity:1!important;background:radial-gradient(ellipse at 18% 24%,rgba(255,255,255,.98) 0%,rgba(255,255,255,.58) 18%,transparent 45%),radial-gradient(ellipse at 82% 32%,rgba(47,158,133,.62) 0%,rgba(110,197,174,.34) 24%,transparent 52%),radial-gradient(ellipse at 46% 82%,rgba(180,225,210,.94) 0%,rgba(111,190,170,.38) 30%,transparent 58%),linear-gradient(135deg,#f8f7ef 0%,#d4eee5 45%,#acd9cc 72%,#f4f2e8 100%)!important;background-size:140% 140%!important;background-position:center!important;filter:url(#hm-water-displacement)!important;animation:hm-water-flow 18s ease-in-out infinite alternate!important;will-change:transform,filter}
-@keyframes hm-water-flow{0%{transform:scale(1) translate3d(-1.5%,-1%,0)}50%{transform:scale(1.06) translate3d(1.5%,1%,0)}100%{transform:scale(1.02) translate3d(-1%,2%,0)}}
-body.hm-motion-standard:before{animation:hm-water-flow 18s ease-in-out infinite alternate!important}
-body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!important;transform:none!important;filter:none!important}
-@media(prefers-reduced-motion:reduce){body:not(.hm-motion-standard):before{animation:none!important;transform:none!important;filter:none!important}}
+body:before{content:none!important;display:none!important}
+#hm-fluid-canvas{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:-1!important;display:block!important;pointer-events:none!important;opacity:1!important}
+body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{animation:none!important}
 </style><style id="hamoso-eye-settings-icon">#hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}</style>
   <style id="latest-news-scroll">
     /* LATEST NEWS：記事カードを横スクロールできるようにする */
@@ -1389,7 +1386,7 @@ body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!importan
 </head>
 
 <body>
-<svg id="hm-water-filter-defs" aria-hidden="true" focusable="false"><filter id="hm-water-displacement" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB"><feTurbulence id="hm-water-turbulence" type="fractalNoise" baseFrequency="0.009 0.014" numOctaves="2" seed="8" result="noise"><animate attributeName="baseFrequency" dur="14s" values="0.008 0.012;0.014 0.009;0.009 0.016;0.008 0.012" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" in2="noise" scale="42" xChannelSelector="R" yChannelSelector="G"><animate attributeName="scale" dur="11s" values="28;55;36;48;28" repeatCount="indefinite"/></feDisplacementMap></filter></svg>
+
 
   <header class="header">
     <div class="wrap nav">
@@ -2259,5 +2256,39 @@ body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!importan
 })();
 </script>
 
+
+<script id="hamoso-fluid-background-script">
+(function(){
+  if(document.getElementById('hm-fluid-canvas')) return;
+  const canvas=document.createElement('canvas');canvas.id='hm-fluid-canvas';canvas.setAttribute('aria-hidden','true');
+  document.body.prepend(canvas);
+  const ctx=canvas.getContext('2d');if(!ctx)return;
+  let w=0,h=0,dpr=1,raf=0,t=0,last=0;
+  const reduced=()=>document.body.classList.contains('hm-motion-reduced')||document.body.classList.contains('hm-lightweight');
+  function resize(){dpr=Math.min(window.devicePixelRatio||1,1.5);w=window.innerWidth;h=window.innerHeight;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+  function blob(x,y,rx,ry,stops){const g=ctx.createRadialGradient(x,y,0,x,y,Math.max(rx,ry));stops.forEach(s=>g.addColorStop(s[0],s[1]));ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()}
+  function draw(now){
+    raf=0;if(!document.body.isConnected)return;
+    if(!last)last=now;const dt=Math.min((now-last)/1000,.05);last=now;if(!reduced())t+=dt;
+    ctx.clearRect(0,0,w,h);
+    const x1=w*(.22+.13*Math.sin(t*.22)),y1=h*(.27+.17*Math.cos(t*.19));
+    const x2=w*(.78+.16*Math.cos(t*.18)),y2=h*(.38+.19*Math.sin(t*.24));
+    const x3=w*(.5+.2*Math.sin(t*.16+2)),y3=h*(.83+.12*Math.cos(t*.2));
+    const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#f8f7ef');bg.addColorStop(.48,'#d5eee5');bg.addColorStop(.75,'#b8dfd2');bg.addColorStop(1,'#f4f2e8');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+    blob(x1,y1,w*.62,h*.65,[[0,'rgba(255,255,255,.96)'],[.35,'rgba(255,255,255,.58)'],[1,'rgba(255,255,255,0)']]);
+    blob(x2,y2,w*.7,h*.62,[[0,'rgba(35,151,126,.56)'],[.38,'rgba(88,185,158,.28)'],[1,'rgba(88,185,158,0)']]);
+    blob(x3,y3,w*.72,h*.7,[[0,'rgba(172,222,207,.8)'],[.42,'rgba(121,195,174,.28)'],[1,'rgba(121,195,174,0)']]);
+    // Long flowing bands add visible water-like currents rather than a simple color fade.
+    ctx.globalCompositeOperation='screen';
+    for(let k=0;k<5;k++){ctx.beginPath();for(let x=-40;x<=w+40;x+=12){const y=h*(.22+k*.145)+Math.sin(x*.006+t*.55+k*.8)*h*.075+Math.sin(x*.012-t*.32+k)*h*.025;if(x===-40)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.strokeStyle='rgba(255,255,255,'+(0.09+k*.012)+')';ctx.lineWidth=18+k*7;ctx.stroke()}
+    ctx.globalCompositeOperation='source-over';
+    if(!reduced())raf=requestAnimationFrame(draw);
+  }
+  function start(){if(!raf)raf=requestAnimationFrame(draw)}
+  window.addEventListener('resize',resize,{passive:true});document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0}else{last=0;start()}});
+  const observer=new MutationObserver(()=>{if(reduced()){if(raf)cancelAnimationFrame(raf);raf=0;draw(performance.now())}else start()});observer.observe(document.body,{attributes:true,attributeFilter:['class']});
+  resize();draw(0);start();
+})();
+</script>
 </body>
 </html>
