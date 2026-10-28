@@ -1,8 +1,22 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/</loc>
+  </url>
+  <url>
+    <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/activities/</loc>
+  </url>
+  <url>
+    <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/contact/</loc>
+  </url>
+  <url>
+    <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/events/2026-11-21/</loc>
+  </url>
+  <url>
+    <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/parts/</loc>
+  </url>
+  <url>
+    <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/schedule/</loc>
   </url>
   <url>
     <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/news/</loc>
@@ -12,6 +26,12 @@
   </url>
   <url>
     <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/news/2026/2026-activities.html</loc>
+  </url>
+  <url>
+    <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/news/2026/homecoming-day.html</loc>
+  </url>
+  <url>
+    <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/news/2026/odawara-live.html</loc>
   </url>
   <url>
     <loc>https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/news/2026/</loc>
