@@ -1232,16 +1232,9 @@ button:focus-visible {
   outline-offset: 4px;
 }
 
-/* 動きを控えたい人にはアニメーションを減らす */
+/* OS側で動きを減らす設定はスクロールを穏やかにする。アニメーションの制御はサイト内設定に一本化する。 */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-  }
+  html { scroll-behavior: auto !important; }
 }
   </style>
 
@@ -1277,7 +1270,7 @@ body.hamoso-high-contrast p,body.hamoso-high-contrast li,body.hamoso-high-contra
 body.hamoso-high-contrast a{color:#0645ad!important;text-decoration:underline!important}
 body.hamoso-high-contrast header,body.hamoso-high-contrast .site-header,body.hamoso-high-contrast .header,body.hamoso-high-contrast section,body.hamoso-high-contrast article,body.hamoso-high-contrast .card,body.hamoso-high-contrast .news-card{background-color:#fff!important;border-color:#333!important}
 @media(max-width:520px){#hamoso-accessibility{right:8px;bottom:8px;gap:4px;padding:7px;border-radius:12px}#hamoso-accessibility .hm-a11y-label{display:none}#hamoso-accessibility button{min-width:32px;min-height:32px;padding:5px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
 
 #hamoso-accessibility{right:18px;bottom:92px;display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px;min-width:154px;border:1px solid #aeb99a;border-radius:16px;background:rgba(255,255,250,.98);box-shadow:0 8px 28px rgba(31,42,24,.22);color:#26311d}#hamoso-accessibility .hm-a11y-label{display:block;font-size:12px;font-weight:800;letter-spacing:.04em;text-align:center;padding-bottom:2px}#hamoso-accessibility button{width:100%;min-height:40px;padding:8px 10px;border:1px solid #8f9d78;border-radius:10px;background:#fff;color:#26311d;font:700 14px/1.2 sans-serif;cursor:pointer;box-shadow:0 1px 2px rgba(20,30,15,.08)}#hamoso-accessibility button:hover{background:#edf1e5;transform:translateY(-1px)}#hamoso-accessibility button[aria-pressed="true"]{background:#34452b;color:#fff;border-color:#34452b}#hamoso-accessibility button:focus-visible{outline:3px solid #245fc7;outline-offset:3px}@media(max-width:520px){#hamoso-accessibility{right:10px;bottom:84px;min-width:132px;padding:9px;gap:6px}#hamoso-accessibility button{min-height:38px;font-size:13px}}
 #hamoso-accessibility{right:18px;bottom:92px;display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px;min-width:154px;border:1px solid #aeb99a;border-radius:16px;background:rgba(255,255,250,.98);box-shadow:0 8px 28px rgba(31,42,24,.22);color:#26311d}#hamoso-accessibility .hm-a11y-label{display:block;font-size:12px;font-weight:800;letter-spacing:.04em;text-align:center;padding-bottom:2px}#hamoso-accessibility button{width:100%;min-height:40px;padding:8px 10px;border:1px solid #8f9d78;border-radius:10px;background:#fff;color:#26311d;font:700 14px/1.2 sans-serif;cursor:pointer;box-shadow:0 1px 2px rgba(20,30,15,.08)}#hamoso-accessibility button:hover{background:#edf1e5;transform:translateY(-1px)}#hamoso-accessibility button[aria-pressed="true"]{background:#34452b;color:#fff;border-color:#34452b}#hamoso-accessibility button:focus-visible{outline:3px solid #245fc7;outline-offset:3px}@media(max-width:520px){#hamoso-accessibility{right:10px;bottom:84px;min-width:132px;padding:9px;gap:6px}#hamoso-accessibility button{min-height:38px;font-size:13px}}
@@ -1376,8 +1369,9 @@ body.hm-lightweight header,body.hm-lightweight .site-header,body.hm-lightweight 
 body{position:relative!important;background-color:#e7f2ed!important;background-image:linear-gradient(135deg,#f8f7ef 0%,#d8eee6 34%,#b8ded3 62%,#f4f2e8 100%)!important;background-size:180% 180%!important;animation:hm-liquid-base 22s ease-in-out infinite alternate}
 body:before,body:after{content:none!important;display:none!important}
 @keyframes hm-liquid-base{0%{background-position:0% 20%}100%{background-position:100% 80%}}
+body.hm-motion-standard{animation:hm-liquid-base 22s ease-in-out infinite alternate!important;background-size:180% 180%!important}
 body.hm-motion-reduced,body.hm-lightweight{animation:none!important;background-position:50% 50%!important;background-size:100% 100%!important}
-@media(prefers-reduced-motion:reduce){body{animation:none!important;background-position:50% 50%!important;background-size:100% 100%!important}}
+@media(prefers-reduced-motion:reduce){body:not(.hm-motion-standard){animation:none!important;background-position:50% 50%!important;background-size:100% 100%!important}}
 </style><style id="hamoso-eye-settings-icon">#hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}</style>
   <style id="latest-news-scroll">
     /* LATEST NEWS：記事カードを横スクロールできるようにする */
@@ -2026,6 +2020,7 @@ body.hm-motion-reduced,body.hm-lightweight{animation:none!important;background-p
   body.classList.toggle('hamoso-high-contrast',high);
   bar.querySelectorAll('[data-hm-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmSize===size)));
   contrast.setAttribute('aria-pressed',String(high));
+  body.classList.toggle('hm-motion-standard',motion==='standard');
   body.classList.toggle('hm-motion-reduced',motion==='reduced');
   body.classList.toggle('hm-lightweight',motion==='light');
   bar.querySelectorAll('[data-hm-motion]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmMotion===motion)));
