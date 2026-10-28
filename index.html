@@ -2016,5 +2016,139 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
  apply();
 })();
 </script>
+
+<script id="hamoso-managed-site-content">
+(async function loadManagedSiteContent(){
+  const API = "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/site-content";
+  const isHttpsUrl = value => {
+    try { return new URL(value, location.href).protocol === "https:"; } catch { return false; }
+  };
+  const addText = (tag, className, value) => {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    el.textContent = String(value || "");
+    return el;
+  };
+  try {
+    const response = await fetch(API, { cache: "no-store" });
+    if (!response.ok) return;
+    const result = await response.json();
+    const data = result && result.content;
+    if (!data || typeof data !== "object") return;
+
+    const activities = data.activities || {};
+    if (activities.text) {
+      const paragraphs = document.querySelectorAll("#about .about-copy > p");
+      if (paragraphs[0]) paragraphs[0].textContent = activities.text;
+      if (paragraphs[1]) paragraphs[1].hidden = true;
+    }
+    const activityPhotos = Array.isArray(activities.photos)
+      ? activities.photos.filter(url => typeof url === "string" && isHttpsUrl(url)).slice(0, 12) : [];
+    if (activityPhotos.length) {
+      const host = document.querySelector("#activities .activity-grid");
+      if (host) {
+        const gallery = document.createElement("div");
+        gallery.className = "managed-photo-gallery";
+        gallery.setAttribute("aria-label", "活動写真");
+        gallery.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:28px";
+        activityPhotos.forEach((url, index) => {
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = "ハモソの活動写真 " + (index + 1);
+          img.loading = "lazy";
+          img.style.cssText = "width:100%;height:220px;object-fit:cover;border-radius:8px;background:#e4e4da";
+          gallery.append(img);
+        });
+        host.insertAdjacentElement("afterend", gallery);
+      }
+    }
+
+    const media = data.media || {};
+    const videoUrls = Array.isArray(media.videos)
+      ? media.videos.filter(url => typeof url === "string" && isHttpsUrl(url)).slice(0, 12) : [];
+    if (videoUrls.length) {
+      const section = document.createElement("section");
+      section.className = "section wrap managed-video-section";
+      section.id = "managed-videos";
+      section.append(addText("div", "eyebrow", "HAMO-SO / PERFORMANCE"));
+      const heading = addText("h2", "", media.videoTitle || "演奏動画");
+      heading.style.cssText = "font-size:clamp(30px,4vw,48px);margin:12px 0 24px";
+      section.append(heading);
+      const list = document.createElement("div");
+      list.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px";
+      videoUrls.forEach((url, index) => {
+        const link = addText("a", "pill", "演奏動画 " + (index + 1) + " ↗");
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.style.cssText = "justify-content:center;padding:18px;border-radius:10px;background:white";
+        list.append(link);
+      });
+      section.append(list);
+      const concert = document.querySelector("#concert");
+      if (concert) concert.insertAdjacentElement("beforebegin", section);
+    }
+
+    const social = media.social || {};
+    const socialLinks = [
+      { key: "x", selector: '.hamoso-social-float a[aria-label*="公式X"]' },
+      { key: "instagram", selector: '.hamoso-social-float a[aria-label*="公式Instagram"]' }
+    ];
+    socialLinks.forEach(({key, selector}) => {
+      const link = document.querySelector(selector);
+      if (link && social[key] && isHttpsUrl(social[key])) link.href = social[key];
+    });
+    const join = document.querySelector("#join .join-inner > div:first-child > p");
+    const recruit = data.recruit || {};
+    if (join && recruit.text) join.textContent = recruit.text;
+    const contact = document.querySelector('#join .join-actions a[href="contact/index.html"]');
+    if (contact && recruit.contactUrl && isHttpsUrl(recruit.contactUrl)) {
+      contact.href = recruit.contactUrl;
+      contact.target = "_blank";
+      contact.rel = "noopener noreferrer";
+    }
+
+    const schedule = data.schedule || {};
+    const scheduleList = document.querySelector("#schedule .schedule-list");
+    if (scheduleList && Array.isArray(schedule.regular) && schedule.regular.length) {
+      scheduleList.replaceChildren();
+      schedule.regular.slice(0, 12).forEach(item => {
+        const row = document.createElement("div");
+        row.className = "schedule-row";
+        const day = addText("div", "day", item.day || "");
+        const detail = document.createElement("div");
+        detail.append(addText("strong", "", item.time || ""));
+        detail.append(addText("p", "", item.label || ""));
+        row.append(day, detail);
+        scheduleList.append(row);
+      });
+    }
+    const note = document.querySelector("#schedule .schedule-note");
+    if (note && schedule.location) {
+      note.replaceChildren(document.createTextNode("主な活動場所：" + schedule.location));
+      if (schedule.notice) {
+        note.append(document.createElement("br"));
+        note.append(document.createTextNode("※" + schedule.notice));
+      }
+    }
+    if (Array.isArray(schedule.yearly) && schedule.yearly.length && scheduleList) {
+      const yearly = document.createElement("div");
+      yearly.style.cssText = "margin-top:24px;padding:18px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.55)";
+      yearly.append(addText("h3", "", "年間の主な活動"));
+      schedule.yearly.slice(0, 12).forEach(item => {
+        const line = document.createElement("p");
+        line.style.cssText = "margin:8px 0;color:var(--muted);font-size:13px";
+        line.textContent = (item.when || "") + "　" + (item.title || "");
+        yearly.append(line);
+      });
+      scheduleList.insertAdjacentElement("afterend", yearly);
+    }
+  } catch (error) {
+    // 公開APIが未デプロイ・未設定でも、既存の静的サイト表示は維持する。
+    console.info("管理コンテンツは未読込のため、既存の表示を維持します。");
+  }
+})();
+</script>
+
 </body>
 </html>
