@@ -1365,8 +1365,9 @@ body.hm-lightweight::before,body.hm-lightweight::after{-webkit-backdrop-filter:n
 body.hm-lightweight header,body.hm-lightweight .site-header,body.hm-lightweight .header,body.hm-lightweight .hamoso-social-float a,body.hm-lightweight #hm-settings-toggle,body.hm-lightweight #hamoso-accessibility{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 </style>
 <style id="hamoso-liquid-wave-background">
-/* Layered gradients create a soft, liquid-like movement without pseudo-elements or extra stacking contexts. */
-body{position:relative!important;background-color:#e7f2ed!important;background-image:radial-gradient(ellipse at 18% 30%,rgba(255,255,255,.92) 0%,rgba(255,255,255,.22) 32%,transparent 58%),radial-gradient(ellipse at 78% 28%,rgba(74,170,151,.46) 0%,rgba(119,199,180,.18) 38%,transparent 66%),radial-gradient(ellipse at 55% 88%,rgba(188,226,213,.82) 0%,rgba(125,193,176,.2) 42%,transparent 70%),linear-gradient(135deg,#f8f7ef 0%,#d8eee6 34%,#b8ded3 62%,#f4f2e8 100%)!important;background-size:220% 220%,190% 190%,170% 170%,180% 180%!important;background-position:0% 20%,100% 10%,10% 100%,0% 20%!important;animation:hm-liquid-base 24s ease-in-out infinite alternate}
+/* Keep the background animation visible and independent of the user's OS reduced-motion preference; the site's own setting controls it. */
+html,body{min-height:100%}
+body{position:relative!important;background-color:#e7f2ed!important;background-image:radial-gradient(ellipse at 18% 30%,rgba(255,255,255,.92) 0%,rgba(255,255,255,.22) 32%,transparent 58%),radial-gradient(ellipse at 78% 28%,rgba(74,170,151,.46) 0%,rgba(119,199,180,.18) 38%,transparent 66%),radial-gradient(ellipse at 55% 88%,rgba(188,226,213,.82) 0%,rgba(125,193,176,.2) 42%,transparent 70%),linear-gradient(135deg,#f8f7ef 0%,#d8eee6 34%,#b8ded3 62%,#f4f2e8 100%)!important;background-size:220% 220%,190% 190%,170% 170%,180% 180%!important;background-position:0% 20%,100% 10%,10% 100%,0% 20%!important;animation:hm-liquid-base 24s ease-in-out infinite alternate!important}
 body:before,body:after{content:none!important;display:none!important}
 @keyframes hm-liquid-base{
 0%{background-position:0% 20%,100% 10%,10% 100%,0% 20%}
