@@ -29,12 +29,13 @@ jobs:
             fiscal_year=$current_year
           fi
           oldest_kept=$((fiscal_year - 9))
-          protected_label="削除保護（${oldest_kept}年度以前の記事）"
+          protected_label="削除保護（${oldest_kept}年度より前の記事）"
           protected_dir="news/${protected_label}"
 
           echo "=== SAFE MODE: review only ==="
           echo "Fiscal year: ${fiscal_year}"
           echo "Keep active archive folders from: ${oldest_kept}"
+          echo "Move rule: protect years strictly less than ${oldest_kept}; retain ${oldest_kept} and later."
           echo "Proposed protected folder: ${protected_dir}"
           echo "This workflow has read-only permissions and will not move or delete files."
 
