@@ -2042,6 +2042,10 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
       if (title) title.textContent = activities.title;
     }
     if (activities.text) {
+      // Keep the managed activity description beside its managed title,
+      // and also show it in the ABOUT introduction for consistency.
+      const activityDescription = document.querySelector("#activities .section-head > p");
+      if (activityDescription) activityDescription.textContent = activities.text;
       const paragraphs = document.querySelectorAll("#about .about-copy > p");
       if (paragraphs[0]) paragraphs[0].textContent = activities.text;
       if (paragraphs[1]) paragraphs[1].hidden = true;
