@@ -1365,18 +1365,19 @@ body.hm-lightweight::before,body.hm-lightweight::after{-webkit-backdrop-filter:n
 body.hm-lightweight header,body.hm-lightweight .site-header,body.hm-lightweight .header,body.hm-lightweight .hamoso-social-float a,body.hm-lightweight #hm-settings-toggle,body.hm-lightweight #hamoso-accessibility{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 </style>
 <style id="hamoso-liquid-wave-background">
-/* Keep the background animation visible and independent of the user's OS reduced-motion preference; the site's own setting controls it. */
+/* A dedicated fixed layer makes the moving colors visible behind transparent page sections. */
 html,body{min-height:100%}
-body{position:relative!important;background-color:#e7f2ed!important;background-image:radial-gradient(ellipse at 18% 30%,rgba(255,255,255,.92) 0%,rgba(255,255,255,.22) 32%,transparent 58%),radial-gradient(ellipse at 78% 28%,rgba(74,170,151,.46) 0%,rgba(119,199,180,.18) 38%,transparent 66%),radial-gradient(ellipse at 55% 88%,rgba(188,226,213,.82) 0%,rgba(125,193,176,.2) 42%,transparent 70%),linear-gradient(135deg,#f8f7ef 0%,#d8eee6 34%,#b8ded3 62%,#f4f2e8 100%)!important;background-size:220% 220%,190% 190%,170% 170%,180% 180%!important;background-position:0% 20%,100% 10%,10% 100%,0% 20%!important;animation:hm-liquid-base 24s ease-in-out infinite alternate!important}
-body:before,body:after{content:none!important;display:none!important}
+body{position:relative!important;isolation:isolate;background:transparent!important}
+body:before{content:""!important;display:block!important;position:fixed!important;inset:-18%!important;z-index:-1!important;pointer-events:none!important;opacity:1!important;background-color:#e7f2ed!important;background-image:radial-gradient(ellipse at 18% 30%,rgba(255,255,255,.98) 0%,rgba(255,255,255,.26) 30%,transparent 58%),radial-gradient(ellipse at 78% 28%,rgba(55,160,139,.55) 0%,rgba(119,199,180,.2) 38%,transparent 66%),radial-gradient(ellipse at 55% 88%,rgba(188,226,213,.9) 0%,rgba(125,193,176,.25) 42%,transparent 70%),linear-gradient(135deg,#f8f7ef 0%,#d8eee6 34%,#b8ded3 62%,#f4f2e8 100%)!important;background-size:180% 180%,170% 170%,160% 160%,150% 150%!important;background-position:0% 20%,100% 10%,10% 100%,0% 20%!important;animation:hm-liquid-base 16s ease-in-out infinite alternate!important;will-change:background-position}
+body:after{content:none!important;display:none!important}
 @keyframes hm-liquid-base{
 0%{background-position:0% 20%,100% 10%,10% 100%,0% 20%}
 50%{background-position:70% 75%,15% 65%,90% 15%,55% 50%}
 100%{background-position:100% 80%,0% 100%,35% 0%,100% 80%}
 }
-body.hm-motion-standard{animation:hm-liquid-base 24s ease-in-out infinite alternate!important}
-body.hm-motion-reduced,body.hm-lightweight{animation:none!important;background-position:50% 50%,50% 50%,50% 50%,50% 50%!important;background-size:100% 100%,100% 100%,100% 100%,100% 100%!important}
-@media(prefers-reduced-motion:reduce){body:not(.hm-motion-standard){animation:none!important;background-position:50% 50%,50% 50%,50% 50%,50% 50%!important;background-size:100% 100%,100% 100%,100% 100%,100% 100%!important}}
+body.hm-motion-standard:before{animation:hm-liquid-base 16s ease-in-out infinite alternate!important}
+body.hm-motion-reduced:before,body.hm-lightweight:before{animation:none!important;background-position:50% 50%,50% 50%,50% 50%,50% 50%!important;background-size:100% 100%,100% 100%,100% 100%,100% 100%!important}
+@media(prefers-reduced-motion:reduce){body:not(.hm-motion-standard):before{animation:none!important;background-position:50% 50%,50% 50%,50% 50%,50% 50%!important;background-size:100% 100%,100% 100%,100% 100%,100% 100%!important}}
 </style><style id="hamoso-eye-settings-icon">#hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}</style>
   <style id="latest-news-scroll">
     /* LATEST NEWS：記事カードを横スクロールできるようにする */
