@@ -216,6 +216,10 @@ a:hover .arrow {
     }
 
     .menu-toggle {
+      position: relative;
+      z-index: 112;
+      pointer-events: auto;
+      touch-action: manipulation;
       display: none;
       border: 1px solid var(--line);
       background: transparent;
@@ -1064,7 +1068,9 @@ a:hover .arrow {
 
       .section-head p { margin-top: 18px; }
 
-      .nav { min-height: 68px; }
+      .header { z-index: 110; }
+      .nav { position: relative; min-height: 68px; }
+      .nav-links { z-index: 111; }
       .brand img { width: 38px; height: 38px; }
       .brand-text strong { font-size: 13px; }
       .brand-text small { font-size: 8px; }
@@ -1892,24 +1898,33 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     const menuToggle = document.getElementById("menuToggle");
     const navLinks = document.getElementById("navLinks");
 
-    menuToggle.addEventListener("click", () => {
-      const isOpen = navLinks.classList.toggle("open");
-      menuToggle.setAttribute("aria-expanded", String(isOpen));
-      menuToggle.setAttribute(
-        "aria-label",
-        isOpen ? "メニューを閉じる" : "メニューを開く"
-      );
-      menuToggle.textContent = isOpen ? "×" : "☰";
-    });
-
-    navLinks.querySelectorAll("a").forEach(link => {
-      link.addEventListener("click", () => {
+    if (menuToggle && navLinks) {
+      const closeMobileMenu = () => {
         navLinks.classList.remove("open");
         menuToggle.setAttribute("aria-expanded", "false");
         menuToggle.setAttribute("aria-label", "メニューを開く");
         menuToggle.textContent = "☰";
+      };
+
+      menuToggle.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        const isOpen = navLinks.classList.toggle("open");
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+        menuToggle.setAttribute("aria-label", isOpen ? "メニューを閉じる" : "メニューを開く");
+        menuToggle.textContent = isOpen ? "×" : "☰";
       });
-    });
+
+      navLinks.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", closeMobileMenu);
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeMobileMenu();
+      });
+    }
+
+
 
 
     // 公開設定されたお知らせを管理APIから取得。取得失敗時は既存の静的記事を残す。
@@ -1948,7 +1963,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
           const arrow = document.createElement("span"); arrow.className = "news-arrow"; arrow.textContent = "↗";
           card.append(date, category, title, arrow);
           if (item.imageUrl) { const img = document.createElement("img"); img.src = item.imageUrl; img.alt = ""; img.loading = "lazy"; img.style.cssText = "width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px"; card.append(img); }
-          if (item.body) { const summary = document.createElement("span"); summary.textContent = String(item.body).replace(/\/n/g, "\n"); summary.style.cssText = "display:block;white-space:pre-wrap;margin-top:8px"; card.append(summary); }
+          if (item.body) { const summary = document.createElement("span"); summary.textContent = String(item.body).replace(/\\n|\\N|\/n|\/N/g, "\n"); summary.style.cssText = "display:block;white-space:pre-wrap;margin-top:8px"; card.append(summary); }
           fragment.append(card);
         });
         host.replaceChildren(fragment);
