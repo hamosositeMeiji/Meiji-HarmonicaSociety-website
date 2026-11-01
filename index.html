@@ -1406,6 +1406,12 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     ]
   }
   </script>
+
+  <style id="hamoso-emergency-content-visibility">
+    /* Emergency safeguard: never leave page content hidden if the reveal observer fails. */
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .hero-title, .hero-image { opacity: 1 !important; }
+  </style>
 </head>
 
 <body>
