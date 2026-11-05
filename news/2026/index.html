@@ -183,16 +183,7 @@ html{scroll-behavior:smooth;font-size:var(--hm-font-scale,100%)}body{position:re
 @media(max-width:600px){.hamoso-social-float{bottom:222px!important;gap:6px!important}.hamoso-social-float a{width:38px;height:38px}#hamoso-accessibility{right:8px!important;bottom:8px!important;width:104px;padding:6px!important}#hamoso-accessibility button{min-height:29px!important;font-size:11px!important}}
 
 </style>
-<style>
-/* Unified, expandable accessibility control */
-#hm-settings-toggle{position:fixed!important;right:18px!important;bottom:150px!important;z-index:1001!important;width:42px!important;height:42px!important;min-height:42px!important;padding:0!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:50%!important;background:#34452b!important;color:#fff!important;box-shadow:0 4px 12px rgba(31,42,24,.24)!important;font-size:17px!important;font-weight:700!important;display:grid!important;place-items:center!important;cursor:pointer!important}
-#hm-settings-toggle:hover{background:#56633b!important}#hamoso-accessibility[hidden]{display:none!important}
-#hamoso-accessibility{position:fixed!important;right:18px!important;bottom:200px!important;z-index:1000!important;width:176px!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;gap:8px!important;padding:10px!important;border:1px solid rgba(52,69,43,.16)!important;border-radius:14px!important;background:#fff!important;color:#263322!important;box-shadow:0 6px 22px rgba(31,42,24,.2)!important}
-#hamoso-accessibility .hm-a11y-label{font-size:12px!important;font-weight:700!important;letter-spacing:.03em!important}#hamoso-accessibility .hm-size-controls{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
-#hamoso-accessibility button{width:100%!important;min-height:32px!important;padding:5px!important;border:1px solid #d9dfd3!important;border-radius:8px!important;background:#f8f8f3!important;color:#263322!important;font-size:12px!important;cursor:pointer!important;box-shadow:none!important}
-#hamoso-accessibility button[aria-pressed="true"]{background:#34452b!important;color:#fff!important;border-color:#34452b!important}#hamoso-accessibility #hm-contrast{background:#f8f8f3!important;color:#263322!important}#hamoso-accessibility #hm-contrast[aria-pressed="true"]{background:#34452b!important;color:#fff!important}
-@media(max-width:600px){#hm-settings-toggle{right:10px!important;bottom:132px!important;width:38px!important;height:38px!important;min-height:38px!important;font-size:16px!important}#hamoso-accessibility{right:10px!important;bottom:178px!important;width:168px!important;padding:9px!important}}
-</style>
+<link rel="stylesheet" href="../../shared/accessibility-controls.css">
   <link rel="stylesheet" href="../../shared/settings-button.css">
   <link rel="stylesheet" href="../../shared/site-controls.css">
   <link rel="stylesheet" href="../../shared/glass-controls.css">
