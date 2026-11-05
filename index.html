@@ -1929,10 +1929,10 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
         // 年度は4月始まり。トップページには2026年度の記事だけを表示する。
         const currentFiscalYear = 2026;
         const fiscalYearOf = item => {
-          const match = String(item.date || "").match(/^(\\d{4})[.\\-/年]/);
+          const match = String(item.date || "").match(/^(\d{4})[.\/\-年]/);
           if (!match) return null;
           const year = Number(match[1]);
-          const monthMatch = String(item.date || "").match(/^\\d{4}[.\\-/年](\\d{1,2})/);
+          const monthMatch = String(item.date || "").match(/^\d{4}[.\/\-年](\d{1,2})/);
           const month = monthMatch ? Number(monthMatch[1]) : 4;
           return month >= 4 ? year : year - 1;
         };
