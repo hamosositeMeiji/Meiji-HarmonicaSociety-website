@@ -1,50 +1,86 @@
-/* Shared floating SNS and accessibility-control positioning. */
+/* Shared floating SNS and accessibility-control positioning.
+   Visual appearance is defined in accessibility-controls.css and glass-controls.css. */
 
-/* Extracted shared style: hamoso-social-float-style */
-.hamoso-social-float{position:fixed;right:20px;bottom:22px;z-index:9999;display:flex;flex-direction:row;gap:10px}
-    .hamoso-social-float a{width:54px;height:54px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#242820;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:transform .2s ease,background .2s ease}
-    .hamoso-social-float a:hover{transform:translateY(-3px);background:#56633b}
-    .hamoso-social-float a:focus-visible{outline:3px solid #a6b86a;outline-offset:3px}
-    .hamoso-social-float svg{width:24px;height:24px;display:block;fill:currentColor}
-    .hamoso-social-float .instagram svg{fill:none;stroke:currentColor;stroke-width:1.9}
-    @media(max-width:600px){.hamoso-social-float{right:12px;bottom:14px;gap:8px}.hamoso-social-float a{width:44px;height:44px}.hamoso-social-float svg{width:20px;height:20px}}
-
-/* Extracted shared style: hamoso-floating-overlap-fix */
-/* Keep the logo settings button and its panel clear of the SNS buttons */
-.hamoso-social-float{right:18px!important;bottom:18px!important;z-index:1002!important;display:flex!important;flex-direction:row!important;gap:8px!important}
-.hamoso-social-float a{width:48px!important;height:48px!important}
-#hm-settings-toggle{right:23px!important;bottom:82px!important;z-index:1004!important;width:42px!important;height:42px!important;min-height:42px!important}
-#hamoso-accessibility{right:18px!important;bottom:132px!important;z-index:1003!important;max-height:min(55vh,360px)!important;overflow-y:auto!important}
-@media(max-width:600px){.hamoso-social-float{right:12px!important;bottom:14px!important;gap:7px!important}.hamoso-social-float a{width:42px!important;height:42px!important}#hm-settings-toggle{right:14px!important;bottom:68px!important;width:38px!important;height:38px!important;min-height:38px!important}#hamoso-accessibility{right:10px!important;bottom:112px!important;width:168px!important;max-height:55vh!important;padding:9px!important}}
-
-/* Consistent footer for secondary pages that previously had no footer. */
-.hamoso-site-footer {
-  padding: 24px 0;
-  border-top: 1px solid rgba(115, 119, 109, .22);
-  color: #73776d;
-  font-size: 12px;
-  text-align: center;
+/* SNS links: horizontal row, anchored to the lower-right corner. */
+.hamoso-social-float{
+  position:fixed!important;
+  right:18px!important;
+  bottom:18px!important;
+  z-index:1002!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  gap:8px!important;
 }
-.hamoso-site-footer .wrap {
-  width: min(1040px, calc(100% - 40px));
-  margin-inline: auto;
-}
-@media (max-width: 600px) {
-  .hamoso-site-footer .wrap { width: calc(100% - 32px); }
+.hamoso-social-float a{
+  width:48px!important;
+  height:48px!important;
 }
 
+/* Keep the settings toggle and its panel above the SNS row. */
+#hm-settings-toggle{
+  right:23px!important;
+  bottom:82px!important;
+  z-index:1004!important;
+  width:42px!important;
+  height:42px!important;
+  min-height:42px!important;
+}
+#hamoso-accessibility{
+  right:18px!important;
+  bottom:132px!important;
+  z-index:1003!important;
+  max-height:min(55vh,360px)!important;
+  overflow-y:auto!important;
+}
 
-/* Respect reduced-motion preferences on every page using shared controls. */
-@media (prefers-reduced-motion: reduce) {
+/* Compact spacing on phones; preserve the same vertical hierarchy. */
+@media(max-width:600px){
+  .hamoso-social-float{
+    right:12px!important;
+    bottom:14px!important;
+    gap:7px!important;
+  }
+  .hamoso-social-float a{
+    width:42px!important;
+    height:42px!important;
+  }
+  #hm-settings-toggle{
+    right:14px!important;
+    bottom:68px!important;
+    width:38px!important;
+    height:38px!important;
+    min-height:38px!important;
+  }
+  #hamoso-accessibility{
+    right:10px!important;
+    bottom:112px!important;
+    width:168px!important;
+    max-height:55vh!important;
+    padding:9px!important;
+  }
+}
+
+/* Consistent footer for secondary pages. */
+.hamoso-site-footer{
+  padding:24px 0;
+  border-top:1px solid rgba(115,119,109,.22);
+  color:#73776d;
+  font-size:12px;
+  text-align:center;
+}
+.hamoso-site-footer .wrap{
+  width:min(1040px,calc(100% - 40px));
+  margin-inline:auto;
+}
+@media(max-width:600px){
+  .hamoso-site-footer .wrap{width:calc(100% - 32px)}
+}
+
+/* Respect reduced-motion preferences on shared controls. */
+@media(prefers-reduced-motion:reduce){
   .hamoso-social-float a,
-  #hm-settings-toggle {
-    transition: none !important;
-  }
+  #hm-settings-toggle{transition:none!important}
   .hamoso-social-float a:hover,
-  #hm-settings-toggle:hover {
-    transform: none !important;
-  }
+  #hm-settings-toggle:hover{transform:none!important}
 }
-
-/* Shared icon sizing for the accessibility settings toggle. */
-#hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}
