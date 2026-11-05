@@ -15,6 +15,19 @@ body.hamoso-high-contrast :not(img):not(svg):not(path){text-shadow:none!importan
 body.hamoso-high-contrast p,body.hamoso-high-contrast li,body.hamoso-high-contrast span,body.hamoso-high-contrast h1,body.hamoso-high-contrast h2,body.hamoso-high-contrast h3,body.hamoso-high-contrast label{color:#111!important}
 body.hamoso-high-contrast a{color:#0645ad!important;text-decoration:underline!important}
 body.hamoso-high-contrast header,body.hamoso-high-contrast .site-header,body.hamoso-high-contrast .header,body.hamoso-high-contrast section,body.hamoso-high-contrast article,body.hamoso-high-contrast .card,body.hamoso-high-contrast .news-card{background-color:#fff!important;border-color:#333!important}
+
+/* Apply the homepage's saved motion preference consistently on shared pages. */
+html.hm-motion-reduced,body.hm-motion-reduced{scroll-behavior:auto!important}
+body.hm-motion-reduced *,body.hm-motion-reduced *::before,body.hm-motion-reduced *::after{animation:none!important;transition:none!important}
+body.hm-motion-reduced .reveal,body.hm-motion-reduced .reveal.visible,body.hm-motion-reduced .hero-title,body.hm-motion-reduced .hero-image,body.hm-motion-reduced .hero-top,body.hm-motion-reduced .hero-bottom{opacity:1!important;transform:none!important;visibility:visible!important}
+body.hm-motion-reduced .ticker-track,body.hm-motion-reduced .ticker-group{animation:none!important;transform:none!important}
+html.hm-lightweight,body.hm-lightweight{scroll-behavior:auto!important}
+body.hm-lightweight *,body.hm-lightweight *::before,body.hm-lightweight *::after{animation:none!important;transition:none!important;filter:none!important}
+body.hm-lightweight .reveal,body.hm-lightweight .reveal.visible,body.hm-lightweight .hero-title,body.hm-lightweight .hero-image,body.hm-lightweight .hero-top,body.hm-lightweight .hero-bottom{opacity:1!important;transform:none!important;visibility:visible!important}
+body.hm-lightweight .ticker-track,body.hm-lightweight .ticker-group{animation:none!important;transform:none!important}
+body.hm-lightweight::before,body.hm-lightweight::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body.hm-lightweight header,body.hm-lightweight .site-header,body.hm-lightweight .header,body.hm-lightweight .hamoso-social-float a,body.hm-lightweight #hm-settings-toggle,body.hm-lightweight #hamoso-accessibility{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
+
 @media(prefers-reduced-motion:reduce){
 *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }

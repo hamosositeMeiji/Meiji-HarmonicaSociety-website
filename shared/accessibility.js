@@ -28,10 +28,19 @@
 
   let size = "normal";
   let high = false;
+  let motion = "";
   try {
-    size = localStorage.getItem("hm-text-size") || "normal";
+    const savedSize = localStorage.getItem("hm-text-size");
+    size = ["small", "normal", "large"].includes(savedSize) ? savedSize : "normal";
     high = localStorage.getItem("hm-high-contrast") === "true";
+    const savedMotion = localStorage.getItem("hm-motion-mode");
+    motion = ["standard", "reduced", "light"].includes(savedMotion) ? savedMotion : "";
   } catch (error) {}
+  if (!motion) {
+    motion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "reduced"
+      : "standard";
+  }
 
   const scales = { small: 0.85, normal: 1, large: 1.3 };
   const selector = "h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small,strong,em,b,i,span,div";
@@ -62,6 +71,13 @@
       button.setAttribute("aria-pressed", String(button.dataset.hmSize === size));
     });
     if (contrast) contrast.setAttribute("aria-pressed", String(high));
+
+    body.classList.toggle("hm-motion-standard", motion === "standard");
+    body.classList.toggle("hm-motion-reduced", motion === "reduced");
+    body.classList.toggle("hm-lightweight", motion === "light");
+    bar.querySelectorAll("[data-hm-motion]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.hmMotion === motion));
+    });
   }
 
   bar.querySelectorAll("[data-hm-size]").forEach((button) => {
@@ -79,6 +95,16 @@
       applySettings();
     });
   }
+
+  bar.querySelectorAll("[data-hm-motion]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextMotion = button.dataset.hmMotion;
+      if (!["standard", "reduced", "light"].includes(nextMotion)) return;
+      motion = nextMotion;
+      try { localStorage.setItem("hm-motion-mode", motion); } catch (error) {}
+      applySettings();
+    });
+  });
 
   applySettings();
 })();
