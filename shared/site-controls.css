@@ -16,3 +16,19 @@
 #hm-settings-toggle{right:23px!important;bottom:82px!important;z-index:1004!important;width:42px!important;height:42px!important;min-height:42px!important}
 #hamoso-accessibility{right:18px!important;bottom:132px!important;z-index:1003!important;max-height:min(55vh,360px)!important;overflow-y:auto!important}
 @media(max-width:600px){.hamoso-social-float{right:12px!important;bottom:14px!important;gap:7px!important}.hamoso-social-float a{width:42px!important;height:42px!important}#hm-settings-toggle{right:14px!important;bottom:68px!important;width:38px!important;height:38px!important;min-height:38px!important}#hamoso-accessibility{right:10px!important;bottom:112px!important;width:168px!important;max-height:55vh!important;padding:9px!important}}
+
+/* Consistent footer for secondary pages that previously had no footer. */
+.hamoso-site-footer {
+  padding: 24px 0;
+  border-top: 1px solid rgba(115, 119, 109, .22);
+  color: #73776d;
+  font-size: 12px;
+  text-align: center;
+}
+.hamoso-site-footer .wrap {
+  width: min(1040px, calc(100% - 40px));
+  margin-inline: auto;
+}
+@media (max-width: 600px) {
+  .hamoso-site-footer .wrap { width: calc(100% - 32px); }
+}
