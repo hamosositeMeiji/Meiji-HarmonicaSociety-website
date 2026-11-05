@@ -9,6 +9,7 @@ const LIMIT_WINDOW_SECONDS = 15 *  60;
 const MAX_ATTEMPTS = 5;
 const CONTENT_KEY = "content:announcements";
 const MEDIA_PREFIX = "media:";
+const SESSION_PREFIX = "session:";
 const MAX_MEDIA_BYTES = 1500 * 1024;
 
 function json(data, status = 200, extraHeaders = {}) {
@@ -39,7 +40,7 @@ async function sign(payload, secret) {
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   return b64url(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload)));
 }
-async function validSession(token, secret) {
+async function validSession(token, secret, env) {
   if (!token || !secret) return false;
   const split = token.split(".");
   if (split.length !== 2) return false;
@@ -50,7 +51,8 @@ async function validSession(token, secret) {
   if (diff !== 0) return false;
   try {
     const payload = JSON.parse(new TextDecoder().decode(unb64url(split[0])));
-    return payload.exp > Math.floor(Date.now() / 1000) && payload.iss === "hamoso-admin";
+    if (!(payload.exp > Math.floor(Date.now() / 1000) && payload.iss === "hamoso-admin" && typeof payload.sid === "string" && /^[a-f0-9-]{36}$/i.test(payload.sid))) return false;
+    return (await env.LOGIN_LIMITS.get(SESSION_PREFIX + payload.sid)) === "active";
   } catch { return false; }
 }
 function bearerToken(request) {
@@ -88,16 +90,27 @@ async function handle(request, env) {
       return json({ error: "invalid_credentials" }, 401, headers);
     }
     await env.LOGIN_LIMITS.delete(key);
-    const payload = b64url(new TextEncoder().encode(JSON.stringify({ iss: "hamoso-admin", exp: now + SESSION_SECONDS })));
+    const sid = crypto.randomUUID();
+    const payload = b64url(new TextEncoder().encode(JSON.stringify({ iss: "hamoso-admin", exp: now + SESSION_SECONDS, sid })));
+    await env.LOGIN_LIMITS.put(SESSION_PREFIX + sid, "active", { expirationTtl: SESSION_SECONDS });
     const token = payload + "." + await sign(payload, env.SESSION_SECRET);
     return json({ ok: true, token, expiresIn: SESSION_SECONDS }, 200, headers);
   }
 
   if (url.pathname === "/api/session" && request.method === "GET") {
-    const ok = await validSession(bearerToken(request), env.SESSION_SECRET);
+    const ok = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     return json({ authenticated: ok }, ok ? 200 : 401, headers);
   }
   if (url.pathname === "/api/logout" && request.method === "POST") {
+    const token = bearerToken(request);
+    if (!await validSession(token, env.SESSION_SECRET, env)) return json({ error: "unauthorized" }, 401, headers);
+    try {
+      const payloadPart = token.split(".")[0];
+      const payload = JSON.parse(new TextDecoder().decode(unb64url(payloadPart)));
+      await env.LOGIN_LIMITS.delete(SESSION_PREFIX + payload.sid);
+    } catch {
+      return json({ error: "invalid_session" }, 401, headers);
+    }
     return json({ ok: true }, 200, headers);
   }
 
