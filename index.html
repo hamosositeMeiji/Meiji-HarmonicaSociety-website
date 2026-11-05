@@ -1009,15 +1009,19 @@ a:hover .arrow {
     }
 
     /* REVEAL */
-    .reveal {
+    /* Reveal is enabled by JS only when motion is allowed and IntersectionObserver exists. */
+    .reveal { opacity: 1; transform: none; }
+    .hm-reveal-enabled .reveal {
       opacity: 0;
       transform: translateY(22px);
       transition: opacity .7s ease, transform .7s ease;
     }
-
-    .reveal.visible {
+    .hm-reveal-enabled .reveal.visible {
       opacity: 1;
       transform: translateY(0);
+    }
+    .hm-reveal-enabled .activity-card.visible:hover {
+      transform: translateY(-6px);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1414,9 +1418,8 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
   </script>
 
   <style id="hamoso-emergency-content-visibility">
-    /* Emergency safeguard: never leave page content hidden if the reveal observer fails. */
-    .reveal { opacity: 1 !important; transform: none !important; }
-    .hero-title, .hero-image { opacity: 1 !important; }
+    /* Safe fallback: content remains visible unless the reveal observer is ready. */
+    .reveal { opacity: 1; transform: none; }
   </style>
 </head>
 
@@ -1564,7 +1567,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
         </div>
 
         <div class="activity-grid">
-          <article class="activity-card reveal">
+          <a class="activity-card reveal" href="activities/index.html" aria-label="日々の練習の詳細を見る">
             <span class="activity-number">01 — PRACTICE</span>
             <div class="activity-icon">♫</div>
             <h3>日々の練習</h3>
@@ -1572,9 +1575,9 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
               パートごとの練習や合奏を通して、少しずつ演奏をレベルアップ。
               初めて楽器に触れる人も、自分のペースで参加できます。
             </p>
-          </article>
+          </a>
 
-          <article class="activity-card reveal">
+          <a class="activity-card reveal" href="activities/index.html" aria-label="ライブ・演奏会の詳細を見る">
             <span class="activity-number">02 — LIVE</span>
             <div class="activity-icon">↗</div>
             <h3>ライブ・演奏会</h3>
@@ -1582,9 +1585,9 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
               練習の成果をステージで披露。
               大人数で音を重ねる迫力と、演奏を届ける楽しさを味わえます。
             </p>
-          </article>
+          </a>
 
-          <article class="activity-card reveal">
+          <a class="activity-card reveal" href="activities/index.html" aria-label="合宿・交流イベントの詳細を見る">
             <span class="activity-number">03 — CAMP & MORE</span>
             <div class="activity-icon">✳</div>
             <h3>合宿・交流イベント</h3>
@@ -1592,7 +1595,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
               音楽だけでなく、仲間との交流もサークルの楽しみ。
               一緒に過ごす時間が、普段の合奏にもつながります。
             </p>
-          </article>
+          </a>
         </div>
         <div class="activity-more reveal">
           <a class="button" href="activities/index.html">活動についてもっと知る ↗</a>
@@ -1970,10 +1973,18 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       } catch (error) { /* Keep the existing static news if the API is unavailable. */ }
     })();
 
-    // スクロールに合わせてコンテンツを表示
+    // スクロール表示：対応ブラウザかつ動きを許可した場合だけ有効化する。
+    // 古いSafari、軽量表示、動きを減らす設定では最初から全要素を表示する。
     const revealItems = document.querySelectorAll(".reveal");
+    let savedMotion = "";
+    try { savedMotion = localStorage.getItem("hm-motion-mode") || ""; } catch (_) {}
+    const systemPrefersReduced = !!(window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    const motionAllowed = savedMotion
+      ? savedMotion === "standard"
+      : !systemPrefersReduced;
 
-    if ("IntersectionObserver" in window) {
+    if ("IntersectionObserver" in window && motionAllowed) {
       const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -1981,8 +1992,10 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.12 });
+      }, { threshold: 0.08, rootMargin: "0px 0px -24px 0px" });
 
+      // Enable hidden initial state only after the observer is ready.
+      document.documentElement.classList.add("hm-reveal-enabled");
       revealItems.forEach(item => observer.observe(item));
     } else {
       revealItems.forEach(item => item.classList.add("visible"));
