@@ -126,7 +126,7 @@ async function handle(request, env) {
   }
 
   if (url.pathname === "/api/media" && request.method === "POST") {
-    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET);
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
     let body;
     try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
@@ -148,7 +148,7 @@ async function handle(request, env) {
 
   // Site content editor: private read/write endpoints for activity, media, recruitment and schedule.
   if (url.pathname === "/api/site-content" && (request.method === "GET" || request.method === "POST")) {
-    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET);
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
     const siteContentKey = "content:site-content";
     if (request.method === "GET") {
@@ -191,7 +191,7 @@ async function handle(request, env) {
 
   // All content routes require a valid bearer token.
   if (url.pathname === "/api/announcements" && (request.method === "GET" || request.method === "POST")) {
-    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET);
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
     if (request.method === "GET") {
       const items = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
