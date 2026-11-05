@@ -105,17 +105,23 @@
       });
       logoutButton.addEventListener("click", async () => {
         const token = sessionStorage.getItem(TOKEN_KEY);
-        sessionStorage.removeItem(TOKEN_KEY);
-        if (token) {
-          try {
-            await fetch(API + "/api/logout", {
+        logoutButton.disabled = true;
+        try {
+          if (token) {
+            const response = await fetch(API + "/api/logout", {
               method: "POST",
               headers: { "Authorization": "Bearer " + token },
             });
-          } catch {}
+            if (!response.ok) throw new Error("セッションを失効できませんでした");
+          }
+          sessionStorage.removeItem(TOKEN_KEY);
+          showLogin();
+          error.textContent = "ログアウトしました。";
+        } catch {
+          error.textContent = "ログアウトできませんでした。通信を確認して再試行してください。";
+        } finally {
+          logoutButton.disabled = false;
         }
-        showLogin();
-        error.textContent = "ログアウトしました。";
       });
       checkSession();
     })();
