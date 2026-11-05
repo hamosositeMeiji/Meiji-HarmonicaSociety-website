@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#eeefe7"/>
+  <rect x="44" y="44" width="1112" height="812" rx="12" fill="none" stroke="#a6b86a" stroke-width="3" stroke-dasharray="12 12"/>
+  <g fill="#65783d" text-anchor="middle" font-family="Arial, sans-serif">
+    <text x="600" y="370" font-size="36" font-weight="700" letter-spacing="8">MEMBERS PHOTO</text>
+    <text x="600" y="455" font-size="58" font-weight="700">HARMONICA</text>
+    <text x="600" y="530" font-size="38">ハーモニカ パート</text>
+    <text x="600" y="625" font-size="26">Replace this placeholder with a real member photo</text>
+  </g>
+</svg>

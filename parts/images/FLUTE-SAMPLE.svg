@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">FLUTE-SAMPLE photo placeholder</title>
+  <desc id="desc">Replace this sample placeholder with a photo of フルート.</desc>
+  <rect width="1200" height="760" fill="#eeefe7"/>
+  <rect x="36" y="36" width="1128" height="688" rx="8" fill="none" stroke="#a6b86a" stroke-width="3" stroke-dasharray="12 12"/>
+  <g fill="#65783d" text-anchor="middle" font-family="Arial, sans-serif">
+    <text x="600" y="340" font-size="66" font-weight="700" letter-spacing="5">FLUTE-SAMPLE</text>
+    <text x="600" y="404" font-size="28">Replace with your photo</text>
+    <text x="600" y="458" font-size="22">parts/images/FLUTE-SAMPLE.svg</text>
+  </g>
+</svg>
