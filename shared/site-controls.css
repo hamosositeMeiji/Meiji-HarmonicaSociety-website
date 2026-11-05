@@ -34,5 +34,17 @@
 }
 
 
+/* Respect reduced-motion preferences on every page using shared controls. */
+@media (prefers-reduced-motion: reduce) {
+  .hamoso-social-float a,
+  #hm-settings-toggle {
+    transition: none !important;
+  }
+  .hamoso-social-float a:hover,
+  #hm-settings-toggle:hover {
+    transform: none !important;
+  }
+}
+
 /* Shared icon sizing for the accessibility settings toggle. */
 #hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}
