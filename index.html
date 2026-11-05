@@ -1988,13 +1988,13 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
  const root=document.documentElement,body=document.body,bar=document.getElementById('hamoso-accessibility'),contrast=document.getElementById('hm-contrast'),toggle=document.getElementById('hm-settings-toggle');
  if(!bar||!body||!toggle)return;
  toggle.addEventListener('click',()=>{const open=bar.hidden;bar.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'表示設定を閉じる':'表示設定を開く');});
- document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!bar.hidden){bar.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','表示設定を開く');}});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!bar.hidden){bar.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','表示設定を開く');toggle.focus();}});
  let size='normal',high=false,motion='';
- try{size=localStorage.getItem('hm-text-size')||'normal';high=localStorage.getItem('hm-high-contrast')==='true';motion=localStorage.getItem('hm-motion-mode')||''}catch(e){}
- if(!motion)motion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'standard';
+ try{const savedSize=localStorage.getItem('hm-text-size');size=['small','normal','large'].includes(savedSize)?savedSize:'normal';high=localStorage.getItem('hm-high-contrast')==='true';motion=localStorage.getItem('hm-motion-mode')||''}catch(e){}
+ if(!['standard','reduced','light'].includes(motion))motion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'standard';
  const scales={small:0.85,normal:1,large:1.3};
  const textSelector='h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small,strong,em,b,i,span,div';
- const targets=Array.from(body.querySelectorAll(textSelector)).filter(el=>el!==bar&&!bar.contains(el)&&el.children.length===0||el.matches('h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small'));
+ const targets=Array.from(body.querySelectorAll(textSelector)).filter(el=>el!==bar&&!bar.contains(el)&&(el.children.length===0||el.matches('h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small')));
  const baseSizes=new WeakMap();
  targets.forEach(el=>{const n=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(n))baseSizes.set(el,n)});
  function apply(){
@@ -2004,14 +2004,14 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
   targets.forEach(el=>{const n=baseSizes.get(el);if(n)el.style.setProperty('font-size',(n*factor)+'px','important')});
   body.classList.toggle('hamoso-high-contrast',high);
   bar.querySelectorAll('[data-hm-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmSize===size)));
-  contrast.setAttribute('aria-pressed',String(high));
+  if(contrast)contrast.setAttribute('aria-pressed',String(high));
   body.classList.toggle('hm-motion-standard',motion==='standard');
   body.classList.toggle('hm-motion-reduced',motion==='reduced');
   body.classList.toggle('hm-lightweight',motion==='light');
   bar.querySelectorAll('[data-hm-motion]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmMotion===motion)));
  }
  bar.querySelectorAll('[data-hm-size]').forEach(b=>b.addEventListener('click',()=>{size=b.dataset.hmSize;try{localStorage.setItem('hm-text-size',size)}catch(e){}apply()}));
- contrast.addEventListener('click',()=>{high=!high;try{localStorage.setItem('hm-high-contrast',String(high))}catch(e){}apply()});
+ if(contrast)contrast.addEventListener('click',()=>{high=!high;try{localStorage.setItem('hm-high-contrast',String(high))}catch(e){}apply()});
  bar.querySelectorAll('[data-hm-motion]').forEach(b=>b.addEventListener('click',()=>{motion=b.dataset.hmMotion;try{localStorage.setItem('hm-motion-mode',motion)}catch(e){}apply()}));
  apply();
 })();
