@@ -1248,16 +1248,6 @@ button:focus-visible {
   html { scroll-behavior: auto !important; }
 }
   </style>
-
-  <style id="hamoso-social-float-style">
-    .hamoso-social-float{position:fixed;right:20px;bottom:22px;z-index:9999;display:flex;flex-direction:row;gap:10px}
-    .hamoso-social-float a{width:54px;height:54px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#242820;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:transform .2s ease,background .2s ease}
-    .hamoso-social-float a:hover{transform:translateY(-3px);background:#56633b}
-    .hamoso-social-float a:focus-visible{outline:3px solid #a6b86a;outline-offset:3px}
-    .hamoso-social-float svg{width:24px;height:24px;display:block;fill:currentColor}
-    .hamoso-social-float .instagram svg{fill:none;stroke:currentColor;stroke-width:1.9}
-    @media(max-width:600px){.hamoso-social-float{right:12px;bottom:14px;gap:8px}.hamoso-social-float a{width:44px;height:44px}.hamoso-social-float svg{width:20px;height:20px}}
-  </style>
 <style id="hamoso-motion-design">
 html{scroll-behavior:smooth;font-size:var(--hm-font-scale,100%)}
 body{position:relative;isolation:isolate;background-color:#f7f6f0;background-image:radial-gradient(ellipse at 8% 4%,rgba(166,184,106,.17),transparent 30%),radial-gradient(ellipse at 92% 35%,rgba(120,145,87,.10),transparent 27%),linear-gradient(132deg,transparent 0 43%,rgba(255,255,255,.68) 43.2% 43.7%,transparent 44% 100%);background-attachment:fixed}
@@ -1358,14 +1348,6 @@ body.hamoso-high-contrast header,body.hamoso-high-contrast .site-header,body.ham
 #hm-settings-toggle img{display:block;width:100%;height:100%;object-fit:contain;border-radius:50%;filter:drop-shadow(0 1px 1px rgba(255,255,255,.8))}
 #hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}
 </style>\n
-<style id="hamoso-floating-overlap-fix">
-/* Keep the logo settings button and its panel clear of the SNS buttons */
-.hamoso-social-float{right:18px!important;bottom:18px!important;z-index:1002!important;display:flex!important;flex-direction:row!important;gap:8px!important}
-.hamoso-social-float a{width:48px!important;height:48px!important}
-#hm-settings-toggle{right:23px!important;bottom:82px!important;z-index:1004!important;width:42px!important;height:42px!important;min-height:42px!important}
-#hamoso-accessibility{right:18px!important;bottom:132px!important;z-index:1003!important;max-height:min(55vh,360px)!important;overflow-y:auto!important}
-@media(max-width:600px){.hamoso-social-float{right:12px!important;bottom:14px!important;gap:7px!important}.hamoso-social-float a{width:42px!important;height:42px!important}#hm-settings-toggle{right:14px!important;bottom:68px!important;width:38px!important;height:38px!important;min-height:38px!important}#hamoso-accessibility{right:10px!important;bottom:112px!important;width:168px!important;max-height:55vh!important;padding:9px!important}}
-</style>
 <style id="hamoso-motion-controls">
 /* Motion modes affect animation only; page content remains visible in every mode. */
 html.hm-motion-reduced,body.hm-motion-reduced{scroll-behavior:auto!important}
@@ -1425,6 +1407,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     /* Safe fallback: content remains visible unless the reveal observer is ready. */
     .reveal { opacity: 1; transform: none; }
   </style>
+  <link rel="stylesheet" href="shared/site-controls.css">
 </head>
 
 <body>
