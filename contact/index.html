@@ -143,10 +143,10 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
             <a href="https://x.com/meiji_hamoso" target="_blank" rel="noopener noreferrer">X @meiji_hamoso ↗</a>
           </div>
         </section>
-        <section class="info-card contact-persons" aria-label="幹事長・支部長・サイト作成者の連絡先">
+        <section class="info-card contact-persons" id="contact-persons" aria-label="役員・担当者の連絡先">
           <p><strong>幹事長</strong><br>文学部3年 美澤和毅<br><a href="mailto:misa.meiji.dr@gmail.com">misa.meiji.dr@gmail.com</a></p>
           <p><strong>支部長</strong><br>政治経済学部2年 服部紘武<br><a href="mailto:fukube.meiji.harm@gmail.com">fukube.meiji.harm@gmail.com</a></p>
-          <p><strong>サイト作成者</strong><br>法学部2年 島津虎太朗<br><a href="mailto:shimadukotarou0320@gmail.com">shimadukotarou0320@gmail.com</a></p>
+          <p><strong>サイト作成者</strong><br>法学部 島津虎太朗<br><a href="mailto:shimadukotarou0320@gmail.com">shimadukotarou0320@gmail.com</a></p>
         </section>
         <section class="info-card">
           <h2>送信前にご確認ください</h2>
@@ -160,6 +160,58 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
       </aside>
     </section>
   </main>
+
+<script>
+(async function loadContactPeople(){
+  const host=document.getElementById("contact-persons");
+  if(!host)return;
+  try{
+    const response=await fetch("https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/site-content",{cache:"no-store"});
+    if(!response.ok)return;
+    const result=await response.json();
+    const contacts=result&&result.content&&result.content.contacts?result.content.contacts:{};
+    const people=Array.isArray(contacts.people)?contacts.people.filter(person=>!person||!String(person.role||"").includes("サイト作成者")):[];
+    const siteAdmins=Array.isArray(contacts.siteAdmins)?contacts.siteAdmins:[];
+    const fragment=document.createDocumentFragment();
+    people.slice(0,3).forEach(person=>{
+      if(!person||typeof person!=="object")return;
+      const role=typeof person.role==="string"?person.role.trim().slice(0,80):"";
+      const name=typeof person.name==="string"?person.name.trim().slice(0,120):"";
+      const email=typeof person.email==="string"?person.email.trim().slice(0,254):"";
+      if(!role&&!name&&!email)return;
+      const p=document.createElement("p");
+      const strong=document.createElement("strong");strong.textContent=role||"お問い合わせ担当";
+      p.append(strong);
+      if(name){p.append(document.createElement("br"),document.createTextNode(name));}
+      if(email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        const link=document.createElement("a");link.href="mailto:"+email;link.textContent=email;
+        p.append(document.createElement("br"),link);
+      }
+      fragment.append(p);
+    });
+    const creator=document.createElement("p");
+    const creatorLabel=document.createElement("strong");creatorLabel.textContent="サイト作成者";
+    const creatorName=document.createTextNode("法学部"+(function(){const now=new Date();const academicYear=now.getFullYear()-(now.getMonth()<3?1:0);return academicYear<=2026?"2年":academicYear===2027?"3年":academicYear===2028?"4年":"29卒";})()+" 島津虎太朗");
+    creator.append(creatorLabel,document.createElement("br"),creatorName,document.createElement("br"));
+    const creatorEmail=document.createElement("a");creatorEmail.href="mailto:shimadukotarou0320@gmail.com";creatorEmail.textContent="shimadukotarou0320@gmail.com";creator.append(creatorEmail);fragment.append(creator);
+    if(siteAdmins.length){
+      const heading=document.createElement("h2");heading.textContent="サイト管理者";fragment.append(heading);
+      siteAdmins.slice(0,3).forEach(person=>{
+        if(!person||typeof person!=="object")return;
+        const role=typeof person.role==="string"?person.role.trim().slice(0,80):"";
+        const name=typeof person.name==="string"?person.name.trim().slice(0,120):"";
+        const email=typeof person.email==="string"?person.email.trim().slice(0,254):"";
+        if(!role&&!name&&!email)return;
+        const p=document.createElement("p");const strong=document.createElement("strong");strong.textContent=role||"サイト管理者";p.append(strong);
+        if(name)p.append(document.createElement("br"),document.createTextNode(name));
+        if(email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){const link=document.createElement("a");link.href="mailto:"+email;link.textContent=email;p.append(document.createElement("br"),link);}
+        fragment.append(p);
+      });
+    }
+    if(fragment.childNodes.length)host.replaceChildren(fragment);
+  }catch(error){/* Keep the existing fallback text if public content is unavailable. */}
+})();
+</script>
 
   <footer><div class="wrap">© 2026 MEIJI UNIVERSITY HARMONICA SOCIETY</div></footer>
 
