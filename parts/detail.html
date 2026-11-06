@@ -141,7 +141,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     };
 
     const requestedPart = new URLSearchParams(window.location.search).get("part");
-    const part = partData[requestedPart] || partData.harmonica;
+    const part = Object.prototype.hasOwnProperty.call(partData, requestedPart) ? partData[requestedPart] : partData.harmonica;
     document.title = part.name + "｜パート紹介｜明治大学ハーモニカソサエティー";
     document.getElementById("part-role").textContent = part.role + " / " + part.english;
     document.getElementById("part-name").textContent = part.name;
