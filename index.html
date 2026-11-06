@@ -1944,7 +1944,8 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
         const data = await response.json();
         if (!Array.isArray(data.items) || data.items.length === 0) return;
         // 年度は4月始まり。トップページには2026年度の記事だけを表示する。
-        const currentFiscalYear = 2026;
+        const today = new Date();
+        const currentFiscalYear = today.getFullYear() - (today.getMonth() < 3 ? 1 : 0);
         const fiscalYearOf = item => {
           const match = String(item.date || "").match(/^(\\d{4})[.\\-/年]/);
           if (!match) return null;
