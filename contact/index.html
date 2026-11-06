@@ -51,7 +51,9 @@
           </div>
         </section>
         <section class="info-card contact-persons" id="contact-persons" aria-label="役員・担当者の連絡先">
-          <p><strong>担当者情報</strong><br>最新の担当者情報を読み込んでいます。</p>
+          <p><strong>幹事長</strong><br>文学部3年 美澤和毅<br><a href="mailto:misa.meiji.dr@gmail.com">misa.meiji.dr@gmail.com</a></p>
+          <p><strong>支部長</strong><br>政治経済学部2年 服部紘武<br><a href="mailto:fukube.meiji.harm@gmail.com">fukube.meiji.harm@gmail.com</a></p>
+          <p><strong>サイト作成者</strong><br>法学部2年 島津虎太朗<br><a href="mailto:shimadukotarou0320@gmail.com">shimadukotarou0320@gmail.com</a></p>
         </section>
         <section class="info-card">
           <h2>送信前にご確認ください</h2>
@@ -86,7 +88,7 @@
       const strong=document.createElement("strong");strong.textContent=role||"お問い合わせ担当";
       p.append(strong);
       if(name){p.append(document.createElement("br"),document.createTextNode(name));}
-      if(email&&/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){
+      if(email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
         const link=document.createElement("a");link.href="mailto:"+email;link.textContent=email;
         p.append(document.createElement("br"),link);
       }
