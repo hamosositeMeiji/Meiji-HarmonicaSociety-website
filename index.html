@@ -1942,7 +1942,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
         const response = await fetch("https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/announcements");
         if (!response.ok) return;
         const data = await response.json();
-        if (!Array.isArray(data.items) || data.items.length === 0) return;
+        if (!Array.isArray(data.items)) return;
         // 年度は4月始まり。トップページには当年度の記事だけを表示する。
         const today = new Date();
         const currentFiscalYear = today.getFullYear() - (today.getMonth() < 3 ? 1 : 0);
@@ -2235,7 +2235,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
 
     const schedule = data.schedule || {};
     const scheduleList = document.querySelector("#schedule .schedule-list");
-    if (scheduleList && Array.isArray(schedule.regular) && schedule.regular.length) {
+    if (scheduleList && Array.isArray(schedule.regular)) {
       scheduleList.replaceChildren();
       schedule.regular.slice(0, 12).forEach(item => {
         const row = document.createElement("div");
@@ -2249,14 +2249,16 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       });
     }
     const note = document.querySelector("#schedule .schedule-note");
-    if (note && schedule.location) {
-      note.replaceChildren(document.createTextNode("主な活動場所：" + schedule.location));
+    if (note && (typeof schedule.location === "string" || typeof schedule.notice === "string")) {
+      note.replaceChildren();
+      if (schedule.location) note.append(document.createTextNode("主な活動場所：" + schedule.location));
       if (schedule.notice) {
-        note.append(document.createElement("br"));
+        if (schedule.location) note.append(document.createElement("br"));
         note.append(document.createTextNode("※" + schedule.notice));
       }
+      note.hidden = !schedule.location && !schedule.notice;
     }
-    if (Array.isArray(schedule.yearly) && schedule.yearly.length && scheduleList) {
+    if (Array.isArray(schedule.yearly) && scheduleList) {
       const yearly = document.createElement("div");
       yearly.style.cssText = "margin-top:24px;padding:18px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.55)";
       yearly.append(addText("h3", "", "年間の主な活動"));
