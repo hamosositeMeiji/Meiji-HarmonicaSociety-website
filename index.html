@@ -1356,12 +1356,12 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     /* LATEST NEWS：記事カードを横スクロールできるようにする */
     #news .news-list{display:flex;gap:16px;overflow-x:auto;overflow-y:hidden;padding:8px 2px 18px;scroll-snap-type:x proximity;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#a6b86a #eeefe7}
     #news .news-card{flex:0 0 min(78%,680px);min-width:280px;scroll-snap-align:start;display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:22px 24px;border:1px solid #e5e3d9;border-radius:12px;background:rgba(255,255,255,.82);color:#242820;text-decoration:none}
-    #news .news-card strong{min-width:0;overflow-wrap:anywhere}
-    #news .news-date{color:#73776d;font-size:12px;white-space:nowrap}
-    #news .news-category{color:#65783d;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap}
-    #news .news-arrow{color:#65783d;font-size:18px}
-    #news .news-card img,#news .news-card > span:last-child:not(.news-arrow){grid-column:1 / -1}
-    @media(max-width:640px){#news .news-card{flex-basis:88%;min-width:250px;gap:9px;padding:18px 16px}#news .news-card strong{font-size:13px}}
+    #news .news-card strong{min-width:0;overflow-wrap:anywhere;font-size:calc(16px * var(--hm-font-scale-factor, 1))}
+    #news .news-date{color:#73776d;font-size:calc(12px * var(--hm-font-scale-factor, 1));white-space:nowrap}
+    #news .news-category{color:#65783d;font-size:calc(10px * var(--hm-font-scale-factor, 1));font-weight:800;letter-spacing:.08em;white-space:nowrap}
+    #news .news-arrow{color:#65783d;font-size:calc(18px * var(--hm-font-scale-factor, 1))}
+    #news .news-card img,#news .news-card > span:last-child:not(.news-arrow){grid-column:1 / -1}\n    #news .news-card > span:last-child:not(.news-arrow){font-size:calc(13px * var(--hm-font-scale-factor, 1))}
+    @media(max-width:640px){#news .news-card{flex-basis:88%;min-width:250px;gap:9px;padding:18px 16px}#news .news-card strong{font-size:calc(13px * var(--hm-font-scale-factor, 1))}}
   </style>
   <script type="application/ld+json">
   {
