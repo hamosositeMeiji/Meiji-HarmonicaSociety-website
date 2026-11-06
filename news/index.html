@@ -419,7 +419,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     const result=await response.json();
     if(!result||!Array.isArray(result.items))return;
     const items=result.items
-      .filter(item=>item&&item.published===true&&typeof item.title==="string")
+      .filter(item=>item&&typeof item.title==="string")
       .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
     host.replaceChildren();
     if(!items.length){
