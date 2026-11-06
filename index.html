@@ -2211,7 +2211,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     const youtubeLink = document.querySelector('.hamoso-social-float a[aria-label*="公式YouTube"]');
     if (youtubeLink) {
       const firstVideo = Array.isArray(media.videos) ? media.videos.map(item => typeof item === "string" ? item : item && item.url).find(url => typeof url === "string" && isHttpsUrl(url) && /youtube\.com|youtu\.be/i.test(url)) : "";
-      const youtubeTarget = isHttpsUrl(social.youtube) ? social.youtube : firstVideo;
+      const youtubeTarget = social.youtube && isHttpsUrl(social.youtube) ? social.youtube : firstVideo;
       if (youtubeTarget) {
         youtubeLink.href = youtubeTarget;
         youtubeLink.hidden = false;
