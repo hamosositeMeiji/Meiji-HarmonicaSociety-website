@@ -2209,9 +2209,15 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       if (link && social[key] && isHttpsUrl(social[key])) link.href = social[key];
     });
     const youtubeLink = document.querySelector('.hamoso-social-float a[aria-label*="公式YouTube"]');
-    if (youtubeLink && !social.youtube) {
-      const firstVideo = Array.isArray(media.videos) ? media.videos.map(item => typeof item === "string" ? item : item && item.url).find(url => typeof url === "string" && isHttpsUrl(url) && /youtube\\.com|youtu\\.be/i.test(url)) : "";
-      if (firstVideo) youtubeLink.href = firstVideo;
+    if (youtubeLink) {
+      const firstVideo = Array.isArray(media.videos) ? media.videos.map(item => typeof item === "string" ? item : item && item.url).find(url => typeof url === "string" && isHttpsUrl(url) && /youtube\.com|youtu\.be/i.test(url)) : "";
+      const youtubeTarget = isHttpsUrl(social.youtube) ? social.youtube : firstVideo;
+      if (youtubeTarget) {
+        youtubeLink.href = youtubeTarget;
+        youtubeLink.hidden = false;
+      } else {
+        youtubeLink.hidden = true;
+      }
     }
     const join = document.querySelector("#join .join-inner > div:first-child > p");
     const recruit = data.recruit || {};
