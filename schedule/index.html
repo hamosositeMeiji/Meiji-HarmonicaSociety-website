@@ -150,7 +150,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     const schedule = result && result.content && result.content.schedule;
     if (!schedule || typeof schedule !== "object") return;
     const days = document.querySelector(".days");
-    if (days && Array.isArray(schedule.regular) && schedule.regular.length) {
+    if (days && Array.isArray(schedule.regular)) {
       days.replaceChildren();
       schedule.regular.slice(0, 12).forEach(item => {
         if (!item || typeof item !== "object") return;
@@ -163,7 +163,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
       });
     }
     const annual = document.querySelector(".annual-grid");
-    if (annual && Array.isArray(schedule.yearly) && schedule.yearly.length) {
+    if (annual && Array.isArray(schedule.yearly)) {
       annual.replaceChildren();
       schedule.yearly.slice(0, 12).forEach(item => {
         if (!item || typeof item !== "object") return;
@@ -174,10 +174,11 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
       });
     }
     const note = document.querySelector(".notice");
-    if (note && (schedule.location || schedule.notice)) {
+    if (note && (typeof schedule.location === "string" || typeof schedule.notice === "string")) {
       note.replaceChildren();
       if (schedule.location) note.append(document.createTextNode("主な活動場所：" + String(schedule.location)));
       if (schedule.notice) { if (schedule.location) note.append(document.createElement("br")); note.append(document.createTextNode("※" + String(schedule.notice))); }
+      note.hidden = !schedule.location && !schedule.notice;
     }
   } catch (_) {
     // 公開APIが利用できない場合は、ページ内の既定スケジュールを表示します。
