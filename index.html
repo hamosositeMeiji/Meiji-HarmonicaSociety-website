@@ -2258,7 +2258,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       }
       note.hidden = !schedule.location && !schedule.notice;
     }
-    if (Array.isArray(schedule.yearly) && scheduleList) {
+    if (Array.isArray(schedule.yearly) && schedule.yearly.length && scheduleList) {
       const yearly = document.createElement("div");
       yearly.style.cssText = "margin-top:24px;padding:18px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.55)";
       yearly.append(addText("h3", "", "年間の主な活動"));
