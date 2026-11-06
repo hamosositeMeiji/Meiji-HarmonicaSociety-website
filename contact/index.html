@@ -176,7 +176,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
       const entries=[["Instagram",social.instagram],["X",social.x],["YouTube",social.youtube]];
       (Array.isArray(social.other)?social.other:[]).forEach(url=>{
         if(typeof url==="string"){
-          try{const parsed=new URL(url);if(parsed.protocol==="https:")entries.push([parsed.hostname.replace(/^www\\./i,""),parsed.href]);}catch(_){}
+          try{const parsed=new URL(url);if(parsed.protocol==="https:")entries.push([parsed.hostname.replace(/^www\./i,""),parsed.href]);}catch(_){}
         }
       });
       socialHost.replaceChildren();
