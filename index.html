@@ -2260,7 +2260,8 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
   document.body.prepend(canvas);
   const ctx=canvas.getContext('2d');if(!ctx)return;
   let w=0,h=0,dpr=1,raf=0,last=0,time=0;
-  const reduced=()=>document.body.classList.contains('hm-motion-reduced')||document.body.classList.contains('hm-lightweight');
+  const motionPreference=window.matchMedia?window.matchMedia("(prefers-reduced-motion: reduce)"):null;
+  const reduced=()=>document.body.classList.contains('hm-motion-reduced')||document.body.classList.contains('hm-lightweight')||!!(motionPreference&&motionPreference.matches);
   function resize(){
     dpr=Math.min(window.devicePixelRatio||1,1.5);w=window.innerWidth;h=window.innerHeight;
     canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
@@ -2321,11 +2322,16 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     });
     if(!reduced())raf=requestAnimationFrame(draw);
   }
-  function start(){if(!raf)raf=requestAnimationFrame(draw)}
+  function start(){if(!reduced()&&!raf)raf=requestAnimationFrame(draw)}
   window.addEventListener('resize',resize,{passive:true});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0}else{last=0;start()}});
   const observer=new MutationObserver(()=>{if(reduced()){if(raf)cancelAnimationFrame(raf);raf=0;draw(performance.now())}else start()});
   observer.observe(document.body,{attributes:true,attributeFilter:['class']});
+  if(motionPreference){
+    const handleMotionPreferenceChange=()=>{if(reduced()){if(raf)cancelAnimationFrame(raf);raf=0;draw(performance.now())}else{last=0;start()}};
+    if(typeof motionPreference.addEventListener==="function")motionPreference.addEventListener("change",handleMotionPreferenceChange);
+    else if(typeof motionPreference.addListener==="function")motionPreference.addListener(handleMotionPreferenceChange);
+  }
   resize();draw(0);start();
 })();
 </script>
