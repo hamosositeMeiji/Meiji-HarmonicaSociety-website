@@ -408,6 +408,48 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
  toggle.addEventListener('click',()=>{const open=bar.hidden;bar.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'表示設定を閉じる':'表示設定を開く');});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!bar.hidden){bar.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','表示設定を開く');}});let size='normal',high=false;try{size=localStorage.getItem('hm-text-size')||'normal';high=localStorage.getItem('hm-high-contrast')==='true'}catch(e){}const scales={small:.85,normal:1,large:1.3};const selector='h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small,strong,em,b,i,span,div';const targets=Array.from(body.querySelectorAll(selector)).filter(el=>!bar.contains(el)&&(el.children.length===0||el.matches('h1,h2,h3,h4,h5,h6,p,li,dt,dd,th,td,label,legend,figcaption,blockquote,summary,a,button,input,select,textarea,small')));const base=new WeakMap();targets.forEach(el=>{const n=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(n))base.set(el,n)});function apply(){const f=scales[size]||1;root.style.setProperty('--hm-font-scale',f===1?'100%':(f*100)+'%');root.style.setProperty('--hm-font-scale-factor',String(f));targets.forEach(el=>{const n=base.get(el);if(n)el.style.setProperty('font-size',(n*f)+'px','important')});body.classList.toggle('hamoso-high-contrast',high);bar.querySelectorAll('[data-hm-size]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.hmSize===size)));contrast.setAttribute('aria-pressed',String(high))}bar.querySelectorAll('[data-hm-size]').forEach(b=>b.addEventListener('click',()=>{size=b.dataset.hmSize;try{localStorage.setItem('hm-text-size',size)}catch(e){}apply()}));contrast.addEventListener('click',()=>{high=!high;try{localStorage.setItem('hm-high-contrast',String(high))}catch(e){}apply()});apply()})();
 </script>
+
+<script id="hamoso-managed-announcements">
+(async function loadPublishedAnnouncements(){
+  const host=document.querySelector(".news-list");
+  if(!host)return;
+  try{
+    const response=await fetch("https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/announcements",{cache:"no-store"});
+    if(!response.ok)return;
+    const result=await response.json();
+    if(!result||!Array.isArray(result.items))return;
+    const items=result.items
+      .filter(item=>item&&item.published===true&&typeof item.title==="string")
+      .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+    host.replaceChildren();
+    if(!items.length){
+      const empty=document.createElement("p");
+      empty.className="empty-note";
+      empty.textContent="現在公開中のお知らせはありません。新しい情報をお待ちください。";
+      host.append(empty);
+      return;
+    }
+    items.forEach(item=>{
+      const card=document.createElement("article");
+      card.className="news-card";
+      const meta=document.createElement("div");meta.className="meta";
+      const date=document.createElement("span");date.textContent=String(item.date||"");
+      const category=document.createElement("span");category.className="category";category.textContent=String(item.category||"お知らせ");
+      meta.append(date,category);card.append(meta);
+      const title=document.createElement("h3");title.textContent=item.title;card.append(title);
+      if(typeof item.imageUrl==="string"&&/^https:\/\/hamoso-admin-auth\.hamososaitoguanli\.workers\.dev\/media\/[a-zA-Z0-9_-]{1,60}$/.test(item.imageUrl)){
+        const image=document.createElement("img");image.src=item.imageUrl;image.alt="";image.loading="lazy";
+        image.style.cssText="display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:12px 0";
+        card.append(image);
+      }
+      const body=document.createElement("p");body.textContent=String(item.body||"");body.style.whiteSpace="pre-line";card.append(body);
+      host.append(card);
+    });
+  }catch(_){
+    // 公開APIが利用できない場合は、既存の静的なお知らせを表示します。
+  }
+})();
+</script>
 </body>
 </html>
 ```
