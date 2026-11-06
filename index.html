@@ -1935,7 +1935,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
           const title = document.createElement("strong"); title.textContent = item.title || "お知らせ";
           const arrow = document.createElement("span"); arrow.className = "news-arrow"; arrow.textContent = "↗";
           card.append(date, category, title, arrow);
-          if (item.imageUrl) { const img = document.createElement("img"); img.src = item.imageUrl; img.alt = ""; img.loading = "lazy"; img.style.cssText = "width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px"; card.append(img); }
+          if (typeof item.imageUrl === "string") { try { const imageUrl = new URL(item.imageUrl, location.href); if (imageUrl.protocol === "https:") { const img = document.createElement("img"); img.src = imageUrl.href; img.alt = ""; img.loading = "lazy"; img.referrerPolicy = "no-referrer"; img.style.cssText = "width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-top:10px"; card.append(img); } } catch (_) {} }
           if (item.body) { const summary = document.createElement("span"); summary.textContent = String(item.body).replace(/\\n|\\N|\/n|\/N/g, "\n"); summary.style.cssText = "display:block;white-space:pre-wrap;margin-top:8px"; card.append(summary); }
           fragment.append(card);
         });
