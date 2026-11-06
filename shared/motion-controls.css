@@ -1,0 +1,68 @@
+/* Shared motion and lightweight display modes for every site page. */
+html.hm-motion-reduced,
+body.hm-motion-reduced,
+html.hm-lightweight,
+body.hm-lightweight {
+  scroll-behavior: auto !important;
+}
+
+body.hm-motion-reduced *,
+body.hm-motion-reduced *::before,
+body.hm-motion-reduced *::after,
+body.hm-lightweight *,
+body.hm-lightweight *::before,
+body.hm-lightweight *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+body.hm-lightweight *,
+body.hm-lightweight *::before,
+body.hm-lightweight *::after {
+  filter: none !important;
+}
+
+body.hm-motion-reduced .reveal,
+body.hm-motion-reduced .reveal.visible,
+body.hm-lightweight .reveal,
+body.hm-lightweight .reveal.visible {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+body.hm-lightweight::before,
+body.hm-lightweight::after,
+body.hm-lightweight header,
+body.hm-lightweight .site-header,
+body.hm-lightweight .header,
+body.hm-lightweight .hamoso-social-float a,
+body.hm-lightweight #hm-settings-toggle,
+body.hm-lightweight #hamoso-accessibility {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* The operating system's reduced-motion preference always takes priority. */
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body,
+  * {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .reveal,
+  .reveal.visible {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+}
