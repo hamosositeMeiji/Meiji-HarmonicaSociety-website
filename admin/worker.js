@@ -163,6 +163,13 @@ async function handle(request, env) {
     if (serialized.length > 30000) return json({ error: "content_too_large" }, 413, headers);
     const safeUrl = value => typeof value === "string" && value.length <= 500 && (!value || /^https:\/\//i.test(value));
     const listOfUrls = value => Array.isArray(value) && value.length <= 30 && value.every(safeUrl);
+    const listOfVideos = value => Array.isArray(value) && value.length <= 30 && value.every(item => {
+      if (typeof item !== "string" || item.length > 623) return false;
+      const separator = item.indexOf("|");
+      const title = separator >= 0 ? item.slice(0, separator).trim() : "";
+      const url = separator >= 0 ? item.slice(separator + 1).trim() : item.trim();
+      return title.length <= 120 && safeUrl(url);
+    });
     const a = content.activities || {}, m = content.media || {}, social = m.social || {}, r = content.recruit || {};
     const contacts = content.contacts || {};
     const people = contacts.people === undefined ? [] : contacts.people;
@@ -176,7 +183,7 @@ async function handle(request, env) {
     if (!Array.isArray(siteAdmins) || siteAdmins.length > 3 || !siteAdmins.every(validPerson)) return json({ error: "invalid_site_admins" }, 400, headers);
     if (typeof a.title !== "string" || a.title.length > 120 || typeof a.text !== "string" || a.text.length > 5000 ||
         !listOfUrls(a.photos || []) || typeof m.videoTitle !== "string" || m.videoTitle.length > 120 ||
-        !listOfUrls(m.videos || []) || !safeUrl(social.instagram || "") || !safeUrl(social.x || "") ||
+        !listOfVideos(m.videos || []) || !safeUrl(social.instagram || "") || !safeUrl(social.x || "") ||
         !safeUrl(social.youtube || "") || !listOfUrls(social.other || []) ||
         typeof r.title !== "string" || r.title.length > 120 || typeof r.text !== "string" || r.text.length > 5000 ||
         !safeUrl(r.contactUrl || "")) return json({ error: "invalid_content_fields" }, 400, headers);
