@@ -2215,8 +2215,10 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       if (youtubeTarget) {
         youtubeLink.href = youtubeTarget;
         youtubeLink.hidden = false;
+        youtubeLink.style.display = "";
       } else {
         youtubeLink.hidden = true;
+        youtubeLink.style.display = "none";
       }
     }
     const join = document.querySelector("#join .join-inner > div:first-child > p");
