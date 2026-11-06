@@ -200,7 +200,7 @@ async function handle(request, env) {
   // Public endpoint exposes only explicitly published announcements and safe display fields.
   if (url.pathname === "/api/public/announcements" && request.method === "GET") {
     const stored = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
-    const items = (Array.isArray(stored) ? stored : []).filter(item => item && item.published === true).slice(0, 20).map(item => ({
+    const items = (Array.isArray(stored) ? stored : []).filter(item => item && item.published === true).sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))).slice(0, 20).map(item => ({
       id: item.id, title: item.title, date: item.date, category: item.category, body: item.body, imageUrl: item.imageUrl || ""
     }));
     return json({ items }, 200, { ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60" });
