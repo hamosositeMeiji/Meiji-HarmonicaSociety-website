@@ -110,7 +110,7 @@
         if(!role&&!name&&!email)return;
         const p=document.createElement("p");const strong=document.createElement("strong");strong.textContent=role||"サイト管理者";p.append(strong);
         if(name)p.append(document.createElement("br"),document.createTextNode(name));
-        if(email&&/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){const link=document.createElement("a");link.href="mailto:"+email;link.textContent=email;p.append(document.createElement("br"),link);}
+        if(email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){const link=document.createElement("a");link.href="mailto:"+email;link.textContent=email;p.append(document.createElement("br"),link);}
         fragment.append(p);
       });
     }
