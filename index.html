@@ -2087,12 +2087,14 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       const section = document.createElement("section");
       section.className = "section wrap managed-video-section";
       section.id = "managed-videos";
-      section.append(addText("div", "eyebrow", "HAMO-SO / PERFORMANCE"));
+      const videoEyebrow = addText("div", "eyebrow", "HAMO-SO / PERFORMANCE");
+      videoEyebrow.style.fontSize = "calc(11px * var(--hm-font-scale-factor, 1))";
+      section.append(videoEyebrow);
       // A URL accidentally entered as the heading should not be displayed as a title.
       const rawTitle = typeof media.videoTitle === "string" ? media.videoTitle.trim() : "";
       const headingText = rawTitle && !/^https?:\/\//i.test(rawTitle) ? rawTitle : "演奏動画";
       const heading = addText("h2", "", headingText);
-      heading.style.cssText = "font-size:clamp(30px,4vw,48px);margin:12px 0 24px";
+      heading.style.cssText = "font-size:clamp(calc(30px * var(--hm-font-scale-factor, 1)),calc(4vw * var(--hm-font-scale-factor, 1)),calc(48px * var(--hm-font-scale-factor, 1)));margin:12px 0 24px";
       section.append(heading);
       const list = document.createElement("div");
       list.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px";
@@ -2146,11 +2148,11 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
           link.href = url;
           link.target = "_blank";
           link.rel = "noopener noreferrer";
-          link.style.cssText = "display:flex;justify-content:center;align-items:center;min-height:168px;padding:18px;border-radius:10px;background:#f5f5f5";
+          link.style.cssText = "display:flex;justify-content:center;align-items:center;min-height:168px;padding:18px;border-radius:10px;background:#f5f5f5;font-size:calc(11px * var(--hm-font-scale-factor, 1))";
           card.append(link);
         }
         const caption = addText("p", "", video.title || "演奏動画 " + (index + 1));
-        caption.style.cssText = "margin:0;padding:12px 14px;font-size:14px;font-weight:600";
+        caption.style.cssText = "margin:0;padding:12px 14px;font-size:calc(14px * var(--hm-font-scale-factor, 1));font-weight:600";
         card.append(caption);
         list.append(card);
       });
@@ -2188,7 +2190,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       const info = document.createElement("p");
       info.className = "managed-visit-info";
       info.textContent = recruit.visitInfo.trim();
-      info.style.cssText = "margin-top:18px;padding:16px 18px;border:1px solid rgba(255,255,255,.35);border-radius:10px;white-space:pre-line;line-height:1.8";
+      info.style.cssText = "margin-top:18px;padding:16px 18px;border:1px solid rgba(255,255,255,.35);border-radius:10px;white-space:pre-line;line-height:1.8;font-size:calc(14px * var(--hm-font-scale-factor, 1))";
       joinCopy.append(info);
     }
     const contact = document.querySelector('#join .join-actions a[href="contact/index.html"]');
@@ -2206,9 +2208,13 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
         const row = document.createElement("div");
         row.className = "schedule-row";
         const day = addText("div", "day", item.day || "");
+        day.style.fontSize = "calc(12px * var(--hm-font-scale-factor, 1))";
         const detail = document.createElement("div");
-        detail.append(addText("strong", "", item.time || ""));
-        detail.append(addText("p", "", item.label || ""));
+        const time = addText("strong", "", item.time || "");
+        time.style.fontSize = "calc(15px * var(--hm-font-scale-factor, 1))";
+        const label = addText("p", "", item.label || "");
+        label.style.fontSize = "calc(12px * var(--hm-font-scale-factor, 1))";
+        detail.append(time, label);
         row.append(day, detail);
         scheduleList.append(row);
       });
@@ -2227,7 +2233,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       yearly.append(addText("h3", "", "年間の主な活動"));
       schedule.yearly.slice(0, 12).forEach(item => {
         const line = document.createElement("p");
-        line.style.cssText = "margin:8px 0;color:var(--muted);font-size:13px";
+        line.style.cssText = "margin:8px 0;color:var(--muted);font-size:calc(13px * var(--hm-font-scale-factor, 1))";
         line.textContent = (item.when || "") + "　" + (item.title || "");
         yearly.append(line);
       });
