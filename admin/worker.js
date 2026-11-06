@@ -170,7 +170,7 @@ async function handle(request, env) {
       typeof (person.role || "") === "string" && (person.role || "").length <= 80 &&
       typeof (person.name || "") === "string" && (person.name || "").length <= 120 &&
       typeof (person.email || "") === "string" && (person.email || "").length <= 254 &&
-      (!(person.email || "") || /^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(person.email));
+      (!(person.email || "") || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(person.email));
     if (!Array.isArray(people) || people.length > 3 || !people.every(validPerson)) return json({ error: "invalid_contact_people" }, 400, headers);
     if (typeof a.title !== "string" || a.title.length > 120 || typeof a.text !== "string" || a.text.length > 5000 ||
         !listOfUrls(a.photos || []) || typeof m.videoTitle !== "string" || m.videoTitle.length > 120 ||
