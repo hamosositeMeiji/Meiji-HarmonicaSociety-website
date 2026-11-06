@@ -206,5 +206,42 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
  apply();
 })();
 </script>
+
+<script id="hamoso-managed-activities">
+(async function loadManagedActivities(){
+  try{
+    const response=await fetch("https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/site-content",{cache:"no-store"});
+    if(!response.ok)return;
+    const result=await response.json();
+    const activities=result&&result.content&&result.content.activities;
+    if(!activities||typeof activities!=="object")return;
+    const heading=document.querySelector("main h1");
+    if(heading&&typeof activities.title==="string"&&activities.title.trim())heading.textContent=activities.title.trim();
+    const intro=document.querySelector("main .intro");
+    if(intro&&typeof activities.text==="string"&&activities.text.trim())intro.textContent=activities.text.trim();
+    if(Array.isArray(activities.photos)){
+      let gallery=document.getElementById("managed-activity-photos");
+      if(!gallery){
+        gallery=document.createElement("section");
+        gallery.id="managed-activity-photos";
+        gallery.setAttribute("aria-label","活動写真");
+        gallery.style.cssText="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px;margin:32px 0";
+        const cards=document.querySelector("main .cards");
+        if(cards)cards.insertAdjacentElement("afterend",gallery);
+      }
+      gallery.replaceChildren();
+      activities.photos.filter(url=>typeof url==="string"&&/^https:\/\//i.test(url)).slice(0,12).forEach((url,index)=>{
+        const image=document.createElement("img");
+        image.src=url;image.alt="ハモソの活動写真 "+(index+1);image.loading="lazy";
+        image.style.cssText="display:block;width:100%;height:auto;max-height:360px;object-fit:contain;border-radius:10px;background:#fff";
+        gallery.append(image);
+      });
+      gallery.hidden=gallery.childElementCount===0;
+    }
+  }catch(_){
+    // 公開APIが利用できない場合は、ページ内の既定内容を維持します。
+  }
+})();
+</script>
 </body>
 </html>
