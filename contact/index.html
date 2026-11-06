@@ -169,7 +169,31 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     const response=await fetch("https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/site-content",{cache:"no-store"});
     if(!response.ok)return;
     const result=await response.json();
-    const contacts=result&&result.content&&result.content.contacts?result.content.contacts:{};
+    const content=result&&result.content?result.content:{};
+    const social=content.media&&content.media.social;
+    const socialHost=document.querySelector(".info-card .social-links");
+    if(socialHost&&social&&typeof social==="object"){
+      const entries=[["Instagram",social.instagram],["X",social.x],["YouTube",social.youtube]];
+      (Array.isArray(social.other)?social.other:[]).forEach(url=>{
+        if(typeof url==="string"){
+          try{const parsed=new URL(url);if(parsed.protocol==="https:")entries.push([parsed.hostname.replace(/^www\./i,""),parsed.href]);}catch(_){}
+        }
+      });
+      socialHost.replaceChildren();
+      entries.forEach(([label,url])=>{
+        if(typeof url!=="string")return;
+        try{
+          const parsed=new URL(url);
+          if(parsed.protocol!=="https:")return;
+          const link=document.createElement("a");
+          link.href=parsed.href;link.textContent=label;link.target="_blank";link.rel="noopener noreferrer";
+          socialHost.append(link);
+        }catch(_){}
+      });
+      const socialCard=socialHost.closest(".info-card");
+      if(socialCard)socialCard.hidden=socialHost.childElementCount===0;
+    }
+    const contacts=content.contacts&&typeof content.contacts==="object"?content.contacts:{};
     const defaultPeople=[{role:"幹事長",name:"文学部3年 美澤和毅",email:"misa.meiji.dr@gmail.com"},{role:"支部長",name:"政治経済学部2年 服部紘武",email:"fukube.meiji.harm@gmail.com"}];
     const people=Array.isArray(contacts.people)?contacts.people.filter(person=>!person||!String(person.role||"").includes("サイト作成者")):defaultPeople;
     const siteAdmins=Array.isArray(contacts.siteAdmins)?contacts.siteAdmins:[];
