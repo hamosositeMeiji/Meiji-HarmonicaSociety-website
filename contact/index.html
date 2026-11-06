@@ -139,8 +139,8 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
           <h2>公式SNS</h2>
           <p>日々の活動や最新情報は、公式SNSでも発信しています。</p>
           <div class="social-links">
-            <a href="https://www.instagram.com/meiji_hamoso/" target="_blank" rel="noopener noreferrer">Instagram @meiji_hamoso ↗</a>
-            <a href="https://x.com/meiji_hamoso" target="_blank" rel="noopener noreferrer">X @meiji_hamoso ↗</a>
+            <a href="https://www.instagram.com/meiji_hamoso/" data-social-key="instagram" target="_blank" rel="noopener noreferrer">Instagram @meiji_hamoso ↗</a>
+            <a href="https://x.com/meiji_hamoso" data-social-key="x" target="_blank" rel="noopener noreferrer">X @meiji_hamoso ↗</a>
           </div>
         </section>
         <section class="info-card contact-persons" id="contact-persons" aria-label="役員・担当者の連絡先">
@@ -173,25 +173,29 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     const social=content.media&&content.media.social;
     const socialHost=document.querySelector(".info-card .social-links");
     if(socialHost&&social&&typeof social==="object"){
-      const entries=[["Instagram",social.instagram],["X",social.x],["YouTube",social.youtube]];
+      const updateLink=(key,url)=>{
+        const link=socialHost.querySelector('[data-social-key="'+key+'"]');
+        if(typeof url!=="string"||!url.trim()||!link)return;
+        try{const parsed=new URL(url);if(parsed.protocol==="https:")link.href=parsed.href;}catch(_){}
+      };
+      updateLink("instagram",social.instagram);
+      updateLink("x",social.x);
+      if(typeof social.youtube==="string"&&social.youtube.trim()){
+        try{
+          const parsed=new URL(social.youtube);
+          if(parsed.protocol==="https:"&&!socialHost.querySelector('[data-social-key="youtube"]')){
+            const link=document.createElement("a");link.href=parsed.href;link.textContent="YouTube";link.target="_blank";link.rel="noopener noreferrer";link.dataset.socialKey="youtube";socialHost.append(link);
+          }
+        }catch(_){}
+      }
       (Array.isArray(social.other)?social.other:[]).forEach(url=>{
-        if(typeof url==="string"){
-          try{const parsed=new URL(url);if(parsed.protocol==="https:")entries.push([parsed.hostname.replace(/^www\./i,""),parsed.href]);}catch(_){}
-        }
-      });
-      socialHost.replaceChildren();
-      entries.forEach(([label,url])=>{
         if(typeof url!=="string")return;
         try{
           const parsed=new URL(url);
           if(parsed.protocol!=="https:")return;
-          const link=document.createElement("a");
-          link.href=parsed.href;link.textContent=label;link.target="_blank";link.rel="noopener noreferrer";
-          socialHost.append(link);
+          const link=document.createElement("a");link.href=parsed.href;link.textContent=parsed.hostname.replace(/^www\./i,"");link.target="_blank";link.rel="noopener noreferrer";link.dataset.socialKey="other";socialHost.append(link);
         }catch(_){}
       });
-      const socialCard=socialHost.closest(".info-card");
-      if(socialCard)socialCard.hidden=socialHost.childElementCount===0;
     }
     const contacts=content.contacts&&typeof content.contacts==="object"?content.contacts:{};
     const defaultPeople=[{role:"幹事長",name:"文学部3年 美澤和毅",email:"misa.meiji.dr@gmail.com"},{role:"支部長",name:"政治経済学部2年 服部紘武",email:"fukube.meiji.harm@gmail.com"}];
