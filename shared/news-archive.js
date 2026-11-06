@@ -38,7 +38,7 @@
 
     const data = await response.json();
     const items = (Array.isArray(data.items) ? data.items : [])
-      .filter((item) => fiscalYear(item.date) === targetYear)
+      .filter((item) => item && typeof item === "object" && !Array.isArray(item) && fiscalYear(item.date) === targetYear)
       .sort((a, b) => {
         const dateA = dateSortValue(a.date);
         const dateB = dateSortValue(b.date);
