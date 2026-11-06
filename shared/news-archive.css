@@ -14,10 +14,10 @@
     .section-heading{margin:38px 0 16px;font-size:22px}
     #news-list{display:grid;gap:14px}
     .news-card{padding:22px 24px;background:var(--white);border:1px solid var(--line);border-radius:12px}
-    .meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:13px}
+    .meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:calc(13px * var(--hm-font-scale-factor,1))}
     .category{color:var(--accent);font-weight:700}
-    .news-card h3{margin:8px 0;font-size:20px}
-    .news-card p{margin:0;color:var(--muted);font-size:14px;white-space:pre-wrap}
+    .news-card h3{margin:8px 0;font-size:calc(20px * var(--hm-font-scale-factor,1))}
+    .news-card p{margin:0;color:var(--muted);font-size:calc(14px * var(--hm-font-scale-factor,1));white-space:pre-wrap}
     .empty-note{padding:20px;border-left:3px solid var(--accent);background:#f0f1e8;color:var(--muted)}
     .archive{margin:44px 0;padding:22px;border:1px solid var(--line);border-radius:12px}
     .archive h2{margin-top:0}.archive-links{display:flex;flex-wrap:wrap;gap:8px 16px}.archive a{color:var(--accent)}
