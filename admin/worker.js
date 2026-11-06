@@ -164,6 +164,14 @@ async function handle(request, env) {
     const safeUrl = value => typeof value === "string" && value.length <= 500 && (!value || /^https:\/\//i.test(value));
     const listOfUrls = value => Array.isArray(value) && value.length <= 30 && value.every(safeUrl);
     const a = content.activities || {}, m = content.media || {}, social = m.social || {}, r = content.recruit || {};
+    const contacts = content.contacts || {};
+    const people = contacts.people === undefined ? [] : contacts.people;
+    const validPerson = person => person && typeof person === "object" && !Array.isArray(person) &&
+      typeof (person.role || "") === "string" && (person.role || "").length <= 80 &&
+      typeof (person.name || "") === "string" && (person.name || "").length <= 120 &&
+      typeof (person.email || "") === "string" && (person.email || "").length <= 254 &&
+      (!(person.email || "") || /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(person.email));
+    if (!Array.isArray(people) || people.length > 3 || !people.every(validPerson)) return json({ error: "invalid_contact_people" }, 400, headers);
     if (typeof a.title !== "string" || a.title.length > 120 || typeof a.text !== "string" || a.text.length > 5000 ||
         !listOfUrls(a.photos || []) || typeof m.videoTitle !== "string" || m.videoTitle.length > 120 ||
         !listOfUrls(m.videos || []) || !safeUrl(social.instagram || "") || !safeUrl(social.x || "") ||
