@@ -41,6 +41,7 @@ body.hm-lightweight #hm-settings-toggle,
 body.hm-lightweight #hamoso-accessibility {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
+  filter: none !important;
   box-shadow: none !important;
 }
 
