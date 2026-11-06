@@ -2024,6 +2024,23 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
   const isHttpsUrl = value => {
     try { return new URL(value, location.href).protocol === "https:"; } catch { return false; }
   };
+  const isYoutubeUrl = value => {
+    try {
+      const parsed = new URL(value, location.href);
+      return parsed.protocol === "https:" && ["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"].includes(parsed.hostname);
+    } catch { return false; }
+  };
+  const socialHosts = {
+    x: ["x.com", "www.x.com", "twitter.com", "www.twitter.com"],
+    instagram: ["instagram.com", "www.instagram.com"],
+    youtube: ["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"]
+  };
+  const isAllowedSocialUrl = (key, value) => {
+    try {
+      const parsed = new URL(value, location.href);
+      return parsed.protocol === "https:" && socialHosts[key].includes(parsed.hostname);
+    } catch { return false; }
+  };
   const addText = (tag, className, value) => {
     const el = document.createElement(tag);
     if (className) el.className = className;
@@ -2081,7 +2098,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
           const separator = line.indexOf("|");
           const title = separator >= 0 ? line.slice(0, separator).trim() : "";
           const url = separator >= 0 ? line.slice(separator + 1).trim() : line;
-          if (!isHttpsUrl(url)) return null;
+          if (!isYoutubeUrl(url)) return null;
           return { title: title && !/^https?:\/\//i.test(title) ? title : "", url };
         }).filter(Boolean).slice(0, 12) : [];
     if (videoItems.length) {
@@ -2174,11 +2191,11 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     ];
     socialLinks.forEach(({key, selector}) => {
       const link = document.querySelector(selector);
-      if (link && social[key] && isHttpsUrl(social[key])) link.href = social[key];
+      if (link && social[key] && isAllowedSocialUrl(key, social[key])) link.href = social[key];
     });
     const youtubeLink = document.querySelector('.hamoso-social-float a[aria-label*="公式YouTube"]');
     if (youtubeLink && !social.youtube) {
-      const firstVideo = Array.isArray(media.videos) ? media.videos.map(item => typeof item === "string" ? item : item && item.url).find(url => typeof url === "string" && isHttpsUrl(url) && /youtube\\.com|youtu\\.be/i.test(url)) : "";
+      const firstVideo = Array.isArray(media.videos) ? media.videos.map(item => typeof item === "string" ? item : item && item.url).find(url => typeof url === "string" && isYoutubeUrl(url)) : "";
       if (firstVideo) youtubeLink.href = firstVideo;
     }
     const join = document.querySelector("#join .join-inner > div:first-child > p");
