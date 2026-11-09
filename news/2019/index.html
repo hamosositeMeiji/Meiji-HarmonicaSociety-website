@@ -57,6 +57,7 @@
       <a href="../2023/">2023年度</a>
       <a href="../2022/">2022年度</a>
       <a href="../2021/">2021年度</a>
+      <a href="../2020/">2020年度</a>
       <a href="../2019/">2019年度</a>
       <a href="../2018/">2018年度</a>
       <a href="../2017/">2017年度</a>
@@ -73,13 +74,27 @@
         const year=Number(match[1]),month=Number(match[2]);
         return month>=4?year:year-1;
       }
+      const dateSortValue = value => {
+                const match = String(value || "").trim().match(/^(\d{4})\s*(?:年|[-./])\s*(\d{1,2})(?:\s*(?:月|[-./])\s*(\d{1,2})\s*日?)?/);
+                if (!match) return null;
+                const year = Number(match[1]), month = Number(match[2]), day = match[3] ? Number(match[3]) : 0;
+                if (month < 1 || month > 12 || (day !== 0 && (day < 1 || day > 31))) return null;
+                return year * 10000 + month * 100 + day;
+              };
+              const compareDates = (a, b) => {
+                const dateA = dateSortValue(a), dateB = dateSortValue(b);
+                if (dateA === null && dateB === null) return String(b || "").localeCompare(String(a || ""));
+                if (dateA === null) return 1;
+                if (dateB === null) return -1;
+                return dateB - dateA;
+              };
       try{
         const response=await fetch('https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/announcements');
         if(!response.ok)throw new Error('API response not OK');
         const data=await response.json();
         const items=(Array.isArray(data.items)?data.items:[])
           .filter(item=>fiscalYear(item.date)===targetYear)
-          .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+          .sort((a,b)=>compareDates(a.date,b.date));
         host.replaceChildren();
         if(!items.length){
           const note=document.createElement('p');
