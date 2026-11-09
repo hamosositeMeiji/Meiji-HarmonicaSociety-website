@@ -172,6 +172,18 @@ async function handle(request, env) {
     });
     const a = content.activities || {}, m = content.media || {}, social = m.social || {}, r = content.recruit || {};
     const contacts = content.contacts || {};
+    const schedule = content.schedule || {};
+    const validScheduleRows = (rows, fields) => Array.isArray(rows) && rows.length <= 12 && rows.every(row =>
+      row && typeof row === "object" && !Array.isArray(row) &&
+      fields.every(([key, max]) => typeof (row[key] || "") === "string" && (row[key] || "").length <= max)
+    );
+    const validSchedule = content.schedule === undefined || (
+      schedule && typeof schedule === "object" && !Array.isArray(schedule) &&
+      typeof (schedule.location || "") === "string" && (schedule.location || "").length <= 300 &&
+      typeof (schedule.notice || "") === "string" && (schedule.notice || "").length <= 500 &&
+      validScheduleRows(schedule.regular || [], [["day", 80], ["time", 80], ["label", 300]]) &&
+      validScheduleRows(schedule.yearly || [], [["when", 80], ["title", 200]])
+    );
     const people = contacts.people === undefined ? [] : contacts.people;
     const validPerson = person => person && typeof person === "object" && !Array.isArray(person) &&
       typeof (person.role || "") === "string" && (person.role || "").length <= 80 &&
@@ -186,16 +198,67 @@ async function handle(request, env) {
         !listOfVideos(m.videos || []) || !safeUrl(social.instagram || "") || !safeUrl(social.x || "") ||
         !safeUrl(social.youtube || "") || !listOfUrls(social.other || []) ||
         typeof r.title !== "string" || r.title.length > 120 || typeof r.text !== "string" || r.text.length > 5000 ||
-        !safeUrl(r.contactUrl || "")) return json({ error: "invalid_content_fields" }, 400, headers);
+        typeof (r.visitInfo || "") !== "string" || (r.visitInfo || "").length > 3000 ||
+        !safeUrl(r.contactUrl || "") || !validSchedule) return json({ error: "invalid_content_fields" }, 400, headers);
     await env.LOGIN_LIMITS.put(siteContentKey, serialized);
     return json({ ok: true }, 200, headers);
   }
 
-  // Public site-content endpoint. Data is intentionally published only through this explicit route.
+  // Public site-content endpoint. Return only the explicitly supported public fields.
+  // Unknown or future internal properties must never be exposed automatically.
   if (url.pathname === "/api/public/site-content" && request.method === "GET") {
     const stored = await env.LOGIN_LIMITS.get("content:site-content", "json");
-    const content = stored && typeof stored === "object" ? stored : {};
-    return json({ content }, 200, { ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60" });
+    const source = stored && typeof stored === "object" && !Array.isArray(stored) ? stored : {};
+    const stringField = (object, key, max) =>
+      object && typeof object[key] === "string" ? object[key].slice(0, max) : "";
+    const safePublicUrl = value =>
+      typeof value === "string" && value.length <= 500 && /^https:\/\//i.test(value) ? value : "";
+    const publicPeople = value => Array.isArray(value) ? value.slice(0, 3)
+      .filter(person => person && typeof person === "object" && !Array.isArray(person))
+      .map(person => ({
+        role: stringField(person, "role", 80),
+        name: stringField(person, "name", 120),
+        email: stringField(person, "email", 254),
+      })) : [];
+    const publicRows = (value, fields) => Array.isArray(value) ? value.slice(0, 12)
+      .filter(item => item && typeof item === "object" && !Array.isArray(item))
+      .map(item => Object.fromEntries(fields.map(([key, max]) => [key, stringField(item, key, max)]))) : [];
+    const media = source.media && typeof source.media === "object" && !Array.isArray(source.media) ? source.media : {};
+    const social = media.social && typeof media.social === "object" && !Array.isArray(media.social) ? media.social : {};
+    const publicContent = {
+      activities: {
+        title: stringField(source.activities, "title", 120),
+        text: stringField(source.activities, "text", 5000),
+        photos: Array.isArray(source.activities?.photos) ? source.activities.photos.filter(safePublicUrl).slice(0, 30) : [],
+      },
+      media: {
+        videoTitle: stringField(media, "videoTitle", 120),
+        videos: Array.isArray(media.videos) ? media.videos.filter(item => typeof item === "string" && item.length <= 623).slice(0, 30) : [],
+        social: {
+          instagram: safePublicUrl(social.instagram),
+          x: safePublicUrl(social.x),
+          youtube: safePublicUrl(social.youtube),
+          other: Array.isArray(social.other) ? social.other.filter(safePublicUrl).slice(0, 30) : [],
+        },
+      },
+      recruit: {
+        title: stringField(source.recruit, "title", 120),
+        text: stringField(source.recruit, "text", 5000),
+        visitInfo: stringField(source.recruit, "visitInfo", 3000),
+        contactUrl: safePublicUrl(source.recruit && source.recruit.contactUrl),
+      },
+      schedule: {
+        regular: publicRows(source.schedule && source.schedule.regular, [["day", 80], ["time", 80], ["label", 300]]),
+        location: stringField(source.schedule, "location", 300),
+        notice: stringField(source.schedule, "notice", 500),
+        yearly: publicRows(source.schedule && source.schedule.yearly, [["when", 80], ["title", 200]]),
+      },
+      contacts: {
+        people: publicPeople(source.contacts && source.contacts.people),
+        siteAdmins: publicPeople(source.contacts && source.contacts.siteAdmins),
+      },
+    };
+    return json({ content: publicContent }, 200, { ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60" });
   }
   // Public endpoint exposes only explicitly published announcements and safe display fields.
   if (url.pathname === "/api/public/announcements" && request.method === "GET") {
