@@ -1427,9 +1427,15 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     /* Safe fallback: content remains visible unless the reveal observer is ready. */
     .reveal { opacity: 1; transform: none; }
   </style>
+
+<style id="hamoso-skip-link-style">
+.skip-link{position:fixed;top:8px;left:8px;z-index:9999;transform:translateY(-160%);padding:10px 14px;border:2px solid #34452b;border-radius:8px;background:#fff;color:#20231c;font-weight:700;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.18)}
+.skip-link:focus{transform:translateY(0);outline:3px solid #8b9f40;outline-offset:2px}
+</style>
 </head>
 
 <body>
+<a class="skip-link" href="#top">本文へ移動</a>
 
 
   <header class="header">
@@ -1467,7 +1473,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     </span>
   </a>
 
-  <main id="top">
+  <main id="top" tabindex="-1">
     <section class="hero wrap">
       <div class="hero-top">
         <span class="pill">MEIJI UNIVERSITY · EST. 1918</span>
