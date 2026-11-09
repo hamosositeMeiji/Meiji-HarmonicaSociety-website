@@ -1935,7 +1935,10 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       });
 
       document.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeMobileMenu();
+        if (event.key === "Escape" && navLinks.classList.contains("open")) {
+          closeMobileMenu();
+          menuToggle.focus();
+        }
       });
     }
 
