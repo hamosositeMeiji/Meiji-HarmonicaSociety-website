@@ -225,39 +225,66 @@ async function handle(request, env) {
       .map(item => Object.fromEntries(fields.map(([key, max]) => [key, stringField(item, key, max)]))) : [];
     const media = source.media && typeof source.media === "object" && !Array.isArray(source.media) ? source.media : {};
     const social = media.social && typeof media.social === "object" && !Array.isArray(media.social) ? media.social : {};
-    const publicContent = {
-      activities: {
-        title: stringField(source.activities, "title", 120),
-        text: stringField(source.activities, "text", 5000),
-        photos: Array.isArray(source.activities?.photos) ? source.activities.photos.filter(safePublicUrl).slice(0, 30) : [],
-      },
-      media: {
-        videoTitle: stringField(media, "videoTitle", 120),
-        videos: Array.isArray(media.videos) ? media.videos.filter(item => typeof item === "string" && item.length <= 623).slice(0, 30) : [],
-        social: {
+    const publicContent = {};
+    const activities = source.activities && typeof source.activities === "object" && !Array.isArray(source.activities) ? source.activities : null;
+    if (activities) {
+      publicContent.activities = {
+        title: stringField(activities, "title", 120),
+        text: stringField(activities, "text", 5000),
+      };
+      if (Array.isArray(activities.photos)) {
+        publicContent.activities.photos = activities.photos.filter(safePublicUrl).slice(0, 30);
+      }
+    }
+    if (stored && source.media && typeof source.media === "object" && !Array.isArray(source.media)) {
+      const publicMedia = { videoTitle: stringField(media, "videoTitle", 120) };
+      if (Array.isArray(media.videos)) {
+        publicMedia.videos = media.videos.filter(item => typeof item === "string" && item.length <= 623).slice(0, 30);
+      }
+      if (social && Object.keys(social).length) {
+        publicMedia.social = {
           instagram: safePublicUrl(social.instagram),
           x: safePublicUrl(social.x),
           youtube: safePublicUrl(social.youtube),
-          other: Array.isArray(social.other) ? social.other.filter(safePublicUrl).slice(0, 30) : [],
-        },
-      },
-      recruit: {
-        title: stringField(source.recruit, "title", 120),
-        text: stringField(source.recruit, "text", 5000),
-        visitInfo: stringField(source.recruit, "visitInfo", 3000),
-        contactUrl: safePublicUrl(source.recruit && source.recruit.contactUrl),
-      },
-      schedule: {
-        regular: publicRows(source.schedule && source.schedule.regular, [["day", 80], ["time", 80], ["label", 300]]),
-        location: stringField(source.schedule, "location", 300),
-        notice: stringField(source.schedule, "notice", 500),
-        yearly: publicRows(source.schedule && source.schedule.yearly, [["when", 80], ["title", 200]]),
-      },
-      contacts: {
-        people: publicPeople(source.contacts && source.contacts.people),
-        siteAdmins: publicPeople(source.contacts && source.contacts.siteAdmins),
-      },
-    };
+        };
+        if (Array.isArray(social.other)) {
+          publicMedia.social.other = social.other.filter(safePublicUrl).slice(0, 30);
+        }
+      }
+      publicContent.media = publicMedia;
+    }
+    const recruit = source.recruit && typeof source.recruit === "object" && !Array.isArray(source.recruit) ? source.recruit : null;
+    if (recruit) {
+      publicContent.recruit = {
+        title: stringField(recruit, "title", 120),
+        text: stringField(recruit, "text", 5000),
+        visitInfo: stringField(recruit, "visitInfo", 3000),
+        contactUrl: safePublicUrl(recruit.contactUrl),
+      };
+    }
+    const scheduleSource = source.schedule && typeof source.schedule === "object" && !Array.isArray(source.schedule) ? source.schedule : null;
+    if (scheduleSource) {
+      publicContent.schedule = {
+        location: stringField(scheduleSource, "location", 300),
+        notice: stringField(scheduleSource, "notice", 500),
+      };
+      if (Array.isArray(scheduleSource.regular)) {
+        publicContent.schedule.regular = publicRows(scheduleSource.regular, [["day", 80], ["time", 80], ["label", 300]]);
+      }
+      if (Array.isArray(scheduleSource.yearly)) {
+        publicContent.schedule.yearly = publicRows(scheduleSource.yearly, [["when", 80], ["title", 200]]);
+      }
+    }
+    const contactsSource = source.contacts && typeof source.contacts === "object" && !Array.isArray(source.contacts) ? source.contacts : null;
+    if (contactsSource) {
+      publicContent.contacts = {};
+      if (Array.isArray(contactsSource.people)) {
+        publicContent.contacts.people = publicPeople(contactsSource.people);
+      }
+      if (Array.isArray(contactsSource.siteAdmins)) {
+        publicContent.contacts.siteAdmins = publicPeople(contactsSource.siteAdmins);
+      }
+    }
     return json({ content: publicContent }, 200, { ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60" });
   }
   // Public endpoint exposes only explicitly published announcements and safe display fields.
