@@ -1,0 +1,68 @@
+/* Shared motion and lightweight display modes for secondary pages. */
+html.hm-motion-reduced,
+body.hm-motion-reduced,
+html.hm-lightweight,
+body.hm-lightweight { scroll-behavior:auto!important; }
+
+body.hm-motion-reduced *,
+body.hm-motion-reduced *::before,
+body.hm-motion-reduced *::after,
+body.hm-lightweight *,
+body.hm-lightweight *::before,
+body.hm-lightweight *::after {
+  animation:none!important;
+  transition:none!important;
+}
+
+body.hm-lightweight *,
+body.hm-lightweight *::before,
+body.hm-lightweight *::after { filter:none!important; }
+
+body.hm-motion-reduced .reveal,
+body.hm-motion-reduced .reveal.visible,
+body.hm-lightweight .reveal,
+body.hm-lightweight .reveal.visible {
+  opacity:1!important;
+  transform:none!important;
+  visibility:visible!important;
+}
+
+body.hm-lightweight::before,
+body.hm-lightweight::after,
+body.hm-lightweight header,
+body.hm-lightweight .site-header,
+body.hm-lightweight .header,
+body.hm-lightweight .hamoso-social-float a,
+body.hm-lightweight #hm-settings-toggle,
+body.hm-lightweight #hamoso-accessibility {
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+
+#hamoso-accessibility .hm-motion-controls {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:5px;
+  margin-top:4px;
+  padding-top:9px;
+  border-top:1px solid rgba(52,69,43,.16);
+}
+#hamoso-accessibility .hm-motion-title {
+  font-size:11px;
+  font-weight:800;
+  line-height:1.4;
+}
+#hamoso-accessibility .hm-motion-help {
+  font-size:10px;
+  line-height:1.45;
+  color:#526057;
+}
+
+/* The operating system's reduced-motion preference always takes priority. */
+@media (prefers-reduced-motion:reduce) {
+  html,body,* { scroll-behavior:auto!important; }
+  *,*::before,*::after { animation:none!important; transition:none!important; }
+  .reveal,.reveal.visible { opacity:1!important; transform:none!important; visibility:visible!important; }
+}

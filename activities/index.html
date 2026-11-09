@@ -157,6 +157,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
 @keyframes hm-liquid-surge{0%{transform:translate(8%,-6%) rotate(-10deg) scale(.92);background-position:0% 50%}50%{transform:translate(-4%,4%) rotate(3deg) scale(1.13);background-position:55% 45%}100%{transform:translate(3%,10%) rotate(12deg) scale(1.04);background-position:100% 50%}}
 @media(prefers-reduced-motion:reduce){body{animation:none!important}body:before,body:after{animation:none!important}}
 </style><style id="hamoso-eye-settings-icon">#hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}</style>
+<link rel="stylesheet" href="../shared/motion-controls.css">
 </head>
 <body>
   <header><div class="wrap nav"><a class="brand" href="../index.html">HAMOSO.</a><a class="back" href="../index.html#activities">← トップページへ戻る</a></div></header>
@@ -184,7 +185,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     </a>
   </nav>
 <button type="button" id="hm-settings-toggle" aria-label="表示設定を開く" aria-expanded="false" aria-controls="hamoso-accessibility" title="表示設定"><svg class="hm-eye-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>
-<nav id="hamoso-accessibility" aria-label="表示設定" hidden><span class="hm-a11y-label">表示設定</span><div class="hm-size-controls"><button type="button" data-hm-size="small" aria-label="文字を小さくする">A−</button><button type="button" data-hm-size="normal" aria-label="文字サイズを標準にする">A</button><button type="button" data-hm-size="large" aria-label="文字を大きくする">A＋</button></div><button type="button" id="hm-contrast" aria-pressed="false">高コントラスト</button></nav>
+<nav id="hamoso-accessibility" aria-label="表示設定" hidden><span class="hm-a11y-label">表示設定</span><div class="hm-size-controls"><button type="button" data-hm-size="small" aria-label="文字を小さくする">A−</button><button type="button" data-hm-size="normal" aria-label="文字サイズを標準にする">A</button><button type="button" data-hm-size="large" aria-label="文字を大きくする">A＋</button></div><button type="button" id="hm-contrast" aria-pressed="false">高コントラスト</button><div class="hm-motion-controls" role="group" aria-label="アニメーションと動作負荷"><span class="hm-motion-title">動き・軽量表示</span><button type="button" data-hm-motion="standard" aria-pressed="false">標準</button><button type="button" data-hm-motion="reduced" aria-pressed="false">アニメーション軽減</button><button type="button" data-hm-motion="light" aria-pressed="false">軽量表示</button><span class="hm-motion-help">設定はこのブラウザに保存されます。</span></div></nav>
 <script id="hamoso-accessibility-script">
 (function(){
  const root=document.documentElement,body=document.body,bar=document.getElementById('hamoso-accessibility'),contrast=document.getElementById('hm-contrast'),toggle=document.getElementById('hm-settings-toggle');
@@ -250,5 +251,6 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
 })();
 </script>
 <script src="../js/managed-social-links.js" defer></script>
+<script src="../shared/motion-preferences.js"></script>
 </body>
 </html>
