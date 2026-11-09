@@ -293,9 +293,26 @@ async function handle(request, env) {
   // Public endpoint exposes only explicitly published announcements and safe display fields.
   if (url.pathname === "/api/public/announcements" && request.method === "GET") {
     const stored = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
-    const items = (Array.isArray(stored) ? stored : []).filter(item => item && item.published === true).sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))).slice(0, 20).map(item => ({
-      id: item.id, title: item.title, date: item.date, category: item.category, body: item.body, imageUrl: item.imageUrl || ""
-    }));
+    const dateSortValue = value => {
+      const match = String(value || "").trim().match(/^(\d{4})\s*(?:年|[-./])\s*(\d{1,2})(?:\s*(?:月|[-./])\s*(\d{1,2})\s*日?)?/);
+      if (!match) return null;
+      const year = Number(match[1]), month = Number(match[2]), day = match[3] ? Number(match[3]) : 0;
+      if (month < 1 || month > 12 || (day !== 0 && (day < 1 || day > 31))) return null;
+      return year * 10000 + month * 100 + day;
+    };
+    const items = (Array.isArray(stored) ? stored : [])
+      .filter(item => item && item.published === true)
+      .sort((a, b) => {
+        const dateA = dateSortValue(a.date), dateB = dateSortValue(b.date);
+        if (dateA === null && dateB === null) return String(b.date || "").localeCompare(String(a.date || ""));
+        if (dateA === null) return 1;
+        if (dateB === null) return -1;
+        return dateB - dateA;
+      })
+      .slice(0, 50)
+      .map(item => ({
+        id: item.id, title: item.title, date: item.date, category: item.category, body: item.body, imageUrl: item.imageUrl || ""
+      }));
     return json({ items }, 200, { ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60" });
   }
 
