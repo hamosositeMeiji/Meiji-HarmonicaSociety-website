@@ -2025,7 +2025,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
  const root=document.documentElement,body=document.body,bar=document.getElementById('hamoso-accessibility'),contrast=document.getElementById('hm-contrast'),toggle=document.getElementById('hm-settings-toggle');
  if(!bar||!body||!toggle)return;
  toggle.addEventListener('click',()=>{const open=bar.hidden;bar.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'表示設定を閉じる':'表示設定を開く');});
- document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!bar.hidden){bar.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','表示設定を開く');}});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!bar.hidden){bar.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','表示設定を開く');toggle.focus();}});
  let size='normal',high=false,motion='';
  try{size=localStorage.getItem('hm-text-size')||'normal';high=localStorage.getItem('hm-high-contrast')==='true';motion=localStorage.getItem('hm-motion-mode')||''}catch(e){}
  if(!motion)motion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'standard';
