@@ -158,10 +158,16 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
 @media(prefers-reduced-motion:reduce){body{animation:none!important}body:before,body:after{animation:none!important}}
 </style><style id="hamoso-eye-settings-icon">#hm-settings-toggle{display:grid!important;place-items:center!important}#hm-settings-toggle .hm-eye-icon{display:block!important;width:23px!important;height:23px!important;flex:none!important}#hm-settings-toggle:focus-visible{outline:3px solid #517b70!important;outline-offset:3px!important}@media(max-width:600px){#hm-settings-toggle .hm-eye-icon{width:21px!important;height:21px!important}}</style>
 <link rel="stylesheet" href="../shared/motion-controls.css">
+
+<style id="hamoso-skip-link-style">
+.skip-link{position:fixed;top:8px;left:8px;z-index:9999;transform:translateY(-160%);padding:10px 14px;border:2px solid #34452b;border-radius:8px;background:#fff;color:#20231c;font-weight:700;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.18)}
+.skip-link:focus{transform:translateY(0);outline:3px solid #8b9f40;outline-offset:2px}
+</style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">本文へ移動</a>
   <header><div class="wrap nav"><a class="brand" href="../index.html">HAMOSO.</a><a class="back" href="../index.html#activities">← トップページへ戻る</a></div></header>
-  <main class="wrap">
+  <main class="wrap" id="main-content" tabindex="-1">
     <div class="eyebrow">02 / ACTIVITIES</div>
     <h1>More than<br><span>just music.</span></h1>
     <p class="intro">ハモソの活動は、楽器を演奏することだけではありません。日々の練習で仲間と音を合わせ、ステージで演奏を届け、イベントを通じて交流を深めています。</p>
