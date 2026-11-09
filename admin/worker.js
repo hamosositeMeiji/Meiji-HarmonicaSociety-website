@@ -185,6 +185,9 @@ async function handle(request, env) {
       validScheduleRows(schedule.yearly || [], [["when", 80], ["title", 200]])
     );
     const people = contacts.people === undefined ? [] : contacts.people;
+    if (contacts.peopleConfigured !== undefined && typeof contacts.peopleConfigured !== "boolean") {
+      return json({ error: "invalid_people_configuration" }, 400, headers);
+    }
     const validPerson = person => person && typeof person === "object" && !Array.isArray(person) &&
       typeof (person.role || "") === "string" && (person.role || "").length <= 80 &&
       typeof (person.name || "") === "string" && (person.name || "").length <= 120 &&
@@ -281,6 +284,9 @@ async function handle(request, env) {
     const contactsSource = source.contacts && typeof source.contacts === "object" && !Array.isArray(source.contacts) ? source.contacts : null;
     if (contactsSource) {
       publicContent.contacts = {};
+      if (typeof contactsSource.peopleConfigured === "boolean") {
+        publicContent.contacts.peopleConfigured = contactsSource.peopleConfigured;
+      }
       if (Array.isArray(contactsSource.people)) {
         publicContent.contacts.people = publicPeople(contactsSource.people);
       }
