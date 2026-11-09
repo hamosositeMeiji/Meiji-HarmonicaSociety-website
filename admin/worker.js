@@ -264,10 +264,13 @@ async function handle(request, env) {
     }
     const scheduleSource = source.schedule && typeof source.schedule === "object" && !Array.isArray(source.schedule) ? source.schedule : null;
     if (scheduleSource) {
-      publicContent.schedule = {
-        location: stringField(scheduleSource, "location", 300),
-        notice: stringField(scheduleSource, "notice", 500),
-      };
+      publicContent.schedule = {};
+      if (typeof scheduleSource.location === "string") {
+        publicContent.schedule.location = scheduleSource.location.slice(0, 300);
+      }
+      if (typeof scheduleSource.notice === "string") {
+        publicContent.schedule.notice = scheduleSource.notice.slice(0, 500);
+      }
       if (Array.isArray(scheduleSource.regular)) {
         publicContent.schedule.regular = publicRows(scheduleSource.regular, [["day", 80], ["time", 80], ["label", 300]]);
       }
