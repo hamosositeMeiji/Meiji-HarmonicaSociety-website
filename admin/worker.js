@@ -23,7 +23,7 @@ function cors(origin) {
   return {
     "Access-Control-Allow-Origin": SITE_ORIGIN,
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
     "Vary": "Origin",
   };
 }
@@ -125,6 +125,62 @@ async function handle(request, env) {
     return new Response(bytes, { status: 200, headers: { ...headers, "Content-Type": stored.type, "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" } });
   }
 
+  // Authenticated deletion also detaches the image from managed content records.
+  if (url.pathname.startsWith("/api/media/") && request.method === "DELETE") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    const id = url.pathname.slice("/api/media/".length);
+    if (!/^[a-zA-Z0-9_-]{1,60}$/.test(id)) return json({ error: "not_found" }, 404, headers);
+    const mediaKey = MEDIA_PREFIX + id;
+    const stored = await env.LOGIN_LIMITS.get(mediaKey);
+    if (!stored) return json({ error: "not_found" }, 404, headers);
+    const imageUrl = "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/media/" + id;
+    let siteContentDetached = 0, announcementsDetached = 0;
+    const siteContentKey = "content:site-content";
+    const siteContent = await env.LOGIN_LIMITS.get(siteContentKey, "json");
+    if (siteContent && typeof siteContent === "object" && !Array.isArray(siteContent) &&
+        siteContent.activities && Array.isArray(siteContent.activities.photos)) {
+      const before = siteContent.activities.photos.length;
+      siteContent.activities.photos = siteContent.activities.photos.filter(value => value !== imageUrl);
+      siteContentDetached = before - siteContent.activities.photos.length;
+      if (siteContentDetached) await env.LOGIN_LIMITS.put(siteContentKey, JSON.stringify(siteContent));
+    }
+    const announcements = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
+    if (Array.isArray(announcements)) {
+      let changed = false;
+      for (const item of announcements) {
+        if (item && item.imageUrl === imageUrl) {
+          item.imageUrl = "";
+          announcementsDetached++;
+          changed = true;
+        }
+      }
+      if (changed) await env.LOGIN_LIMITS.put(CONTENT_KEY, JSON.stringify(announcements));
+    }
+    await env.LOGIN_LIMITS.delete(mediaKey);
+    return json({ ok: true, detached: { siteContent: siteContentDetached, announcements: announcementsDetached } }, 200, headers);
+  }
+
+  // One-time, authenticated migration for media objects created with the former 365-day TTL.
+  if (url.pathname === "/api/media/extend-retention" && request.method === "POST") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    let body = {};
+    try { body = await request.json(); } catch {}
+    const options = { prefix: MEDIA_PREFIX, limit: 100 };
+    if (typeof body.cursor === "string" && body.cursor) options.cursor = body.cursor;
+    const listed = await env.LOGIN_LIMITS.list(options);
+    let extended = 0;
+    for (const key of listed.keys) {
+      const value = await env.LOGIN_LIMITS.get(key.name);
+      if (value !== null) {
+        await env.LOGIN_LIMITS.put(key.name, value);
+        extended++;
+      }
+    }
+    return json({ ok: true, extended, cursor: listed.list_complete ? null : listed.cursor, complete: listed.list_complete === true }, 200, headers);
+  }
+
   if (url.pathname === "/api/media" && request.method === "POST") {
     const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
@@ -142,7 +198,7 @@ async function handle(request, env) {
       : bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50;
     if (!signatureOK) return json({ error: "image_content_mismatch" }, 400, headers);
     const id = crypto.randomUUID().replace(/-/g, "");
-    await env.LOGIN_LIMITS.put(MEDIA_PREFIX + id, JSON.stringify({ type: body.type, data: body.data }), { expirationTtl: 60 * 60 * 24 * 365 });
+    await env.LOGIN_LIMITS.put(MEDIA_PREFIX + id, JSON.stringify({ type: body.type, data: body.data }));
     return json({ ok: true, id, url: "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/media/" + id }, 201, headers);
   }
 
