@@ -15,8 +15,8 @@ assert.equal(new Set(xmlUrls).size, xmlUrls.length, "sitemap.xml contains duplic
 assert.deepEqual(xmlUrls, sitemapTxt, "sitemap.xml and sitemap.txt must contain the same URLs in the same order");
 
 function attr(tag, name) {
-  const match = tag.match(new RegExp("\\b" + name + "\\s*=\\s*([\\"'])(.*?)\\1", "i"));
-  return match ? match[2] : null;
+  const match = tag.match(new RegExp(name + "=(?:\\x22([^\\x22]*)\\x22|\\x27([^\\x27]*)\\x27)", "i"));
+  return match ? (match[1] ?? match[2]) : null;
 }
 function existsForUrl(url) {
   const parsed = new URL(url);
