@@ -22,6 +22,11 @@
 - お知らせの保存・公開APIの上限を2,000件（JSONデータ10MB）に拡張しました。公開APIは公開中の記事を日付順に最大2,000件返し、年度別アーカイブが年度ごとに絞り込みます。
 - 旧仕様の上限50件でKVに保存されなかった過去記事は、この変更だけでは復元されません。旧サイト・旧データ・手元の原稿などからの移行が必要です。現時点のKV内記事数・欠落状況は本番データを確認するまで断定しません。
 
+## GitHub運用・ブランチ保護
+- `.github/workflows/site-quality.yml` はPull RequestとmainへのpushでHTML・サイトマップ・ローカル参照・OGP・画像alt・ID重複・JavaScript構文を自動検査します。
+- `main`の直接pushを防ぐには、GitHubのSettings → Branches → Add branch protection ruleで`main`を対象にし、Pull Request必須、Status checks必須（`site-audit`）、force push禁止、branch deletion禁止を有効にしてください。
+- このGitHub接続ではブランチ保護ルールを書き込む権限がないため、ルール自体は管理画面での設定が必要です。設定後はPR画面で`site-audit`が成功するまでマージしない運用にしてください。
+
 ## Search Console・robots.txt
 - このサイトはGitHub Pagesのプロジェクトサイト形式で、公開URLに `/Meiji-HarmonicaSociety-website/` が含まれます。そのため、このリポジトリ直下の `robots.txt` は `https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/robots.txt` に配置され、ホスト直下の `https://hamosositemeiji.github.io/robots.txt` にはなりません。
 - Googleのrobots.txt仕様では、robots.txtは対象ホストのルートに置く必要があります。プロジェクトサイト内のrobots.txtはGoogleのホスト全体向けクロール制御としては機能しません。
