@@ -1,3 +1,6 @@
+// NOTE: This is a GitHub Pages project-site file under /Meiji-HarmonicaSociety-website/.
+// Google requires robots.txt at the host root; this file does not control the whole host.
+// Submit the project sitemap directly in Search Console.
 User-agent: *
 Allow: /
 
