@@ -456,6 +456,29 @@ async function handle(request, env) {
     for (const item of body.items) await env.LOGIN_LIMITS.put(MEDIA_PREFIX + item.id, JSON.stringify({ type: item.type, data: item.data }));
     return json({ ok: true, restored: body.items.length }, 200, headers);
   }
+  if (url.pathname === "/api/backup/restore-latest-snapshot" && request.method === "POST") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    const siteList = await env.LOGIN_LIMITS.list({ prefix: "backup:site-content:", limit: 100 });
+    const announcementList = await env.LOGIN_LIMITS.list({ prefix: "backup:announcements:", limit: 100 });
+    const latest = list => list.keys.sort((a, b) => b.name.localeCompare(a.name))[0];
+    const siteKey = latest(siteList), announcementKey = latest(announcementList);
+    if (!siteKey || !announcementKey) return json({ error: "snapshot_not_found" }, 404, headers);
+    const siteSnapshot = await env.LOGIN_LIMITS.get(siteKey.name, "json");
+    const announcementSnapshot = await env.LOGIN_LIMITS.get(announcementKey.name, "json");
+    if (!siteSnapshot || typeof siteSnapshot.value !== "string" || !announcementSnapshot || typeof announcementSnapshot.value !== "string") {
+      return json({ error: "snapshot_invalid" }, 500, headers);
+    }
+    const siteRevision = (await env.LOGIN_LIMITS.get(SITE_CONTENT_REVISION_KEY)) || "0";
+    const announcementRevision = (await env.LOGIN_LIMITS.get(ANNOUNCEMENTS_REVISION_KEY)) || "0";
+    const nextSiteRevision = String(Number(siteRevision) + 1);
+    const nextAnnouncementRevision = String(Number(announcementRevision) + 1);
+    await env.LOGIN_LIMITS.put("content:site-content", siteSnapshot.value);
+    await env.LOGIN_LIMITS.put(CONTENT_KEY, announcementSnapshot.value);
+    await env.LOGIN_LIMITS.put(SITE_CONTENT_REVISION_KEY, nextSiteRevision);
+    await env.LOGIN_LIMITS.put(ANNOUNCEMENTS_REVISION_KEY, nextAnnouncementRevision);
+    return json({ ok: true, restoredSiteSnapshot: siteSnapshot.createdAt, restoredAnnouncementsSnapshot: announcementSnapshot.createdAt }, 200, headers);
+  }
   if (url.pathname === "/api/backup/restore-content" && request.method === "POST") {
     const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
