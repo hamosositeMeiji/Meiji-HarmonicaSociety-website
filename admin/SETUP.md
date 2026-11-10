@@ -22,6 +22,13 @@
 - お知らせの保存・公開APIの上限を2,000件（JSONデータ10MB）に拡張しました。公開APIは公開中の記事を日付順に最大2,000件返し、年度別アーカイブが年度ごとに絞り込みます。
 - 旧仕様の上限50件でKVに保存されなかった過去記事は、この変更だけでは復元されません。旧サイト・旧データ・手元の原稿などからの移行が必要です。現時点のKV内記事数・欠落状況は本番データを確認するまで断定しません。
 
+## Search Console・robots.txt
+- このサイトはGitHub Pagesのプロジェクトサイト形式で、公開URLに `/Meiji-HarmonicaSociety-website/` が含まれます。そのため、このリポジトリ直下の `robots.txt` は `https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/robots.txt` に配置され、ホスト直下の `https://hamosositemeiji.github.io/robots.txt` にはなりません。
+- Googleのrobots.txt仕様では、robots.txtは対象ホストのルートに置く必要があります。プロジェクトサイト内のrobots.txtはGoogleのホスト全体向けクロール制御としては機能しません。
+- 現在のサイトマップは `https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/sitemap.xml` です。Search Consoleでは、URLプレフィックスプロパティを `https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/` に合わせ、そのプロパティの「サイトマップ」から上記の完全URLを直接送信してください。
+- `Couldn't fetch` の原因はrobots.txtの配置だけでは断定できません。公開後にブラウザでサイトマップURLがHTTP 200で取得できること、XMLが正しいこと、Search ConsoleのプロパティURLが一致していることを個別に確認してください。
+- ホスト直下のrobots.txtが必要な場合は、`hamosositemeiji.github.io` というユーザーサイト用リポジトリを別途用意するか、独自ドメインを設定する必要があります。現時点では既存のユーザーサイト用リポジトリが確認できなかったため、新規作成はしていません。
+
 ## バックアップと復元
 - 管理画面トップの「データのバックアップ・復元」から、サイト情報・お知らせ・アップロード画像を1つのJSONファイルに書き出せます。
 - バックアップは運営担当者が定期的にダウンロードし、アクセス制限された安全な場所に保管してください。ファイルには公開予定の部員情報・画像も含まれるため、公開リポジトリや共有リンクに置かないでください。
