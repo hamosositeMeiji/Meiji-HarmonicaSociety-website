@@ -41,6 +41,11 @@
 - サイト情報・お知らせの保存前には直前のデータをKV内に90日間保存し、各種類の直近20件を保持します。
 - 同じデータを複数の管理画面で編集した場合、古い画面からの保存はrevision conflictとして拒否します。Cloudflare KVには原子的なcompare-and-swapがないため、同時刻に重なった保存を完全に直列化するものではありません。複数人で同時編集せず、保存担当を1人に決めてください。
 
+## 旧CMS設定について
+- `admin/config.yml` はDecap CMS / Git Gatewayを想定した旧設定で、現行管理画面では読み込まれていません。
+- `content/site.json` は旧CMS時代の参考データです。現行サイトの活動予定・コンテンツはCloudflare KVの `content:site-content` が保存先です。
+- 旧JSONを編集しても現行サイトには反映されません。移行元の記録として残し、削除・上書きしないでください。
+
 ## 年度更新
 1. 新年度用の `ADMIN_PASSWORD` と `SESSION_SECRET` をWorkerのSecretsで更新します。
 2. これにより旧パスワードでの新規ログインが拒否され、旧セッションも無効になります。
