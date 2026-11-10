@@ -161,6 +161,26 @@ async function handle(request, env) {
     return json({ ok: true, detached: { siteContent: siteContentDetached, announcements: announcementsDetached } }, 200, headers);
   }
 
+  // One-time, authenticated migration for media objects created with the former 365-day TTL.
+  if (url.pathname === "/api/media/extend-retention" && request.method === "POST") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    let body = {};
+    try { body = await request.json(); } catch {}
+    const options = { prefix: MEDIA_PREFIX, limit: 100 };
+    if (typeof body.cursor === "string" && body.cursor) options.cursor = body.cursor;
+    const listed = await env.LOGIN_LIMITS.list(options);
+    let extended = 0;
+    for (const key of listed.keys) {
+      const value = await env.LOGIN_LIMITS.get(key.name);
+      if (value !== null) {
+        await env.LOGIN_LIMITS.put(key.name, value);
+        extended++;
+      }
+    }
+    return json({ ok: true, extended, cursor: listed.list_complete ? null : listed.cursor, complete: listed.list_complete === true }, 200, headers);
+  }
+
   if (url.pathname === "/api/media" && request.method === "POST") {
     const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
