@@ -11,6 +11,23 @@ const CONTENT_KEY = "content:announcements";
 const MEDIA_PREFIX = "media:";
 const SESSION_PREFIX = "session:";
 const MAX_MEDIA_BYTES = 1500 * 1024;
+const SITE_CONTENT_REVISION_KEY = "revision:site-content";
+const ANNOUNCEMENTS_REVISION_KEY = "revision:announcements";
+async function snapshotBeforeWrite(env, label, key) {
+  const current = await env.LOGIN_LIMITS.get(key);
+  if (current === null) return;
+  const prefix = "backup:" + label + ":";
+  const createdAt = new Date().toISOString();
+  const backupKey = prefix + createdAt.replace(/[:.]/g, "-");
+  await env.LOGIN_LIMITS.put(backupKey, JSON.stringify({ createdAt, value: current }), { expirationTtl: 60 * 60 * 24 * 90 });
+  const listed = await env.LOGIN_LIMITS.list({ prefix, limit: 100 });
+  const newest = listed.keys.sort((a, b) => b.name.localeCompare(a.name));
+  for (const item of newest.slice(20)) await env.LOGIN_LIMITS.delete(item.name);
+}
+async function checkRevision(env, key, expected) {
+  const current = (await env.LOGIN_LIMITS.get(key)) || "0";
+  return { current, matches: typeof expected === "string" && expected === current };
+}
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -209,12 +226,15 @@ async function handle(request, env) {
     const siteContentKey = "content:site-content";
     if (request.method === "GET") {
       const content = await env.LOGIN_LIMITS.get(siteContentKey, "json");
-      return json({ content: content && typeof content === "object" ? content : {} }, 200, headers);
+      const revision = (await env.LOGIN_LIMITS.get(SITE_CONTENT_REVISION_KEY)) || "0";
+      return json({ content: content && typeof content === "object" ? content : {}, revision }, 200, headers);
     }
     let body;
     try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
     const content = body && body.content;
     if (!content || typeof content !== "object" || Array.isArray(content)) return json({ error: "invalid_content" }, 400, headers);
+    const revisionState = await checkRevision(env, SITE_CONTENT_REVISION_KEY, body.expectedRevision);
+    if (!revisionState.matches) return json({ error: "revision_conflict", revision: revisionState.current }, 409, headers);
     const serialized = JSON.stringify(content);
     if (serialized.length > 30000) return json({ error: "content_too_large" }, 413, headers);
     const safeUrl = value => typeof value === "string" && value.length <= 500 && (!value || /^https:\/\//i.test(value));
@@ -259,8 +279,11 @@ async function handle(request, env) {
         typeof r.title !== "string" || r.title.length > 120 || typeof r.text !== "string" || r.text.length > 5000 ||
         typeof (r.visitInfo || "") !== "string" || (r.visitInfo || "").length > 3000 ||
         !safeUrl(r.contactUrl || "") || !validSchedule) return json({ error: "invalid_content_fields" }, 400, headers);
+    await snapshotBeforeWrite(env, "site-content", siteContentKey);
+    const nextRevision = String(Number(revisionState.current) + 1);
     await env.LOGIN_LIMITS.put(siteContentKey, serialized);
-    return json({ ok: true }, 200, headers);
+    await env.LOGIN_LIMITS.put(SITE_CONTENT_REVISION_KEY, nextRevision);
+    return json({ ok: true, revision: nextRevision }, 200, headers);
   }
 
   // Public site-content endpoint. Return only the explicitly supported public fields.
@@ -378,17 +401,106 @@ async function handle(request, env) {
     return json({ items }, 200, { ...headers, "Access-Control-Allow-Origin": SITE_ORIGIN, "Cache-Control": "public, max-age=60" });
   }
 
+  // Full backup export: content first, then paginated media records.
+  if (url.pathname === "/api/backup/export" && request.method === "GET") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    const siteContent = await env.LOGIN_LIMITS.get("content:site-content", "json");
+    const announcements = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
+    return json({
+      format: "hamoso-kv-backup", version: 1, createdAt: new Date().toISOString(),
+      siteContent: siteContent && typeof siteContent === "object" && !Array.isArray(siteContent) ? siteContent : {},
+      announcements: Array.isArray(announcements) ? announcements : [],
+      revisions: {
+        siteContent: (await env.LOGIN_LIMITS.get(SITE_CONTENT_REVISION_KEY)) || "0",
+        announcements: (await env.LOGIN_LIMITS.get(ANNOUNCEMENTS_REVISION_KEY)) || "0",
+      },
+    }, 200, headers);
+  }
+  if (url.pathname === "/api/backup/export-media" && request.method === "GET") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    const options = { prefix: MEDIA_PREFIX, limit: 5 };
+    const cursor = url.searchParams.get("cursor");
+    if (cursor) options.cursor = cursor;
+    const listed = await env.LOGIN_LIMITS.list(options);
+    const items = [];
+    for (const key of listed.keys) {
+      const stored = await env.LOGIN_LIMITS.get(key.name, "json");
+      if (stored && typeof stored.type === "string" && typeof stored.data === "string") {
+        items.push({ id: key.name.slice(MEDIA_PREFIX.length), type: stored.type, data: stored.data });
+      }
+    }
+    return json({ items, cursor: listed.list_complete ? null : listed.cursor, complete: listed.list_complete === true }, 200, headers);
+  }
+  if (url.pathname === "/api/backup/restore-media" && request.method === "POST") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    let body;
+    try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
+    if (!Array.isArray(body.items) || body.items.length > 5) return json({ error: "invalid_backup_media_batch" }, 400, headers);
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    for (const item of body.items) {
+      if (!item || !/^[a-zA-Z0-9_-]{1,60}$/.test(item.id) || !allowedTypes.includes(item.type) ||
+          typeof item.data !== "string" || item.data.length > 2100000 || !/^[A-Za-z0-9+/]*={0,2}$/.test(item.data)) {
+        return json({ error: "invalid_backup_media_item" }, 400, headers);
+      }
+      let bytes;
+      try { bytes = Uint8Array.from(atob(item.data), c => c.charCodeAt(0)); } catch { return json({ error: "invalid_backup_media_data" }, 400, headers); }
+      if (!bytes.length || bytes.length > MAX_MEDIA_BYTES) return json({ error: "invalid_backup_media_size" }, 400, headers);
+      const ok = item.type === "image/jpeg" ? bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff
+        : item.type === "image/png" ? bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47
+        : bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50;
+      if (!ok) return json({ error: "backup_media_type_mismatch" }, 400, headers);
+    }
+    for (const item of body.items) await env.LOGIN_LIMITS.put(MEDIA_PREFIX + item.id, JSON.stringify({ type: item.type, data: item.data }));
+    return json({ ok: true, restored: body.items.length }, 200, headers);
+  }
+  if (url.pathname === "/api/backup/restore-content" && request.method === "POST") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    let body;
+    try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
+    const siteContent = body.siteContent;
+    const announcements = body.announcements;
+    if (!siteContent || typeof siteContent !== "object" || Array.isArray(siteContent) ||
+        JSON.stringify(siteContent).length > 30000 || !Array.isArray(announcements) || announcements.length > 50) {
+      return json({ error: "invalid_backup_content" }, 400, headers);
+    }
+    if (!announcements.every(item => item && typeof item === "object" && typeof item.title === "string" &&
+      item.title.length > 0 && item.title.length <= 120 && typeof item.date === "string" &&
+      typeof item.category === "string" && typeof item.body === "string" &&
+      typeof item.imageUrl === "string" && item.imageUrl.length <= 200 &&
+      (!item.imageUrl || /^https:\/\/hamoso-admin-auth\.hamososaitoguanli\.workers\.dev\/media\/[a-zA-Z0-9_-]{1,60}$/.test(item.imageUrl)))) {
+      return json({ error: "invalid_backup_announcements" }, 400, headers);
+    }
+    await snapshotBeforeWrite(env, "site-content", "content:site-content");
+    await snapshotBeforeWrite(env, "announcements", CONTENT_KEY);
+    const siteRevision = (await env.LOGIN_LIMITS.get(SITE_CONTENT_REVISION_KEY)) || "0";
+    const announcementsRevision = (await env.LOGIN_LIMITS.get(ANNOUNCEMENTS_REVISION_KEY)) || "0";
+    const nextSiteRevision = String(Number(siteRevision) + 1);
+    const nextAnnouncementsRevision = String(Number(announcementsRevision) + 1);
+    await env.LOGIN_LIMITS.put("content:site-content", JSON.stringify(siteContent));
+    await env.LOGIN_LIMITS.put(CONTENT_KEY, JSON.stringify(announcements));
+    await env.LOGIN_LIMITS.put(SITE_CONTENT_REVISION_KEY, nextSiteRevision);
+    await env.LOGIN_LIMITS.put(ANNOUNCEMENTS_REVISION_KEY, nextAnnouncementsRevision);
+    return json({ ok: true, restoredAnnouncements: announcements.length, revision: { siteContent: nextSiteRevision, announcements: nextAnnouncementsRevision } }, 200, headers);
+  }
+
   // All content routes require a valid bearer token.
   if (url.pathname === "/api/announcements" && (request.method === "GET" || request.method === "POST")) {
     const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
     if (request.method === "GET") {
       const items = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
-      return json({ items: Array.isArray(items) ? items : [] }, 200, headers);
+      const revision = (await env.LOGIN_LIMITS.get(ANNOUNCEMENTS_REVISION_KEY)) || "0";
+      return json({ items: Array.isArray(items) ? items : [], revision }, 200, headers);
     }
     let body;
     try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
     if (!Array.isArray(body.items) || body.items.length > 50) return json({ error: "invalid_items" }, 400, headers);
+    const revisionState = await checkRevision(env, ANNOUNCEMENTS_REVISION_KEY, body.expectedRevision);
+    if (!revisionState.matches) return json({ error: "revision_conflict", revision: revisionState.current }, 409, headers);
     const clean = [];
     for (const item of body.items) {
       if (!item || typeof item !== "object") return json({ error: "invalid_item" }, 400, headers);
@@ -408,8 +520,11 @@ async function handle(request, env) {
         updatedAt: new Date().toISOString(),
       });
     }
+    await snapshotBeforeWrite(env, "announcements", CONTENT_KEY);
+    const nextRevision = String(Number(revisionState.current) + 1);
     await env.LOGIN_LIMITS.put(CONTENT_KEY, JSON.stringify(clean));
-    return json({ ok: true, items: clean }, 200, headers);
+    await env.LOGIN_LIMITS.put(ANNOUNCEMENTS_REVISION_KEY, nextRevision);
+    return json({ ok: true, items: clean, revision: nextRevision }, 200, headers);
   }
   return json({ error: "not_found" }, 404, headers);
 }
