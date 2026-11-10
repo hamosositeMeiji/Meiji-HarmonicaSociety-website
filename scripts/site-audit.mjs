@@ -43,6 +43,13 @@ for (const url of xmlUrls) {
     assert.ok(html.includes(marker), relative + ": missing " + marker);
   }
   assert.ok(!/name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html), relative + ": noindex page must not be in sitemap");
+  const ogImage = html.match(/<meta\s+property=["']og:image["']\s+content=["']([^"']+)["']/i);
+  assert.ok(ogImage, relative + ": missing Open Graph image URL");
+  const ogImageUrl = new URL(ogImage[1], url);
+  assert.equal(ogImageUrl.origin, origin, relative + ": OGP image must use the site origin");
+  assert.ok(ogImageUrl.pathname.startsWith(projectPath), relative + ": OGP image must be inside the project site");
+  const ogImagePath = path.resolve(root, decodeURIComponent(ogImageUrl.pathname.slice(projectPath.length)));
+  assert.ok(fs.existsSync(ogImagePath), relative + ": OGP image file is missing");
   assert.ok(!/記事タイトルを入力|記事の概要を入力してください|ここに記事の本文を入力してください/.test(html), relative + ": unfinished article placeholder in sitemap");
 
   const ids = new Set();
@@ -62,7 +69,9 @@ for (const url of xmlUrls) {
   }
   for (const match of html.matchAll(/\b(?:href|src)=["']([^"']+)["']/gi)) {
     const ref = match[1].trim();
-    if (!ref || ref.startsWith("#") || /^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(ref)) continue;
+    if (!ref) continue;
+    if (ref.startsWith("#")) { assert.ok(ids.has(decodeURIComponent(ref.slice(1))), relative + ": broken same-page anchor " + ref); continue; }
+    if (/^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(ref)) continue;
     const resolved = new URL(ref, url);
     if (resolved.origin !== origin || !resolved.pathname.startsWith(projectPath)) continue;
     let local = resolved.pathname.slice(projectPath.length);
