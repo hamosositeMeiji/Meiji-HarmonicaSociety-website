@@ -17,7 +17,7 @@
 <script>
 (()=> {
 const API="https://hamoso-admin-auth.hamososaitoguanli.workers.dev",KEY="hamoso_admin_token";
-const $=id=>document.getElementById(id);let items=[];let dirty=false;let currentImageUrl="";let selectedImageUrl="";
+const $=id=>document.getElementById(id);let items=[];let dirty=false;let revision="0";let currentImageUrl="";let selectedImageUrl="";
 const token=()=>sessionStorage.getItem(KEY);
 function safeText(value){return String(value??"");}
 function showStatus(id,text){$(id).textContent=text;}
@@ -32,9 +32,9 @@ $("image-file").addEventListener("change",async()=>{const file=$("image-file").f
 $("remove-image").addEventListener("click",()=>{selectedImageUrl="";currentImageUrl="";$("image-file").value="";updatePreview("");dirty=true;showStatus("image-status","画像を外しました。項目の保存も押してください");showStatus("save-status","未保存の変更があります");});
 $("delete-image-data").addEventListener("click",async()=>{const match=currentImageUrl.match(/^https:\/\/hamoso-admin-auth\.hamososaitoguanli\.workers\.dev\/media\/([a-zA-Z0-9_-]{1,60})$/);if(!match){showStatus("image-status","管理ストレージ上の画像URLではありません");return;}if(dirty){showStatus("image-status","先に一覧の変更を保存してください");return;}if(!confirm("この画像データを完全に削除します。複数のお知らせで共有している場合は、すべての掲載画像が外れます。続行しますか？"))return;const button=$("delete-image-data");button.disabled=true;try{await api("/api/media/"+match[1],{method:"DELETE"});items.forEach(item=>{if(item.imageUrl===currentImageUrl)item.imageUrl="";});selectedImageUrl="";currentImageUrl="";updatePreview("");render();showStatus("image-status","画像データを削除し、保存済みのお知らせからも外しました");}catch(e){showStatus("image-status","画像削除に失敗："+e.message);}finally{button.disabled=false;}});
 $("reset").addEventListener("click",resetForm);
-async function load(){showStatus("save-status","読み込み中…");try{const data=await api("/api/announcements");items=Array.isArray(data.items)?data.items:[];dirty=false;render();showStatus("save-status","保存済みデータを読み込みました");}catch(e){showStatus("save-status","読み込み失敗："+e.message);}}
+async function load(){showStatus("save-status","読み込み中…");try{const data=await api("/api/announcements");revision=String(data.revision||"0");items=Array.isArray(data.items)?data.items:[];dirty=false;render();showStatus("save-status","保存済みデータを読み込みました");}catch(e){showStatus("save-status","読み込み失敗："+e.message);}}
 $("reload").addEventListener("click",()=>{if(dirty&&!confirm("未保存の変更は失われます。再読込しますか？"))return;load();});
-$("save").addEventListener("click",async()=>{showStatus("save-status","保存中…");try{const data=await api("/api/announcements",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items})});items=data.items;dirty=false;render();showStatus("save-status","保存しました。公開設定のお知らせは、Workerの公開APIが最新状態ならトップページに反映されます");}catch(e){showStatus("save-status","保存失敗："+e.message);}});
+$("save").addEventListener("click",async()=>{showStatus("save-status","保存中…");try{const data=await api("/api/announcements",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items,expectedRevision:revision})});revision=String(data.revision||revision);items=data.items;dirty=false;render();showStatus("save-status","保存しました。公開設定のお知らせは、Workerの公開APIが最新状態ならトップページに反映されます");}catch(e){showStatus("save-status",String(e.message).includes("revision_conflict")?"別の管理者が先に保存しました。入力内容は画面に残しています。最新データを再読込し、必要な差分を反映してください。":"保存失敗："+e.message);}});
 const t=token();if(!t){location.replace("./login.html");return;}api("/api/session").catch(()=>{});load();
 })();
 </script></body></html>
