@@ -467,10 +467,35 @@ async function handle(request, env) {
         JSON.stringify(siteContent).length > 30000 || !Array.isArray(announcements) || announcements.length > 50) {
       return json({ error: "invalid_backup_content" }, 400, headers);
     }
-    if (!announcements.every(item => item && typeof item === "object" && typeof item.title === "string" &&
-      item.title.length > 0 && item.title.length <= 120 && typeof item.date === "string" &&
-      typeof item.category === "string" && typeof item.body === "string" &&
-      typeof item.imageUrl === "string" && item.imageUrl.length <= 200 &&
+    const isRecord = value => value && typeof value === "object" && !Array.isArray(value);
+    const optionalString = (object, key, max) => object[key] === undefined || (typeof object[key] === "string" && object[key].length <= max);
+    const optionalHttps = value => value === undefined || (typeof value === "string" && value.length <= 500 && (!value || /^https:\/\//i.test(value)));
+    const a = siteContent.activities, m = siteContent.media, r = siteContent.recruit, schedule = siteContent.schedule, contacts = siteContent.contacts;
+    const social = isRecord(m) && isRecord(m.social) ? m.social : {};
+    const validPeople = value => value === undefined || (Array.isArray(value) && value.length <= 3 && value.every(person =>
+      isRecord(person) && optionalString(person, "role", 80) && optionalString(person, "name", 120) &&
+      optionalString(person, "email", 254) && (person.email === undefined || !person.email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(person.email))));
+    const validRows = (value, fields) => value === undefined || (Array.isArray(value) && value.length <= 12 &&
+      value.every(row => isRecord(row) && fields.every(([key, max]) => optionalString(row, key, max))));
+    const validSiteContent =
+      (a === undefined || (isRecord(a) && optionalString(a, "title", 120) && optionalString(a, "text", 5000) &&
+        (a.photos === undefined || (Array.isArray(a.photos) && a.photos.length <= 30 && a.photos.every(optionalHttps))))) &&
+      (m === undefined || (isRecord(m) && optionalString(m, "videoTitle", 120) &&
+        (m.videos === undefined || (Array.isArray(m.videos) && m.videos.length <= 30 && m.videos.every(value => typeof value === "string" && value.length <= 623))) &&
+        (m.social === undefined || (isRecord(m.social) && optionalHttps(social.instagram) && optionalHttps(social.x) &&
+          optionalHttps(social.youtube) && (social.other === undefined || (Array.isArray(social.other) && social.other.length <= 30 && social.other.every(optionalHttps))))))) &&
+      (r === undefined || (isRecord(r) && optionalString(r, "title", 120) && optionalString(r, "text", 5000) &&
+        optionalString(r, "visitInfo", 3000) && optionalHttps(r.contactUrl))) &&
+      (schedule === undefined || (isRecord(schedule) && optionalString(schedule, "location", 300) &&
+        optionalString(schedule, "notice", 500) && validRows(schedule.regular, [["day",80],["time",80],["label",300]]) &&
+        validRows(schedule.yearly, [["when",80],["title",200]]))) &&
+      (contacts === undefined || (isRecord(contacts) && (contacts.peopleConfigured === undefined || typeof contacts.peopleConfigured === "boolean") &&
+        validPeople(contacts.people) && validPeople(contacts.siteAdmins)));
+    if (!validSiteContent) return json({ error: "invalid_backup_site_content" }, 400, headers);
+    if (!announcements.every(item => isRecord(item) && typeof item.title === "string" && item.title.length > 0 && item.title.length <= 120 &&
+      typeof item.date === "string" && item.date.length <= 20 && typeof item.category === "string" && item.category.length <= 30 &&
+      typeof item.body === "string" && item.body.length <= 3000 && typeof item.imageUrl === "string" && item.imageUrl.length <= 200 &&
+      (item.id === undefined || typeof item.id === "string") && (item.published === undefined || typeof item.published === "boolean") &&
       (!item.imageUrl || /^https:\/\/hamoso-admin-auth\.hamososaitoguanli\.workers\.dev\/media\/[a-zA-Z0-9_-]{1,60}$/.test(item.imageUrl)))) {
       return json({ error: "invalid_backup_announcements" }, 400, headers);
     }
