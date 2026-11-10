@@ -11,6 +11,8 @@ const CONTENT_KEY = "content:announcements";
 const MEDIA_PREFIX = "media:";
 const SESSION_PREFIX = "session:";
 const MAX_MEDIA_BYTES = 1500 * 1024;
+const MAX_ANNOUNCEMENTS = 2000;
+const MAX_ANNOUNCEMENTS_JSON_BYTES = 10 * 1024 * 1024;
 const SITE_CONTENT_REVISION_KEY = "revision:site-content";
 const ANNOUNCEMENTS_REVISION_KEY = "revision:announcements";
 async function snapshotBeforeWrite(env, label, key) {
@@ -394,7 +396,7 @@ async function handle(request, env) {
         if (dateB === null) return -1;
         return dateB - dateA;
       })
-      .slice(0, 50)
+      .slice(0, MAX_ANNOUNCEMENTS)
       .map(item => ({
         id: item.id, title: item.title, date: item.date, category: item.category, body: item.body, imageUrl: item.imageUrl || ""
       }));
@@ -487,7 +489,7 @@ async function handle(request, env) {
     const siteContent = body.siteContent;
     const announcements = body.announcements;
     if (!siteContent || typeof siteContent !== "object" || Array.isArray(siteContent) ||
-        JSON.stringify(siteContent).length > 30000 || !Array.isArray(announcements) || announcements.length > 50) {
+        JSON.stringify(siteContent).length > 30000 || !Array.isArray(announcements) || announcements.length > MAX_ANNOUNCEMENTS) {
       return json({ error: "invalid_backup_content" }, 400, headers);
     }
     const isRecord = value => value && typeof value === "object" && !Array.isArray(value);
@@ -515,6 +517,7 @@ async function handle(request, env) {
       (contacts === undefined || (isRecord(contacts) && (contacts.peopleConfigured === undefined || typeof contacts.peopleConfigured === "boolean") &&
         validPeople(contacts.people) && validPeople(contacts.siteAdmins)));
     if (!validSiteContent) return json({ error: "invalid_backup_site_content" }, 400, headers);
+    if (JSON.stringify(announcements).length > MAX_ANNOUNCEMENTS_JSON_BYTES) return json({ error: "invalid_backup_announcements_size" }, 413, headers);
     if (!announcements.every(item => isRecord(item) && typeof item.title === "string" && item.title.length > 0 && item.title.length <= 120 &&
       typeof item.date === "string" && item.date.length <= 20 && typeof item.category === "string" && item.category.length <= 30 &&
       typeof item.body === "string" && item.body.length <= 3000 && typeof item.imageUrl === "string" && item.imageUrl.length <= 200 &&
@@ -546,7 +549,7 @@ async function handle(request, env) {
     }
     let body;
     try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
-    if (!Array.isArray(body.items) || body.items.length > 50) return json({ error: "invalid_items" }, 400, headers);
+    if (!Array.isArray(body.items) || body.items.length > MAX_ANNOUNCEMENTS) return json({ error: "invalid_items" }, 400, headers);
     const revisionState = await checkRevision(env, ANNOUNCEMENTS_REVISION_KEY, body.expectedRevision);
     if (!revisionState.matches) return json({ error: "revision_conflict", revision: revisionState.current }, 409, headers);
     const clean = [];
@@ -568,6 +571,7 @@ async function handle(request, env) {
         updatedAt: new Date().toISOString(),
       });
     }
+    if (JSON.stringify(clean).length > MAX_ANNOUNCEMENTS_JSON_BYTES) return json({ error: "announcements_too_large" }, 413, headers);
     await snapshotBeforeWrite(env, "announcements", CONTENT_KEY);
     const nextRevision = String(Number(revisionState.current) + 1);
     await env.LOGIN_LIMITS.put(CONTENT_KEY, JSON.stringify(clean));
