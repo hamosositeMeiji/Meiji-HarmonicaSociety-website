@@ -1,4 +1,4 @@
-backend:
+# LEGACY CONFIGURATION — NOT USED BY THE CURRENT ADMIN UI.\n# The active admin is a custom HTML/JavaScript interface backed by admin/worker.js and Cloudflare KV.\n# Do not configure or edit this file for routine site updates. See admin/SETUP.md.\nbackend:
   name: git-gateway
   branch: main
 
