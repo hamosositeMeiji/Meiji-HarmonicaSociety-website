@@ -198,6 +198,100 @@ async function handle(request, env) {
     return new Response(bytes, { status: 200, headers: { ...headers, "Content-Type": stored.type, "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" } });
   }
 
+  // Authenticated media library: list metadata and known content references without exposing image data.
+  if (url.pathname === "/api/media/library" && request.method === "GET") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    const options = { prefix: MEDIA_PREFIX, limit: 40 };
+    const cursor = url.searchParams.get("cursor");
+    if (cursor) options.cursor = cursor;
+    const listed = await env.LOGIN_LIMITS.list(options);
+    const siteContent = await env.LOGIN_LIMITS.get("content:site-content", "json");
+    const announcements = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
+    const referenceMap = new Map();
+    const addReference = (value, label, depth = 0) => {
+      if (depth > 16 || value === null || value === undefined) return;
+      if (typeof value === "string") {
+        const match = value.match(/^https:\/\/hamoso-admin-auth\.hamososaitoguanli\.workers\.dev\/media\/([a-zA-Z0-9_-]{1,60})$/);
+        if (match) {
+          const id = match[1];
+          if (!referenceMap.has(id)) referenceMap.set(id, []);
+          referenceMap.get(id).push(label);
+        }
+        return;
+      }
+      if (Array.isArray(value)) {
+        value.forEach((item, index) => addReference(item, label + "[" + (index + 1) + "]", depth + 1));
+        return;
+      }
+      if (typeof value === "object") {
+        for (const [key, item] of Object.entries(value)) addReference(item, label + " / " + key, depth + 1);
+      }
+    };
+    addReference(siteContent, "サイト情報");
+    if (Array.isArray(announcements)) {
+      announcements.forEach((item, index) => {
+        const title = item && typeof item.title === "string" && item.title.trim() ? item.title.trim().slice(0, 80) : "項目 " + (index + 1);
+        addReference(item, "お知らせ / " + title);
+      });
+    }
+    const items = [];
+    for (const key of listed.keys) {
+      const id = key.name.slice(MEDIA_PREFIX.length);
+      const raw = await env.LOGIN_LIMITS.get(key.name);
+      let stored = null;
+      try { stored = raw ? JSON.parse(raw) : null; } catch {}
+      const data = stored && typeof stored.data === "string" ? stored.data : "";
+      const usage = referenceMap.get(id) || [];
+      items.push({
+        id,
+        url: "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/media/" + id,
+        type: stored && typeof stored.type === "string" ? stored.type : "unknown",
+        sizeBytes: data ? Math.floor(data.length * 3 / 4) : 0,
+        usage,
+        usageCount: usage.length,
+        valid: !!(stored && data && typeof stored.type === "string")
+      });
+    }
+    return json({ items, cursor: listed.list_complete ? null : listed.cursor, complete: listed.list_complete === true }, 200, headers);
+  }
+
+  // Delete only when a fresh server-side scan finds no references in managed content.
+  if (url.pathname === "/api/media/delete-unused" && request.method === "POST") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    let body = {};
+    try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
+    const id = typeof body.id === "string" ? body.id : "";
+    if (!/^[a-zA-Z0-9_-]{1,60}$/.test(id)) return json({ error: "invalid_media_id" }, 400, headers);
+    const mediaKey = MEDIA_PREFIX + id;
+    if (await env.LOGIN_LIMITS.get(mediaKey) === null) return json({ error: "not_found" }, 404, headers);
+    const imageUrl = "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/media/" + id;
+    const siteContent = await env.LOGIN_LIMITS.get("content:site-content", "json");
+    const announcements = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
+    const references = [];
+    const scan = (value, label, depth = 0) => {
+      if (depth > 16 || value === null || value === undefined) return;
+      if (typeof value === "string") {
+        if (value === imageUrl) references.push(label);
+      } else if (Array.isArray(value)) {
+        value.forEach((item, index) => scan(item, label + "[" + (index + 1) + "]", depth + 1));
+      } else if (typeof value === "object") {
+        for (const [key, item] of Object.entries(value)) scan(item, label + " / " + key, depth + 1);
+      }
+    };
+    scan(siteContent, "サイト情報");
+    if (Array.isArray(announcements)) {
+      announcements.forEach((item, index) => {
+        const title = item && typeof item.title === "string" && item.title.trim() ? item.title.trim().slice(0, 80) : "項目 " + (index + 1);
+        scan(item, "お知らせ / " + title);
+      });
+    }
+    if (references.length) return json({ error: "media_in_use", references }, 409, headers);
+    await env.LOGIN_LIMITS.delete(mediaKey);
+    return json({ ok: true, deleted: id }, 200, headers);
+  }
+
   // Authenticated deletion also detaches the image from managed content records.
   if (url.pathname.startsWith("/api/media/") && request.method === "DELETE") {
     const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
