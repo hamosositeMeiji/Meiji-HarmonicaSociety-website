@@ -22,4 +22,6 @@ jobs:
         with:
           node-version: 22
       - name: Run site quality audit
-        run: node scripts/site-audit.mjs
+        run: |
+          node scripts/site-audit.mjs
+          node scripts/media-library-test.mjs
