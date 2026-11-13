@@ -150,6 +150,12 @@ GitHub PagesとWorkerの更新順序を混同しないでください。特にPR
 node scripts/site-audit.mjs
 ```
 
+PR #53がmainに反映された後は、パスワード管理のWorkerモックテストも実行します。
+
+```bash
+node scripts/password-management-test.mjs
+```
+
 PR #60がmainに反映された後は、画像ライブラリのWorkerモックテストも実行します。
 
 ```bash
