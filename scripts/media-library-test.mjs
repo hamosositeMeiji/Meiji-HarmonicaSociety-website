@@ -109,6 +109,19 @@ const blockedB = await call("/api/media/delete-unused", { method: "POST", token,
 assert.equal(blockedB.status, 409, "media referenced by announcements must not be deleted");
 assert.equal(store.has("media:" + usedB), true, "announcement media must remain stored");
 
+const legacyBlocked = await call("/api/media/" + usedB, { method: "DELETE", token });
+assert.equal(legacyBlocked.status, 409, "legacy delete route must refuse unknown nested references");
+assert.ok(legacyBlocked.data.references.some(label => label.includes("gallery / cover")));
+assert.equal(store.has("media:" + usedB), true, "legacy delete must preserve media with unknown references");
+const announcementsAfterBlockedDelete = JSON.parse(store.get("content:announcements"));
+assert.equal(announcementsAfterBlockedDelete[0].image, base + "/media/" + usedB, "preflight rejection must not partially detach known references");
+
+const legacyDeleteA = await call("/api/media/" + usedA, { method: "DELETE", token });
+assert.equal(legacyDeleteA.status, 200, "legacy delete may remove media when all known references can be detached");
+assert.equal(store.has("media:" + usedA), false);
+const siteContentAfterLegacyDelete = JSON.parse(store.get("content:site-content"));
+assert.equal(siteContentAfterLegacyDelete.activities.photos.length, 0, "known activity references must be detached");
+
 const deleted = await call("/api/media/delete-unused", { method: "POST", token, body: { id: unused } });
 assert.equal(deleted.status, 200, "unused media may be deleted");
 assert.equal(store.has("media:" + unused), false, "unused media must be removed from storage");
@@ -116,4 +129,4 @@ assert.equal(store.has("media:" + unused), false, "unused media must be removed 
 const invalid = await call("/api/media/delete-unused", { method: "POST", token, body: { id: "../content:site-content" } });
 assert.equal(invalid.status, 400, "invalid media IDs must be rejected");
 
-console.log("Media library tests passed: authentication, listing, nested references, accurate size, protected deletion, and unused deletion.");
+console.log("Media library tests passed: authentication, listing, nested references, accurate size, protected deletion, legacy deletion preflight, and unused deletion.");
