@@ -292,7 +292,7 @@ async function handle(request, env) {
         scanRemaining(item, "お知らせ / " + title);
       });
     }
-    if (remainingReferences.length) return json({ error: "media_still_referenced", references: remainingReferences }, 409, headers);
+    if (remainingReferences.length) return json({ error: "別の掲載箇所でも参照されているため削除を中止しました", references: remainingReferences }, 409, headers);
 
     if (siteContentDetached) await env.LOGIN_LIMITS.put(siteContentKey, JSON.stringify(nextSiteContent));
     if (announcementsDetached) await env.LOGIN_LIMITS.put(CONTENT_KEY, JSON.stringify(nextAnnouncements));
