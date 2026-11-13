@@ -202,7 +202,7 @@ async function handle(request, env) {
   if (url.pathname === "/api/media/library" && request.method === "GET") {
     const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
     if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
-    const options = { prefix: MEDIA_PREFIX, limit: 40 };
+    const options = { prefix: MEDIA_PREFIX, limit: 20 };
     const cursor = url.searchParams.get("cursor");
     if (cursor) options.cursor = cursor;
     const listed = await env.LOGIN_LIMITS.list(options);
