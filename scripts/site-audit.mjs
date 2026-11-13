@@ -115,10 +115,10 @@ for (const entry of fs.readdirSync(adminDir, { withFileTypes: true })) {
   if (!entry.isFile() || !entry.name.endsWith(".html")) continue;
   const relative = path.join("admin", entry.name);
   const html = fs.readFileSync(path.join(adminDir, entry.name), "utf8");
-  assert.match(html, /<meta\\s+name=["']robots["']\\s+content=["'][^"']*noindex/i, relative + ": admin page must be noindex");
-  for (const match of html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)) {
+  assert.match(html, /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i, relative + ": admin page must be noindex");
+  for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
     const attrs = match[1] || "";
-    if (/\\bsrc\\s*=/.test(attrs) || /application\\/ld\\+json/i.test(attrs)) continue;
+    if (/\bsrc\s*=/.test(attrs) || /application\/ld\+json/i.test(attrs)) continue;
     if (!match[2].trim()) continue;
     new vm.Script(match[2], { filename: relative + ":inline-script" });
   }
