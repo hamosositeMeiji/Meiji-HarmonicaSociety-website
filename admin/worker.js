@@ -251,25 +251,51 @@ async function handle(request, env) {
     let siteContentDetached = 0, announcementsDetached = 0;
     const siteContentKey = "content:site-content";
     const siteContent = await env.LOGIN_LIMITS.get(siteContentKey, "json");
-    if (siteContent && typeof siteContent === "object" && !Array.isArray(siteContent) &&
-        siteContent.activities && Array.isArray(siteContent.activities.photos)) {
-      const before = siteContent.activities.photos.length;
-      siteContent.activities.photos = siteContent.activities.photos.filter(value => value !== imageUrl);
-      siteContentDetached = before - siteContent.activities.photos.length;
-      if (siteContentDetached) await env.LOGIN_LIMITS.put(siteContentKey, JSON.stringify(siteContent));
-    }
     const announcements = await env.LOGIN_LIMITS.get(CONTENT_KEY, "json");
-    if (Array.isArray(announcements)) {
-      let changed = false;
-      for (const item of announcements) {
+    const nextSiteContent = siteContent && typeof siteContent === "object"
+      ? JSON.parse(JSON.stringify(siteContent)) : siteContent;
+    const nextAnnouncements = Array.isArray(announcements)
+      ? JSON.parse(JSON.stringify(announcements)) : announcements;
+
+    // Preflight the complete managed records before changing anything. Only the
+    // established activity-photo and announcement-image fields are auto-detached.
+    if (nextSiteContent && typeof nextSiteContent === "object" && !Array.isArray(nextSiteContent) &&
+        nextSiteContent.activities && Array.isArray(nextSiteContent.activities.photos)) {
+      const before = nextSiteContent.activities.photos.length;
+      nextSiteContent.activities.photos = nextSiteContent.activities.photos.filter(value => value !== imageUrl);
+      siteContentDetached = before - nextSiteContent.activities.photos.length;
+    }
+    if (Array.isArray(nextAnnouncements)) {
+      for (const item of nextAnnouncements) {
         if (item && item.imageUrl === imageUrl) {
           item.imageUrl = "";
           announcementsDetached++;
-          changed = true;
         }
       }
-      if (changed) await env.LOGIN_LIMITS.put(CONTENT_KEY, JSON.stringify(announcements));
     }
+
+    const remainingReferences = [];
+    const scanRemaining = (value, label, depth = 0) => {
+      if (depth > 16 || value === null || value === undefined) return;
+      if (typeof value === "string") {
+        if (value === imageUrl) remainingReferences.push(label);
+      } else if (Array.isArray(value)) {
+        value.forEach((item, index) => scanRemaining(item, label + "[" + (index + 1) + "]", depth + 1));
+      } else if (typeof value === "object") {
+        for (const [key, item] of Object.entries(value)) scanRemaining(item, label + " / " + key, depth + 1);
+      }
+    };
+    scanRemaining(nextSiteContent, "サイト情報");
+    if (Array.isArray(nextAnnouncements)) {
+      nextAnnouncements.forEach((item, index) => {
+        const title = item && typeof item.title === "string" && item.title.trim() ? item.title.trim().slice(0, 80) : "項目 " + (index + 1);
+        scanRemaining(item, "お知らせ / " + title);
+      });
+    }
+    if (remainingReferences.length) return json({ error: "media_still_referenced", references: remainingReferences }, 409, headers);
+
+    if (siteContentDetached) await env.LOGIN_LIMITS.put(siteContentKey, JSON.stringify(nextSiteContent));
+    if (announcementsDetached) await env.LOGIN_LIMITS.put(CONTENT_KEY, JSON.stringify(nextAnnouncements));
     await env.LOGIN_LIMITS.delete(mediaKey);
     return json({ ok: true, detached: { siteContent: siteContentDetached, announcements: announcementsDetached } }, 200, headers);
   }
