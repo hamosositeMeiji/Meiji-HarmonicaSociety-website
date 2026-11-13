@@ -78,6 +78,33 @@ function bearerToken(request) {
   const value = request.headers.get("Authorization") || "";
   return value.startsWith("Bearer ") ? value.slice(7) : "";
 }
+const PASSWORD_HASH_KEY = "auth:password-hash";
+const PASSWORD_HASH_ITERATIONS = 210000;
+async function hashPassword(password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: PASSWORD_HASH_ITERATIONS }, key, 256);
+  return "pbkdf2$" + PASSWORD_HASH_ITERATIONS + "$" + b64url(salt) + "$" + b64url(bits);
+}
+async function verifyPassword(password, encoded) {
+  try {
+    const [scheme, roundsText, saltText, hashText] = encoded.split("$");
+    const rounds = Number(roundsText);
+    if (scheme !== "pbkdf2" || !Number.isInteger(rounds) || rounds < 100000 || rounds > 1000000 || !saltText || !hashText) return false;
+    const salt = unb64url(saltText);
+    const expected = unb64url(hashText);
+    if (salt.length !== 16 || expected.length !== 32) return false;
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+    const actual = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: rounds }, key, 256));
+    let diff = 0;
+    for (let i = 0; i < expected.length; i++) diff |= expected[i] ^ actual[i];
+    return diff === 0;
+  } catch { return false; }
+}
+async function passwordMatches(env, password) {
+  const savedHash = await env.LOGIN_LIMITS.get(PASSWORD_HASH_KEY);
+  return savedHash ? verifyPassword(password, savedHash) : password === env.ADMIN_PASSWORD;
+}
 async function handle(request, env) {
   const url = new URL(request.url);
   const origin = request.headers.get("Origin") || "";
@@ -101,7 +128,7 @@ async function handle(request, env) {
     }
     let body;
     try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
-    if (typeof body.password !== "string" || body.password.length > 1024 || body.password !== env.ADMIN_PASSWORD) {
+    if (typeof body.password !== "string" || body.password.length > 1024 || !(await passwordMatches(env, body.password))) {
       await env.LOGIN_LIMITS.put(key, JSON.stringify({
         count: attempts + 1,
         resetAt: record && record.resetAt > now ? record.resetAt : now + LIMIT_WINDOW_SECONDS,
@@ -114,6 +141,33 @@ async function handle(request, env) {
     await env.LOGIN_LIMITS.put(SESSION_PREFIX + sid, "active", { expirationTtl: SESSION_SECONDS });
     const token = payload + "." + await sign(payload, env.SESSION_SECRET);
     return json({ ok: true, token, expiresIn: SESSION_SECONDS }, 200, headers);
+  }
+
+  if (url.pathname === "/api/password/change" && request.method === "POST") {
+    const authenticated = await validSession(bearerToken(request), env.SESSION_SECRET, env);
+    if (!authenticated) return json({ error: "unauthorized" }, 401, headers);
+    let body;
+    try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
+    const currentPassword = body && body.currentPassword;
+    const newPassword = body && body.newPassword;
+    const confirmPassword = body && body.confirmPassword;
+    if (typeof currentPassword !== "string" || currentPassword.length > 1024 ||
+        typeof newPassword !== "string" || newPassword.length < 12 || newPassword.length > 1024 ||
+        newPassword !== confirmPassword) {
+      return json({ error: "invalid_password_fields" }, 400, headers);
+    }
+    if (!await passwordMatches(env, currentPassword)) return json({ error: "current_password_incorrect" }, 401, headers);
+    const encoded = await hashPassword(newPassword);
+    await env.LOGIN_LIMITS.put(PASSWORD_HASH_KEY, encoded);
+    let cursor;
+    do {
+      const options = { prefix: SESSION_PREFIX, limit: 100 };
+      if (cursor) options.cursor = cursor;
+      const sessions = await env.LOGIN_LIMITS.list(options);
+      for (const item of sessions.keys) await env.LOGIN_LIMITS.delete(item.name);
+      cursor = sessions.list_complete ? null : sessions.cursor;
+    } while (cursor);
+    return json({ ok: true, reauthenticate: true }, 200, headers);
   }
 
   if (url.pathname === "/api/session" && request.method === "GET") {
