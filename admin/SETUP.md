@@ -12,6 +12,19 @@
    - `SESSION_SECRET`: 別のランダムな秘密値。少なくとも32文字。年度更新時はこれも変更して旧セッションを無効化します。
 5. WorkerのURL（例：`https://任意の名前.あなたのサブドメイン.workers.dev`）を控えます。実際のURLはCloudflareが発行したものを使います。
 
+## 既存Workerのコードを更新する場合（ブラウザのみ）
+既に稼働しているWorkerを更新するときは、新しいWorkerを作らず、現在のWorkerを更新します。管理画面のAPI URLが変わらないようにするためです。
+
+1. GitHubで対象PRがmainに反映され、必要な自動検査が成功したことを確認します。
+2. GitHubのmainブランチで `admin/worker.js` を開き、ファイル全体をコピーします。複数のWorker変更PRがある場合は、すべてmainに反映された後の最新版を使います。
+3. Cloudflare DashboardのWorkers & Pagesから、現在使っている `hamoso-admin-auth` Workerを開き、コード編集画面に進みます。
+4. 既存コード全体をmainの `admin/worker.js` に置き換え、保存・Deployします。新しいWorkerを作成したり、Worker名・workers.dev URLを変更したりしません。
+5. Settings / Bindingsで既存のKV binding `LOGIN_LIMITS` が残っていることを確認します。Settings / Variables and Secretsで `ADMIN_PASSWORD` と `SESSION_SECRET` が設定済みであることも確認します。コード更新だけならSecretの値を変更する必要はありません。
+6. デプロイ後、管理画面でログイン、セッション確認、サイト情報の読み込み、お知らせ、画像、バックアップを確認します。パスワード変更を初めて試す場合は、変更後に全端末がログアウトされることを前提に、現役担当者への共有準備を済ませてから行います。
+7. 異常があればCloudflareの直前の正常なWorkerバージョンへ戻します。KVのコンテンツやSecretを原因調査のために削除しないでください。
+
+**注意：** GitHub Pagesの公開が成功してもWorkerは自動更新されません。PR #53のパスワード変更やPR #60の画像ライブラリなど、Workerコードを変更する機能は、main反映後にこの手順でWorkerを再デプロイするまで利用できません。
+
 ## 画像の保存・削除
 - 管理画面からアップロードした画像は、ブラウザで再エンコードしてから保存します。通常のJPEG / PNG / WebPに含まれるEXIF等のメタデータは、再エンコード時に引き継がれません。
 - 新規画像は期限なしでKVに保存し、管理画面の「保存画像を完全削除」から明示的に削除します。削除すると活動写真・お知らせの参照も自動で外れます。
