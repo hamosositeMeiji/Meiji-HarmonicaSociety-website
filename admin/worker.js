@@ -247,7 +247,7 @@ async function handle(request, env) {
         id,
         url: "https://hamoso-admin-auth.hamososaitoguanli.workers.dev/media/" + id,
         type: stored && typeof stored.type === "string" ? stored.type : "unknown",
-        sizeBytes: data ? Math.floor(data.length * 3 / 4) : 0,
+        sizeBytes: data ? Math.max(0, Math.floor(data.length * 3 / 4) - (data.endsWith("==") ? 2 : data.endsWith("=") ? 1 : 0)) : 0,
         usage,
         usageCount: usage.length,
         valid: !!(stored && data && typeof stored.type === "string")
