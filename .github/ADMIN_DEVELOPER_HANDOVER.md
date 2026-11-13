@@ -110,7 +110,7 @@ GitHub PagesとCloudflare Workerは別々にデプロイされます。GitHubの
 | `POST /api/backup/restore-media`、`POST /api/backup/restore-content` | バックアップ復元 |
 | `POST /api/backup/restore-latest-snapshot` | 保存前スナップショットから復元 |
 
-PR #53では `POST /api/password/change`、PR #60では `GET /api/media/library` と `POST /api/media/delete-unused` を追加します。これらは各PRがmainに反映され、Workerも再デプロイされた後に利用できます。
+mainには `POST /api/password/change`、`GET /api/media/library`、`POST /api/media/delete-unused` を実装済みです。Cloudflare Workerへmainの最新版を再デプロイした後に利用できます。画像ライブラリは20件ずつ表示します。
 
 ## 6. データを壊さないための注意
 
@@ -150,13 +150,13 @@ GitHub PagesとWorkerの更新順序を混同しないでください。特にPR
 node scripts/site-audit.mjs
 ```
 
-PR #53がmainに反映された後は、パスワード管理のWorkerモックテストも実行します。
+パスワード管理のWorkerモックテストは、mainの品質検査で自動実行します。
 
 ```bash
 node scripts/password-management-test.mjs
 ```
 
-PR #60がmainに反映された後は、画像ライブラリのWorkerモックテストも実行します。
+画像ライブラリのWorkerモックテストも、mainの品質検査で自動実行します。
 
 ```bash
 node scripts/media-library-test.mjs
