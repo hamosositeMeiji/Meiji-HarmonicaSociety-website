@@ -107,4 +107,20 @@ function walk(dir) {
   }
 }
 walk(root);
-console.log("Site quality checks passed: " + xmlUrls.length + " sitemap pages, local references, metadata, IDs, image alts, and JavaScript syntax.");
+
+// Admin pages are intentionally excluded from the public sitemap, but their inline scripts
+// still need syntax checks because they are deployed with the GitHub Pages site.
+const adminDir = path.join(root, "admin");
+for (const entry of fs.readdirSync(adminDir, { withFileTypes: true })) {
+  if (!entry.isFile() || !entry.name.endsWith(".html")) continue;
+  const relative = path.join("admin", entry.name);
+  const html = fs.readFileSync(path.join(adminDir, entry.name), "utf8");
+  assert.match(html, /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i, relative + ": admin page must be noindex");
+  for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    const attrs = match[1] || "";
+    if (/\bsrc\s*=/.test(attrs) || /application\/ld\+json/i.test(attrs)) continue;
+    if (!match[2].trim()) continue;
+    new vm.Script(match[2], { filename: relative + ":inline-script" });
+  }
+}
+console.log("Site quality checks passed: " + xmlUrls.length + " sitemap pages, local references, metadata, IDs, image alts, public JavaScript, and admin-page scripts.");
