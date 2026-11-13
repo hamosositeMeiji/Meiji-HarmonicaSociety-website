@@ -31,12 +31,16 @@ async function call(path, method = "GET", token, body) {
   let json = {}; try { json = await res.json(); } catch {}
   return { status: res.status, json };
 }
+const unauthenticatedChange = await call("/api/password/change", "POST", null, { currentPassword: env.ADMIN_PASSWORD, newPassword: "B".repeat(24), confirmPassword: "B".repeat(24) });
+assert.equal(unauthenticatedChange.status, 401);
 const first = await call("/api/login", "POST", null, { password: env.ADMIN_PASSWORD });
 assert.equal(first.status, 200);
 const oldToken = first.json.token;
 const short = await call("/api/password/change", "POST", oldToken, { currentPassword: env.ADMIN_PASSWORD, newPassword: "x", confirmPassword: "x" });
 assert.equal(short.status, 400);
 const nextPassword = "B".repeat(24);
+const mismatch = await call("/api/password/change", "POST", oldToken, { currentPassword: env.ADMIN_PASSWORD, newPassword: nextPassword, confirmPassword: "C".repeat(24) });
+assert.equal(mismatch.status, 400);
 const changed = await call("/api/password/change", "POST", oldToken, { currentPassword: env.ADMIN_PASSWORD, newPassword: nextPassword, confirmPassword: nextPassword });
 assert.equal(changed.status, 200);
 const saved = data.get("auth:password-hash");
@@ -50,4 +54,4 @@ assert.equal((await call("/api/session", "GET", second.json.token)).status, 200)
 const wrong = await call("/api/password/change", "POST", second.json.token, { currentPassword: "C".repeat(24), newPassword: "D".repeat(24), confirmPassword: "D".repeat(24) });
 assert.equal(wrong.status, 401);
 assert.equal(data.get("auth:password-hash"), saved);
-console.log("Password Worker tests passed: bootstrap login, length validation, PBKDF2 storage, session invalidation, and new/old password checks.");
+console.log("Password Worker tests passed: authentication, bootstrap login, length and confirmation validation, PBKDF2 storage, session invalidation, and new/old password checks.");
