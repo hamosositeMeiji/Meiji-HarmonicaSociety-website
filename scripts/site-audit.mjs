@@ -33,6 +33,13 @@ function existsForUrl(url) {
 for (const url of xmlUrls) {
   const { parsed, relative, target } = existsForUrl(url);
   const html = fs.readFileSync(target, "utf8");
+  // A stray HTML tag inside a style element is treated as CSS text, not as a resource link.
+  for (const style of html.matchAll(/<style\\b[^>]*>([\\s\\S]*?)<\\/style>/gi)) {
+    assert.ok(!/<\\s*(?:link|meta|script|style)\\b/i.test(style[1]), relative + ": HTML markup inside a CSS style block");
+  }
+  const fontLinks = [...html.matchAll(/<link\\b[^>]*>/gi)]
+    .filter(match => (attr(match[0], "href") || "").startsWith("https://fonts.googleapis.com/css2?"));
+  assert.ok(fontLinks.length <= 1, relative + ": combine Google Fonts into one stylesheet request");
   const title = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
   const description = html.match(/<meta\s+name=["']description["']\s+content=["'][^"']*["']\s*\/?\s*>/i);
   const canonical = html.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i);
