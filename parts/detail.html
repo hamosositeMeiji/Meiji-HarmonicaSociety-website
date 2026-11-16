@@ -147,7 +147,8 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     };
 
     const requestedPart = new URLSearchParams(window.location.search).get("part");
-    const part = Object.prototype.hasOwnProperty.call(partData, requestedPart) ? partData[requestedPart] : partData.harmonica;
+    const partKey = Object.prototype.hasOwnProperty.call(partData, requestedPart) ? requestedPart : "harmonica";
+    const part = partData[partKey];
     document.title = part.name + "｜パート紹介｜明治大学ハーモニカソサエティー";
     document.getElementById("part-role").textContent = part.role + " / " + part.english;
     document.getElementById("part-name").textContent = part.name;
@@ -169,6 +170,27 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     document.getElementById("part-intro").textContent = part.intro;
     document.getElementById("part-detail").textContent = part.detail;
     document.getElementById("part-group").textContent = part.group;
+
+    function displayManagedPhoto(value, elementId, caption) {
+      if (typeof value !== "string" || !/^https:\/\//i.test(value)) return;
+      const photo = new Image();
+      photo.onload = () => {
+        const image = document.getElementById(elementId);
+        image.src = photo.src;
+        image.alt = caption;
+        document.getElementById(elementId + "-caption").textContent = caption;
+      };
+      photo.src = value;
+    }
+
+    fetch("https://hamoso-admin-auth.hamososaitoguanli.workers.dev/api/public/site-content", {cache: "no-store"})
+      .then(response => response.ok ? response.json() : null)
+      .then(result => {
+        const photos = result?.content?.partPhotos?.[partKey];
+        displayManagedPhoto(photos?.member, "member-photo", part.name + "パートのメンバー写真");
+        displayManagedPhoto(photos?.instrument, "part-photo", part.name + "の楽器写真");
+      })
+      .catch(() => { /* Keep the default images when the content API is unavailable. */ });
   </script>
 
   <nav class="hamoso-social-float" aria-label="公式SNS">

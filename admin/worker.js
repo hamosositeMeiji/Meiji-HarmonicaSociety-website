@@ -13,6 +13,19 @@ const SESSION_PREFIX = "session:";
 const MAX_MEDIA_BYTES = 1500 * 1024;
 const MAX_ANNOUNCEMENTS = 2000;
 const MAX_ANNOUNCEMENTS_JSON_BYTES = 10 * 1024 * 1024;
+const PART_PHOTO_KEYS = ["harmonica", "flute", "clarinet", "keyboard", "guitar", "bass", "percussion", "other"];
+const PART_PHOTO_SLOTS = ["member", "instrument"];
+
+function validPartPhotoUrl(value) {
+  if (typeof value !== "string" || value.length > 500 || !/^https:\/\//i.test(value)) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+}
+
 const SITE_CONTENT_REVISION_KEY = "revision:site-content";
 const ANNOUNCEMENTS_REVISION_KEY = "revision:announcements";
 async function snapshotBeforeWrite(env, label, key) {
@@ -405,7 +418,7 @@ async function handle(request, env) {
     if (request.method === "GET") {
       const content = await env.LOGIN_LIMITS.get(siteContentKey, "json");
       const revision = (await env.LOGIN_LIMITS.get(SITE_CONTENT_REVISION_KEY)) || "0";
-      return json({ content: content && typeof content === "object" ? content : {}, revision }, 200, headers);
+      return json({ content: content && typeof content === "object" ? content : {}, revision, partPhotoEditing: true }, 200, headers);
     }
     let body;
     try { body = await request.json(); } catch { return json({ error: "invalid_request" }, 400, headers); }
@@ -413,6 +426,19 @@ async function handle(request, env) {
     if (!content || typeof content !== "object" || Array.isArray(content)) return json({ error: "invalid_content" }, 400, headers);
     const revisionState = await checkRevision(env, SITE_CONTENT_REVISION_KEY, body.expectedRevision);
     if (!revisionState.matches) return json({ error: "revision_conflict", revision: revisionState.current }, 409, headers);
+    if (Object.hasOwn(content, "partPhotos")) {
+      const photos = content.partPhotos;
+      if (!photos || typeof photos !== "object" || Array.isArray(photos) ||
+          !Object.entries(photos).every(([part, slots]) =>
+            PART_PHOTO_KEYS.includes(part) && slots && typeof slots === "object" && !Array.isArray(slots) &&
+            Object.entries(slots).every(([slot, value]) => PART_PHOTO_SLOTS.includes(slot) && validPartPhotoUrl(value)))) {
+        return json({ error: "invalid_part_photos" }, 400, headers);
+      }
+    } else {
+      // An older editor may still be open when the Worker is deployed.
+      const previous = await env.LOGIN_LIMITS.get(siteContentKey, "json");
+      if (previous?.partPhotos) content.partPhotos = previous.partPhotos;
+    }
     const serialized = JSON.stringify(content);
     if (serialized.length > 30000) return json({ error: "content_too_large" }, 413, headers);
     const safeUrl = value => typeof value === "string" && value.length <= 500 && (!value || /^https:\/\//i.test(value));
@@ -486,6 +512,15 @@ async function handle(request, env) {
     const media = source.media && typeof source.media === "object" && !Array.isArray(source.media) ? source.media : {};
     const social = media.social && typeof media.social === "object" && !Array.isArray(media.social) ? media.social : {};
     const publicContent = {};
+    const partPhotos = {};
+    for (const part of PART_PHOTO_KEYS) {
+      const slots = source.partPhotos?.[part];
+      const photos = Object.fromEntries(PART_PHOTO_SLOTS
+        .filter(slot => validPartPhotoUrl(slots?.[slot]))
+        .map(slot => [slot, slots[slot]]));
+      if (Object.keys(photos).length) partPhotos[part] = photos;
+    }
+    if (Object.keys(partPhotos).length) publicContent.partPhotos = partPhotos;
     const activities = source.activities && typeof source.activities === "object" && !Array.isArray(source.activities) ? source.activities : null;
     if (activities) {
       publicContent.activities = {
