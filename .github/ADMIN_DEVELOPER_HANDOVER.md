@@ -1,7 +1,7 @@
 # 管理画面・開発保守 引き継ぎ書
 
 > 対象：サイト保守担当者・次年度以降の開発担当者  
-> この文書は開発・運用者向けです。公開サイトの利用者向け案内には掲載しません。  
+> この文書は開発・運用者向けです。公開サイトの案内やナビゲーションには掲載しません。公開リポジトリ上では誰でも閲覧できます。  
 > 更新日：2026-11-13
 
 ## 1. 全体構成
@@ -10,7 +10,7 @@
 
 | 領域 | 役割 | 主な場所 |
 |---|---|---|
-| 公開サイト | GitHub Pagesで配信するHTML/CSS/JavaScript | リポジトリ直下、`activities/`、`events/`、`parts/`、`schedule/`、`news/` |
+| 公開サイト | GitHub Pagesで配信するHTML/CSS/JavaScript | リポジトリ直下、`activities/`、`contact/`、`events/`、`parts/`、`schedule/`、`news/` |
 | 管理画面 | 運営者がサイト情報・写真・お知らせを編集 | `admin/*.html` |
 | API | ログイン、保存、画像、バックアップ | `admin/worker.js` |
 | 永続データ | サイト情報・お知らせ・画像・セッション | Cloudflare KV（Worker binding `LOGIN_LIMITS`） |
@@ -56,6 +56,9 @@ GitHub PagesとCloudflare Workerは別々にデプロイされます。GitHubの
 
 - `admin/index.html`：管理画面トップ・各編集画面へのリンク
 - `admin/login.html`：ログイン
+- `admin/handover.html`：年度交代の作業手順
+- `admin/password.html`：管理者パスワード変更
+- `admin/media.html`：保存画像の一覧・参照確認・未使用画像の削除
 - `admin/site-content.html`：活動紹介、写真、動画、SNS、入会案内、役員、サイト管理者、活動予定
 - `admin/announcements.html`：お知らせ・演奏会情報
 - `admin/backup.html`：バックアップの書き出し・復元
@@ -63,7 +66,7 @@ GitHub PagesとCloudflare Workerは別々にデプロイされます。GitHubの
 - `admin/worker.js`：API・認証・KV操作
 - `admin/SETUP.md`：Cloudflareの設定と運用手順
 
-管理画面のHTMLには検索エンジン向けの `noindex,nofollow` を設定します。管理画面のURLを知っていても、APIの認証を省略できるわけではありません。
+管理画面のHTMLには検索エンジン向けの `noindex,nofollow` を設定します。静的HTMLはURLを知っていれば閲覧できます。保存・パスワード変更・バックアップなどの管理APIは認証が必要です。公開APIには掲載用の役員・サイト管理者の氏名やメールアドレスも含まれます。
 
 ## 5. Cloudflare Worker・KV
 
@@ -89,7 +92,7 @@ GitHub PagesとCloudflare Workerは別々にデプロイされます。GitHubの
 | `backup:site-content:` | サイト情報の保存前スナップショット |
 | `backup:announcements:` | お知らせの保存前スナップショット |
 
-パスワード変更機能を反映した場合は、KVの `auth:password-hash` にPBKDF2ハッシュが保存されます。これはPR #53の追加仕様です。通常の年度更新でKVキーを手作業で編集しないでください。
+管理画面からパスワードを変更すると、KVの `auth:password-hash` にPBKDF2ハッシュが保存されます。これはPR #53で導入済みです。通常の年度更新でKVキーを手作業で編集しないでください。
 
 ### 主なAPIルート
 
@@ -110,16 +113,16 @@ GitHub PagesとCloudflare Workerは別々にデプロイされます。GitHubの
 | `POST /api/backup/restore-media`、`POST /api/backup/restore-content` | バックアップ復元 |
 | `POST /api/backup/restore-latest-snapshot` | 保存前スナップショットから復元 |
 
-mainには `POST /api/password/change`、`GET /api/media/library`、`POST /api/media/delete-unused` を実装済みです。Cloudflare Workerへmainの最新版を再デプロイした後に利用できます。画像ライブラリは20件ずつ表示します。
+mainには `POST /api/password/change`、`GET /api/media/library`、`POST /api/media/delete-unused` を実装済みです。Cloudflare Workerへmainの最新版を再デプロイした後に利用できます。画像ライブラリは20件ずつ表示します。パスワード変更はPR #53、画像ライブラリはPR #64でmainに反映済みです。PR #60は#64に置き換わりました。
 
 ## 6. データを壊さないための注意
 
 1. 管理画面を変更する前に、バックアップJSONを取得します。
 2. 実データを確認せずにKVキーを削除・上書きしません。
 3. サイト情報とお知らせを複数人が同時編集しないよう、保存担当を決めます。revisionチェックはありますが、KVに原子的なcompare-and-swapはありません。
-4. 画像は複数の場所で共有される可能性があります。完全削除の前に掲載先を確認します。
+4. 画像は複数の場所で共有される可能性があります。完全削除の前に掲載先を確認します。`POST /api/media/delete-unused` は管理データ内に参照がある画像を `409` で拒否します。`DELETE /api/media/:id` は活動写真・お知らせ画像の既知の参照を外して削除し、ほかの参照が残る場合は `409` で中止します。
 5. 画像の参照検出は管理用KV内のサイト情報・お知らせを対象とします。静的HTML、外部サービス、別システムの参照までは保証しません。
-6. バックアップJSONには部員情報や画像が含まれる可能性があります。公開リポジトリや公開共有リンクに置きません。
+6. バックアップJSONには部員情報や画像が含まれる可能性があります。公開リポジトリや公開共有リンクに置きません。手動復元ではJSONの形式・件数をプレビューで確認してから画像とコンテンツを復元します。自動スナップショットから復元できるのはサイト情報とお知らせです。
 7. 部員の氏名・連絡先・写真は、本人の公開同意が確認できたものだけを掲載します。
 
 ## 7. 変更・公開手順
@@ -128,7 +131,7 @@ mainには `POST /api/password/change`、`GET /api/media/library`、`POST /api/m
 
 1. 作業ブランチで変更します。
 2. Pull Requestを作成します。
-3. GitHub Actionsの `Site quality checks` が成功することを確認します。
+3. GitHub Actionsの `site-audit` と `password-tests` が成功することを確認します。
 4. 差分と変更対象ファイルを確認してからmainへ反映します。
 5. Pagesのビルド・デプロイ完了後、公開URLをPCとスマートフォンで確認します。
 
@@ -140,7 +143,7 @@ mainには `POST /api/password/change`、`GET /api/media/library`、`POST /api/m
 4. デプロイ後、ログイン、セッション確認、サイト情報の読み込み・保存、お知らせ、画像、バックアップを確認します。
 5. Worker変更が失敗した場合は、Cloudflareの直前の正常なデプロイ版へ戻し、KVデータは削除しません。
 
-GitHub PagesとWorkerの更新順序を混同しないでください。特にPR #53と#60はWorkerの再デプロイが必要です。
+GitHub PagesとWorkerの更新順序を混同しないでください。本番Workerのデプロイ版を確認し、PR #53・#64を含む版が未反映なら、mainの最新版を既存Workerへデプロイします。年度交代を始める前に、管理画面でログイン・バックアップ・パスワード変更が利用できることを確認してください。パスワード変更を実行する場合は、現役担当者への共有準備を済ませてから行います。
 
 ## 8. 検査コマンド
 
@@ -150,13 +153,13 @@ GitHub PagesとWorkerの更新順序を混同しないでください。特にPR
 node scripts/site-audit.mjs
 ```
 
-パスワード管理のWorkerモックテストは、mainの品質検査で自動実行します。
+パスワード管理のWorkerモックテストは、`Admin password management tests` の `password-tests` で実行します。
 
 ```bash
 node scripts/password-management-test.mjs
 ```
 
-画像ライブラリのWorkerモックテストも、mainの品質検査で自動実行します。
+画像ライブラリのWorkerモックテストは、`Site quality checks` の `site-audit` でサイト監査と合わせて実行します。
 
 ```bash
 node scripts/media-library-test.mjs
