@@ -28,3 +28,4 @@ jobs:
         run: |
           node scripts/site-audit.mjs
           node scripts/media-library-test.mjs
+          node scripts/worker-api-contract-test.mjs
