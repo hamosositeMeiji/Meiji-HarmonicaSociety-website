@@ -129,4 +129,48 @@ assert.equal(store.has("media:" + unused), false, "unused media must be removed 
 const invalid = await call("/api/media/delete-unused", { method: "POST", token, body: { id: "../content:site-content" } });
 assert.equal(invalid.status, 400, "invalid media IDs must be rejected");
 
+const siteContentPath = "/api/site-content";
+const publicContentPath = "/api/public/site-content";
+const partImage = base + "/media/" + usedB;
+const original = await call(siteContentPath, { token });
+assert.equal(original.data.partPhotoEditing, true);
+const editable = {
+  activities: { title: "", text: "", photos: [] },
+  media: { videoTitle: "" },
+  recruit: { title: "", text: "" }
+};
+const saveContent = (content, expectedRevision) => call(siteContentPath, {
+  method: "POST", token, body: { content, expectedRevision }
+});
+const rejectedPhoto = await saveContent({
+  ...editable, partPhotos: { bass: { member: "javascript:alert(1)" } }
+}, original.data.revision);
+assert.equal(rejectedPhoto.status, 400);
+const rejectedPart = await saveContent({
+  ...editable, partPhotos: { unknown: { member: partImage } }
+}, original.data.revision);
+assert.equal(rejectedPart.status, 400);
+const registered = await saveContent({
+  ...editable, partPhotos: { bass: { member: partImage, instrument: "https://example.org/bass.webp" } }
+}, original.data.revision);
+assert.equal(registered.status, 200);
+const visible = await call(publicContentPath);
+assert.deepEqual(visible.data.content.partPhotos, {
+  bass: { member: partImage, instrument: "https://example.org/bass.webp" }
+});
+const legacySave = await saveContent(editable, registered.data.revision);
+assert.equal(legacySave.status, 200);
+assert.equal((await call(publicContentPath)).data.content.partPhotos.bass.member, partImage);
+const staleSave = await saveContent({ ...editable, partPhotos: {} }, registered.data.revision);
+assert.equal(staleSave.status, 409);
+const referencedPartImage = await call("/api/media/delete-unused", {
+  method: "POST", token, body: { id: usedB }
+});
+assert.equal(referencedPartImage.status, 409);
+assert.ok(referencedPartImage.data.references.some(label => label.includes("partPhotos / bass / member")));
+const detachedPartPhoto = await saveContent({ ...editable, partPhotos: {} }, legacySave.data.revision);
+assert.equal(detachedPartPhoto.status, 200);
+assert.equal((await call(publicContentPath)).data.content.partPhotos, undefined);
+console.log("Part photo tests passed: save, public projection, input validation, legacy save, revision conflict, reference protection, and removal.");
+
 console.log("Media library tests passed: authentication, listing, nested references, accurate size, protected deletion, legacy deletion preflight, and unused deletion.");
