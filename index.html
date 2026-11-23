@@ -278,6 +278,8 @@ a:hover .arrow {
     .latest-news-strip:hover .latest-news-arrow { transform: translate(3px, -2px); }
     .latest-news-strip:hover .latest-news-title { text-decoration: underline; text-underline-offset: 3px; }
 
+    .news-empty { margin: 0; padding: 24px; width: 100%; color: var(--muted); background: rgba(255,255,255,.72); border: 1px solid var(--line); border-radius: 12px; line-height: 1.8; }
+
     /* HERO */
     .hero {
       padding: 34px 0 80px;
@@ -1679,11 +1681,11 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
     <section class="concert wrap" id="concert">
       <div class="concert-panel reveal">
         <div class="concert-copy">
-          <div class="eyebrow">04 / UPCOMING CONCERT</div>
-          <h2>See you<br>at the live.</h2>
+          <div class="eyebrow">04 / PAST CONCERT</div>
+          <h2>Thank you<br>for coming.</h2>
           <p>
-            ハモソの演奏を、ぜひ会場で。
-            音源だけでは伝わらない、バンドの迫力を体感してください。
+            2026年11月21日の演奏会は終了しました。
+            ご来場いただいた皆さま、ありがとうございました。
           </p>
 
           <div class="concert-date">
@@ -1695,7 +1697,7 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
             会場：日暮里サニーホール
           </p>
 
-          <a class="button" href="contact/index.html">お問い合わせ・見学申込 ↗</a>
+          <a class="button" href="news/2026-autumn-concert.html">演奏会の記事を見る ↗</a>
         </div>
 
         <div class="concert-art" aria-label="秋の演奏会のビジュアル">
@@ -1981,7 +1983,14 @@ const dateSortValue = value => {
           .sort((a, b) => compareDates(a.date, b.date));
         // API取得に成功した場合は、古い年度の静的サンプル記事も残さない。
         host.replaceChildren();
-        if (currentItems.length === 0) return;
+        if (currentItems.length === 0) {
+          const empty = document.createElement("p");
+          empty.className = "news-empty";
+          empty.textContent = "現在、今年度のお知らせはありません。過去のお知らせは一覧からご覧いただけます。";
+          empty.setAttribute("role", "status");
+          host.append(empty);
+          return;
+        }
         const fragment = document.createDocumentFragment();
         currentItems.forEach(item => {
           const card = document.createElement("a");
