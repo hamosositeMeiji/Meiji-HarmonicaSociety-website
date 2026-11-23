@@ -455,7 +455,9 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     const items=result.items
       .filter(item=>item&&typeof item.title==="string")
       .sort((a,b)=>compareDates(a.date,b.date));
-    const entries=items.map(item=>({item,date:item.date}));
+    const entries=items
+      .filter(item=>!staticCards.some(card=>card.dataset.newsTitle===String(item.title||"").trim()))
+      .map(item=>({item,date:item.date}));
     for(const card of staticCards){
       if(!items.some(item=>String(item.title||"").trim()===card.dataset.newsTitle)){
         entries.push({card,date:card.dataset.newsDate});
