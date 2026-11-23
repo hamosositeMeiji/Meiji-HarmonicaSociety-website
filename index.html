@@ -1721,10 +1721,16 @@ body.hm-motion-reduced #hm-fluid-canvas,body.hm-lightweight #hm-fluid-canvas{ani
       </div>
 
       <div class="news-list">
-        <a class="news-card" href="news/2026-autumn-concert.html">
-          <span class="news-date">2026.10</span>
+        <a class="news-card" href="news/2026/concert-report.html" data-static-news data-news-date="2026.11.23" data-news-title="2026年度 定期演奏会を開催しました">
+          <span class="news-date">2026.11.23</span>
+          <span class="news-category">ACTIVITY REPORT</span>
+          <strong>2026年度 定期演奏会を開催しました</strong>
+          <span class="news-arrow">↗</span>
+        </a>
+        <a class="news-card" href="news/2026-autumn-concert.html" data-static-news data-news-date="2026.10.14" data-news-title="演奏会のお知らせ">
+          <span class="news-date">2026.10.14</span>
           <span class="news-category">CONCERT</span>
-          <strong>2026年 秋の演奏会のお知らせ</strong>
+          <strong>演奏会のお知らせ（開催終了）</strong>
           <span class="news-arrow">↗</span>
         </a>
       </div>
@@ -1978,12 +1984,22 @@ const dateSortValue = value => {
           if (dateB === null) return -1;
           return dateB - dateA;
         };
+        const staticCards = [...host.querySelectorAll("[data-static-news]")];
         const currentItems = data.items
           .filter(item => fiscalYearOf(item) === currentFiscalYear)
           .sort((a, b) => compareDates(a.date, b.date));
-        // API取得に成功した場合は、古い年度の静的サンプル記事も残さない。
+        // CMSのお知らせと静的記事を日付順に統合し、APIが0件でも記事を表示する。
+        const entries = currentItems.map(item => ({item, date:item.date}));
+        if (currentFiscalYear === 2026) {
+          for (const card of staticCards) {
+            if (!currentItems.some(item => String(item.title || "").trim() === card.dataset.newsTitle)) {
+              entries.push({card, date:card.dataset.newsDate});
+            }
+          }
+        }
+        entries.sort((a, b) => compareDates(a.date, b.date));
         host.replaceChildren();
-        if (currentItems.length === 0) {
+        if (entries.length === 0) {
           const empty = document.createElement("p");
           empty.className = "news-empty";
           empty.textContent = "現在、今年度のお知らせはありません。過去のお知らせは一覧からご覧いただけます。";
@@ -1992,7 +2008,9 @@ const dateSortValue = value => {
           return;
         }
         const fragment = document.createDocumentFragment();
-        currentItems.forEach(item => {
+        entries.forEach(entry => {
+          if (entry.card) { fragment.append(entry.card); return; }
+          const item = entry.item;
           const card = document.createElement("a");
           card.className = "news-card";
           card.href = "news/index.html";
