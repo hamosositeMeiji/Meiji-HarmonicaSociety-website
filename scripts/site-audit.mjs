@@ -102,7 +102,7 @@ for (const url of xmlUrls) {
 
 // Prevent repeated or skipped section numbers on the homepage.
 const homeHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
-const homeSectionNumbers = [...homeHtml.matchAll(/<div class="eyebrow">(\\d{2}) \\/ [^<]+<\\/div>/g)]
+const homeSectionNumbers = [...homeHtml.matchAll(/<div class="eyebrow">(\d{2}) \/ [^<]+<\/div>/g)]
   .map(match => Number(match[1]));
 assert.ok(homeSectionNumbers.length >= 8, "homepage section labels could not be identified");
 assert.deepEqual(
