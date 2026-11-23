@@ -1989,7 +1989,9 @@ const dateSortValue = value => {
           .filter(item => fiscalYearOf(item) === currentFiscalYear)
           .sort((a, b) => compareDates(a.date, b.date));
         // CMSのお知らせと静的記事を日付順に統合し、APIが0件でも記事を表示する。
-        const entries = currentItems.map(item => ({item, date:item.date}));
+        const entries = currentItems
+          .filter(item => !staticCards.some(card => card.dataset.newsTitle === String(item.title || "").trim()))
+          .map(item => ({item, date:item.date}));
         if (currentFiscalYear === 2026) {
           for (const card of staticCards) {
             if (!currentItems.some(item => String(item.title || "").trim() === card.dataset.newsTitle)) {
