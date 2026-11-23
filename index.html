@@ -1994,9 +1994,7 @@ const dateSortValue = value => {
           .map(item => ({item, date:item.date}));
         if (currentFiscalYear === 2026) {
           for (const card of staticCards) {
-            if (!currentItems.some(item => String(item.title || "").trim() === card.dataset.newsTitle)) {
-              entries.push({card, date:card.dataset.newsDate});
-            }
+            entries.push({card, date:card.dataset.newsDate});
           }
         }
         entries.sort((a, b) => compareDates(a.date, b.date));
