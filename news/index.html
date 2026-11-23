@@ -382,26 +382,26 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
 
 <section class="news-list" aria-label="ニュース一覧">
 
-<a class="news-card" href="2026-autumn-concert.html">
+<a class="news-card" href="2026/concert-report.html" data-static-news data-news-date="2026.11.23" data-news-title="2026年度 定期演奏会を開催しました">
+  <div class="meta">
+    <span>2026.11.23</span>
+    <span class="category">活動報告</span>
+  </div>
+  <h3>2026年度 定期演奏会を開催しました</h3>
+  <p>11月21日の定期演奏会を開催しました。ご来場いただいた皆さま、ありがとうございました。</p>
+  <span class="read-more">READ ARTICLE ↗</span>
+</a>
+
+<a class="news-card" href="2026-autumn-concert.html" data-static-news data-news-date="2026.10.14" data-news-title="演奏会のお知らせ">
   <div class="meta">
     <span>2026.10.14</span>
     <span class="category">演奏会</span>
   </div>
   <h3>演奏会のお知らせ</h3>
-  <p>日暮里サニーホールでの演奏会に向けて準備を進めています。</p>
+  <p>11月21日の演奏会は終了しました。開催情報と報告記事をご覧いただけます。</p>
   <span class="read-more">READ ARTICLE ↗</span>
 </a>
-
-           <article class="news-card">
-        <div class="meta">
-          <span>NEWS</span>
-          <span class="category">活動報告</span>
-        </div>
-        <h3>活動報告を準備中です</h3>
-        <p>合奏やパート練習、演奏会に向けた準備など、ハモソの日々の活動を今後紹介していきます。</p>
-        <span class="read-more">COMING SOON</span>
-      </article>
-    </section>
+</section>
 
         <div class="empty-note">
       ハモソの演奏会情報や活動の様子を、随時更新していきます。
@@ -451,18 +451,28 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
           if (dateB === null) return -1;
           return dateB - dateA;
         };
+    const staticCards=[...host.querySelectorAll("[data-static-news]")];
     const items=result.items
       .filter(item=>item&&typeof item.title==="string")
       .sort((a,b)=>compareDates(a.date,b.date));
+    const entries=items.map(item=>({item,date:item.date}));
+    for(const card of staticCards){
+      if(!items.some(item=>String(item.title||"").trim()===card.dataset.newsTitle)){
+        entries.push({card,date:card.dataset.newsDate});
+      }
+    }
+    entries.sort((a,b)=>compareDates(a.date,b.date));
     host.replaceChildren();
-    if(!items.length){
+    if(!entries.length){
       const empty=document.createElement("p");
       empty.className="empty-note";
       empty.textContent="現在公開中のお知らせはありません。新しい情報をお待ちください。";
       host.append(empty);
       return;
     }
-    items.forEach(item=>{
+    entries.forEach(entry=>{
+      if(entry.card){host.append(entry.card);return;}
+      const item=entry.item;
       const card=document.createElement("article");
       card.className="news-card";
       const meta=document.createElement("div");meta.className="meta";
