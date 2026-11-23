@@ -100,6 +100,17 @@ for (const url of xmlUrls) {
   }
 }
 
+// Prevent repeated or skipped section numbers on the homepage.
+const homeHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const homeSectionNumbers = [...homeHtml.matchAll(/<div class="eyebrow">(\d{2}) \/ [^<]+<\/div>/g)]
+  .map(match => Number(match[1]));
+assert.ok(homeSectionNumbers.length >= 8, "homepage section labels could not be identified");
+assert.deepEqual(
+  homeSectionNumbers,
+  Array.from({ length: homeSectionNumbers.length }, (_, index) => index + 1),
+  "homepage section numbers must be sequential and unique"
+);
+
 // Parse every repository JavaScript file, including the Worker as an ES-module-shaped source.
 function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
