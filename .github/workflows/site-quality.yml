@@ -27,5 +27,6 @@ jobs:
       - name: Run site quality audit
         run: |
           node scripts/site-audit.mjs
+          node scripts/news-integration-test.mjs
           node scripts/media-library-test.mjs
           node scripts/worker-api-contract-test.mjs
