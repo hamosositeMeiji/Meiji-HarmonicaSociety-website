@@ -25,7 +25,7 @@
     *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans","Noto Sans JP",sans-serif;line-height:1.9}
     a{color:inherit;text-decoration:none}.wrap{width:min(var(--max),calc(100% - 40px));margin:auto}
     header{padding:22px 0;border-bottom:1px solid var(--line)}.nav{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-weight:800;letter-spacing:.04em}.back{font-size:13px;color:var(--muted)}
-    main{padding:78px 0 100px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--muted)}h1{font-size:clamp(42px,7vw,76px);line-height:1.08;letter-spacing:-.06em;margin:18px 0 24px}h1 span{color:#65783d}.intro{max-width:650px;color:var(--muted);font-size:16px;margin-bottom:48px}
+    main{padding:78px 0 100px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--muted)}h1{font-size:clamp(42px,7vw,76px);line-height:1.08;letter-spacing:-.06em;margin:18px 0 24px}h1 .heading-accent{color:#65783d}.intro{max-width:650px;color:var(--muted);font-size:16px;margin-bottom:48px}
     .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{padding:28px;border:1px solid var(--line);border-radius:18px;background:#fff}.num{font-size:11px;color:var(--muted);letter-spacing:.1em}.symbol{display:grid;place-items:center;width:54px;height:54px;margin:24px 0 16px;border-radius:16px;background:#e5ebd5;font-size:26px}h2{font-size:22px;margin:0 0 12px;letter-spacing:-.03em}.card p{font-size:14px;color:var(--muted);margin:0}.note{margin-top:36px;padding:24px 28px;background:#eeefe7;border-radius:16px}.note p{margin:0;font-size:14px}.cta{display:inline-flex;margin-top:34px;padding:12px 20px;background:var(--ink);color:#fff;border-radius:999px;font-size:13px;font-weight:700}.cta:focus-visible,.back:focus-visible{outline:3px solid var(--green);outline-offset:4px}
     @media(max-width:720px){main{padding:52px 0 70px}.cards{grid-template-columns:1fr}.card{padding:24px}.intro{font-size:14px}}
 
@@ -164,13 +164,14 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
 .skip-link:focus{transform:translateY(0);outline:3px solid #8b9f40;outline-offset:2px}
 </style>
   <link rel="canonical" href="https://hamosositemeiji.github.io/Meiji-HarmonicaSociety-website/activities/">
+  <link rel="stylesheet" href="../shared/visually-hidden.css">
 </head>
 <body>
 <a class="skip-link" href="#main-content">本文へ移動</a>
   <header><div class="wrap nav"><a class="brand" href="../index.html">HAMOSO.</a><a class="back" href="../index.html#activities">← トップページへ戻る</a></div></header>
   <main class="wrap" id="main-content" tabindex="-1">
     <div class="eyebrow">02 / ACTIVITIES</div>
-    <h1>More than<br><span>just music.</span></h1>
+    <h1><span class="visually-hidden">明治大学ハーモニカソサエティーの活動紹介 </span><span id="activity-heading-text">More than<br><span class="heading-accent">just music.</span></span></h1>
     <p class="intro">ハモソの活動は、楽器を演奏することだけではありません。日々の練習で仲間と音を合わせ、ステージで演奏を届け、イベントを通じて交流を深めています。</p>
     <div class="cards">
       <article class="card"><div class="num">01 — PRACTICE</div><div class="symbol">♫</div><h2>日々の練習</h2><p>パートごとの練習や全体での合奏を重ねて、少しずつ演奏を磨いていきます。経験者はもちろん、初めて楽器に触れる人も、自分のペースで参加できます。</p></article>
@@ -229,7 +230,7 @@ body:after{inset:-24% -45%;opacity:.58;background:linear-gradient(112deg,transpa
     const result=await response.json();
     const activities=result&&result.content&&result.content.activities;
     if(!activities||typeof activities!=="object")return;
-    const heading=document.querySelector("main h1");
+    const heading=document.getElementById("activity-heading-text");
     if(heading&&typeof activities.title==="string"&&activities.title.trim())heading.textContent=activities.title.trim();
     const intro=document.querySelector("main .intro");
     if(intro&&typeof activities.text==="string"&&activities.text.trim())intro.textContent=activities.text.trim();
