@@ -55,7 +55,7 @@
 - 同じデータを複数の管理画面で編集した場合、古い画面からの保存はrevision conflictとして拒否します。Cloudflare KVには原子的なcompare-and-swapがないため、同時刻に重なった保存を完全に直列化するものではありません。複数人で同時編集せず、保存担当を1人に決めてください。
 
 ## 旧CMS設定について
-- `admin/config.yml` はDecap CMS / Git Gatewayを想定した旧設定で、現行管理画面では読み込まれていません。
+- `admin/config.yml` はDecap CMS / Git Gateway向けの旧設定でした。現行管理画面が参照していないため削除しました。
 - `content/site.json` は旧CMS時代の参考データです。現行サイトの活動予定・コンテンツはCloudflare KVの `content:site-content` が保存先です。
 - 旧JSONを編集しても現行サイトには反映されません。移行元の記録として残し、削除・上書きしないでください。
 
