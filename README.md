@@ -45,3 +45,7 @@
 ## 詳細な運用手順
 
 Cloudflare Workerの設定、KV、画像の保存・削除、バックアップ、Search Console、ブランチ保護の手順は [admin/SETUP.md](admin/SETUP.md) を参照してください。
+
+## サイトマップの更新
+
+公開ページの本文・構造化データなどを更新したときは、`sitemap.xml` の該当URLの `lastmod` も更新します。対応するHTMLの最終コミット日は `git log -1 --format=%cs -- ファイルパス` で確認できます。
