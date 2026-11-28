@@ -4,9 +4,15 @@ body.hm-motion-reduced,
 html.hm-lightweight,
 body.hm-lightweight { scroll-behavior:auto!important; }
 
+body.hm-motion-reduced,
+body.hm-motion-reduced::before,
+body.hm-motion-reduced::after,
 body.hm-motion-reduced *,
 body.hm-motion-reduced *::before,
 body.hm-motion-reduced *::after,
+body.hm-lightweight,
+body.hm-lightweight::before,
+body.hm-lightweight::after,
 body.hm-lightweight *,
 body.hm-lightweight *::before,
 body.hm-lightweight *::after {
